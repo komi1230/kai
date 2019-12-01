@@ -1,4 +1,4 @@
-(defsystem "kai/tests"
+(defsystem "kai-test"
   :author ""
   :license ""
   :depends-on ("kai"
