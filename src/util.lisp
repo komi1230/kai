@@ -8,11 +8,11 @@
 
 
 (in-package :cl-user)
-(defpackage :kai.util
+(defpackage #:kai.util
   (:use :cl)
   (:export :check-shape-type-simple
            :check-shape-type-nested))
-(in-package :kai.util)
+(in-package #:kai.util)
 
 
 ;;;; Type and shape check
