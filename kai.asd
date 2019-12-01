@@ -7,6 +7,8 @@
                "cl-glut")
   :components ((:module "src"
                 :components
-                ((:file "main"))))
+                ((:file "main")
+                 (:fiie "util")
+                 (:file "window"))))
   :description "Plotter for Common Lisp"
   :in-order-to ((test-op (test-op "kai/tests"))))
