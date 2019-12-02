@@ -1,5 +1,5 @@
 (defsystem "kai"
-  :version "0.1.0"
+  :version "0.0.1"
   :author "Yusuke Kominami"
   :license "MIT License"
   :depends-on ("cl-opengl"
@@ -8,7 +8,6 @@
   :components ((:module "src"
                 :components
                 ((:file "main")
-                 (:fiie "util")
+                 (:file "util")
                  (:file "window"))))
-  :description "Plotter for Common Lisp"
-  :in-order-to ((test-op (test-op "kai/tests"))))
+  :description "Plotter for Common Lisp")
