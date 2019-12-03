@@ -56,3 +56,43 @@
                   (or (= (length x) 2)  ; check dimension
                       (= (length x) 3))))
          data))
+
+
+
+
+;;;; Find max and min value in input data
+;;;
+;;; When plotting in the figure, we have to know
+;;; max and min value of the input data to calculate and
+;;; scale the size of the figure.
+;;;
+;;; Like the above function (type and shape check), we will
+;;; make some functions for each shape of the input data.
+;;;
+;;; Each finding function returns cons: (MIN . MAX)
+
+;; Case 1)
+(defun find-min-max-simple-lst (data)
+  (labels ((f (min-value max-value lst)
+             (if (null lst)
+                 (cons min-value max-value)
+                 (if (< max-value (car lst))
+                     (f min-value (car lst) (cdr lst))
+                     (if (< (car lst) min-value)
+                         (f (car lst) max-value (cdr lst))
+                         (f min-value max-value (cdr lst)))))))
+    (f (car data) (car data) data)))
+
+
+;; Case 2)
+(defun find-min-max-simple-vector (data)
+  (let ((min-value (aref data 0))
+        (max-value (aref data 0)))
+    (loop for i from 0 below (length data) do
+         (if (< (aref data i) min-value)
+             (setq min-value (aref data i))
+             (if (< max-value (aref data i))
+                 (setq max-value (aref data i)))))
+    (cons min-value max-value)))
+
+;; Case 3)
