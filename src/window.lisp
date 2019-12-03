@@ -8,6 +8,11 @@
 
 
 (in-package :cl-user)
+
+(ql:quickload :cl-opengl)
+(ql:quickload :cl-glu)
+(ql:quickload :cl-glut)
+
 (defpackage #:kai.window
   (:use :cl)
   (:import-from :glut
@@ -37,9 +42,12 @@
 
 
 (defparameter *title* "Kai")
-(defparameter *width* 500)
-(defparameter *height* 500)
+(defparameter *width* 600)
+(defparameter *height* 600)
 
+
+
+;; Open base window
 (defmacro make-base-window (title width height)
   `(defclass base-window (glut:window)
      ()
@@ -49,27 +57,51 @@
                         :height ,height
                         :mode '(:single :rgb) :title ,title)))
 
+
+;; Draw initial background
 (defmacro setup-base-window ()
   `(defmethod glut:display-window :before ((w base-window))
-     ;; Select clearing color.
-     (gl:clear-color ,1 ,1 ,1 ,1)
+     ;; Clear buffer
+     (gl:clear-color ,1 ,1 ,1 ,0)
+              
      ;; Initialize viewing values.
-     (gl:matrix-mode :projection)
+     (gl:matrix-mode ,:projection)
      (gl:load-identity)
      (gl:ortho ,0 ,1 ,0 ,1 ,-1 ,1)))
 
-(defmacro plot-hoge ()
+
+;; Draw input and frame
+(defmacro plot ()
   `(defmethod glut:display ((w base-window))
      (gl:clear :color-buffer)
-  ;; Draw white polygon (rectangle) with corners at
-  ;; (0.25, 0.25, 0.0) and (0.75, 0.75, 0.0).
-  (gl:color ,1 ,0 ,0)
-  (gl:with-primitive :polygon
-    (gl:vertex ,0.25 ,0.25 ,0)
-    (gl:vertex ,0.75 ,0.25 ,0)
-    (gl:vertex ,0.75 ,0.75 ,0)
-    (gl:vertex ,0.25 ,0.75 ,0))
-  ;; Start processing buffered OpenGL routines.
-  (gl:flush)))
+     
+     ;; Draw frame
+     (gl:color ,0 ,0 ,0)
+     (gl:with-primitive :line-strip  ; bottom
+       (gl:vertex ,0.10 ,0.15 ,0)
+       (gl:vertex ,0.90 ,0.15 ,0))
+     (gl:with-primitive :line-strip  ; top
+       (gl:vertex ,0.10 ,0.85 ,0)
+       (gl:vertex ,0.90 ,0.85 ,0))
+     (gl:with-primitive :line-strip  ; left
+       (gl:vertex ,0.10 ,0.15 ,0)
+       (gl:vertex ,0.10 ,0.85 ,0))
+     (gl:with-primitive :line-strip  ; right
+       (gl:vertex ,0.90 ,0.15 ,0)
+       (gl:vertex ,0.90 ,0.85 ,0))
+
+     ;; FIXME: Draw input data.
+     
+     ;; Start processing buffered OpenGL routines.
+     (gl:flush)))
 
 
+
+
+
+;; TEST FUNCTION !!!
+(defun main ()
+  (make-base-window *title* *width* *height*)
+  (setup-base-window)
+  (plot-frame)
+  (glut:display-window (make-instance 'base-window)))
