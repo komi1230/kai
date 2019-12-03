@@ -4,6 +4,13 @@ Kai is a portable plotter for Common Lisp.
 
 ## Usage
 
+On construction !
+
+
+## Installation
+
+### ASDF
+
 Clone this repository:
 
 ```
@@ -16,4 +23,6 @@ And load this system with ASDF:
 (asdf:load-system :kai)
 ```
 
+### Quicklisp
 
+Coming soon...
