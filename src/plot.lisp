@@ -21,12 +21,21 @@
 
 
 
+
 (defun draw-string (str x y font)
   (gl:raster-pos x y)
   (gl:color 0 0 0)
   (loop for i from 0 below (length str) do
        (glut:bitmap-character font
                               (char-code (aref str i)))))
+
+
+(defun draw-line (x0 y0 x1 y1)
+  (gl:color 0 0 0)
+  (gl:with-primitive :line-strip
+     (gl:vertex x0 y0 0)
+     (gl:vertex x1 y1 0)))
+
 
 ;; Draw title of the figure
 (defun draw-title (str)
@@ -43,29 +52,17 @@
 
 ;; Draw frame of the figure: outline
 (defun draw-frame-2d (x0 y0 x1 y1)
-  (gl:color 0 0 0)
-  (gl:with-primitive :line-strip  ; bottom
-     (gl:vertex x0 y0 0)
-     (gl:vertex x1 y0 0))
-  (gl:with-primitive :line-strip  ; left
-   (gl:vertex x0 y0 0)
-   (gl:vertex x0 y1 0))
-  (gl:with-primitive :line-strip  ; right
-     (gl:vertex x1 y0 0)
-     (gl:vertex x1 y1 0))
-  (gl:with-primitive :line-strip  ; top
-     (gl:vertex x0 y1 0)
-     (gl:vertex x1 y1 0)))
+  (draw-line x0 y0 x1 y0)   ; bottom
+  (draw-line x0 y0 x0 y1)   ; left
+  (draw-line x1 y0 x1 y1)   ; right
+  (draw-line x0 y1 x1 y1))  ; top
 
+  
 
 ;; Draw each scale line and number
 (defun draw-scale (min-max)
-  (let ((x-init-pos 0.13)
-        (x-final-pos 0.93)
-        (x-buffer 0.025)
+  (let ((x-buffer 0.025)
         (x-split-time 5)
-        (y-init-pos 0.10)
-        (y-final-pos 0.90)
         (y-buffer 0.02)
         (y-split-time 8)
         (scale-line-len 0.01)
@@ -76,11 +73,11 @@
     (gl:color 0 0 0)
     ;; x-axis
     (loop for i from 0 to x-split-time do
-         (let* ((x-pos (+ x-init-pos
+         (let* ((x-pos (+ *x0-lim*
                           x-buffer
                           (* i
-                             (/ (- x-final-pos
-                                   x-init-pos
+                             (/ (- *x1-lim*
+                                   *x0-lim*
                                    (* x-buffer 2))
                                 x-split-time))))
                 (num (write-to-string (float
@@ -95,23 +92,23 @@
            ;; scale line
            (gl:with-primitive :line-strip
              (gl:vertex x-pos
-                        y-init-pos
+                        *y0-lim*
                         0)
              (gl:vertex x-pos
-                        (- y-init-pos scale-line-len)
+                        (- *y0-lim* scale-line-len)
                         0))
            ;; scale num
            (draw-string num
                         num-pos
-                        (- y-init-pos 0.04)
+                        (- *y0-lim* 0.04)
                         glut:+bitmap-helvetica-12+)))
     ;; y-axis
     (loop for i from 0 to y-split-time do
-         (let* ((y-pos (+ y-init-pos
+         (let* ((y-pos (+ *y0-lim*
                           y-buffer
                           (* i
-                             (/ (- y-final-pos
-                                   y-init-pos
+                             (/ (- *y1-lim*
+                                   *y0-lim*
                                    (* 2 y-buffer))
                                 y-split-time))))
                 (num (write-to-string (float
@@ -119,15 +116,15 @@
                                             (* (/ (- y-max y-min)
                                                   x-split-time)
                                                i)))))
-                (num-pos (- x-init-pos
+                (num-pos (- *x0-lim*
                             0.02
                             (* 0.012 (length num)))))
            ;; scale line
            (gl:with-primitive :line-strip
-             (gl:vertex x-init-pos
+             (gl:vertex *x0-lim*
                         y-pos
                         0)
-             (gl:vertex (- x-init-pos scale-line-len)
+             (gl:vertex (- *x0-lim* scale-line-len)
                         y-pos
                         0))
            ;; scale num
@@ -137,16 +134,17 @@
                         glut:+bitmap-helvetica-12+)))))
 
 
+
 ;; Draw input data and frame
 (defmacro make-figure ()
   `(defmethod glut:display ((w base-window))
      (gl:clear :color-buffer)
      
      ;; Draw frame
-     (draw-frame-2d ,*x0-lim*
-                    ,*y0-lim*
-                    ,*x1-lim*
-                    ,*y1-lim*)
+     (draw-frame-2d *x0-lim*
+                    *y0-lim*
+                    *x1-lim*
+                    *y1-lim*)
 
 
      ;; Draw Scale
@@ -154,7 +152,7 @@
      
 
      ;; FIXME: Draw input data.
-     (draw-title ,"Figure 1")
+     (draw-title "Figure 1")
      
      ;; Start processing buffered OpenGL routines.
      (gl:flush)))
