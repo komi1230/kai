@@ -15,18 +15,6 @@
 
 (defpackage #:kai.window
   (:use :cl)
-  (:import-from :glut
-                :window)
-  (:import-from :gl
-                :color
-                :clear
-                :clear-color
-                :flush
-                :matrix-mode
-                :load-identity
-                :ortho
-                :vertex
-                :with-primitive)
   (:export :make-base-window
            :setup-base-window
            :plot))
@@ -44,6 +32,7 @@
 ;;; Enter main loop and process events.
 
 
+;; Initial settings
 (defparameter *title* "Kai")
 (defparameter *width* 600)
 (defparameter *height* 600)
@@ -78,8 +67,8 @@
 
 
 ;;----------------- For Debug ---------------------
-;(defun main ()
-;  (make-base-window *title* *width* *height*)
-;  (setup-base-window)
-;  (make-figure)
-;  (glut:display-window (make-instance 'base-window)))
+(defun main ()
+  (make-base-window *title* *width* *height*)
+  (setup-base-window)
+  (make-figure)
+  (glut:display-window (make-instance 'base-window)))
