@@ -62,7 +62,7 @@
       (if (listp (nth 0 data))
           (check-shape-type-nested data)
           (check-shape-type-simple data))
-      (if (vectorp data)
+      (if (and (vectorp data) (not (stringp data)))
           (if (vectorp (aref data 0))
               (check-shape-type-nested data)
               (check-shape-type-simple data))
@@ -175,10 +175,12 @@
           (if (complexp (car data))
               (find-min-max-simple-complex-lst data)
               (find-min-max-simple-lst data)))
-      (if (vectorp data)
+      (if (and (vectorp data) (not (stringp data)))
           (if (vectorp (aref data 0))
               (find-min-max-nested-vector data)
               (if (complexp (aref data 0))
                   (find-min-max-nested-complex-vector data)
                   (find-min-max-simple-vector data)))
           (error "Invalid input data: ~a~&" data))))
+
+
