@@ -10,8 +10,8 @@
 (in-package :cl-user)
 (defpackage #:kai.util
   (:use :cl)
-  (:export :check-shape-type-simple
-           :check-shape-type-nested))
+  (:export :check-shape-type
+           :find-min-max))
 (in-package #:kai.util)
 
 
@@ -57,6 +57,16 @@
                       (= (length x) 3))))
          data))
 
+(defun check-shape-type (data)
+  (if (listp data)
+      (if (listp (nth 0 data))
+          (check-shape-type-nested data)
+          (check-shape-type-simple data))
+      (if (vectorp data)
+          (if (vectorp (aref data 0))
+              (check-shape-type-nested data)
+              (check-shape-type-simple data))
+          (error "Invalid input data: ~A~&" data))))
 
 
 
