@@ -50,7 +50,7 @@
                         :mode '(:single :rgb) :title ,title)))
 
 
-;; Draw initial background
+;; Draw initial background : 2D
 (defmacro setup-base-window ()
   `(defmethod glut:display-window :before ((w base-window))
      ;; Clear buffer
