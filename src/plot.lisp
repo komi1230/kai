@@ -13,7 +13,20 @@
 (in-package #:kai.plot)
 
 
+;; Frame information
+(defparameter *x0-lim* 0.13)
+(defparameter *y0-lim* 0.10)
+(defparameter *x1-lim* 0.93)
+(defparameter *y1-lim* 0.90)
 
+
+
+(defun draw-string (str x y font)
+  (gl:raster-pos x y)
+  (gl:color 0 0 0)
+  (loop for i from 0 below (length str) do
+       (glut:bitmap-character font
+                              (char-code (aref str i)))))
 
 ;; Draw title of the figure
 (defun draw-title (str)
@@ -22,11 +35,10 @@
                      (/ (length str)
                         2))))
         (y-pos 0.93))
-    (gl:raster-pos x-pos y-pos)
-    (gl:color 0 0 0)
-    (loop for i from 0 below (length str) do
-         (glut:bitmap-character glut:+bitmap-helvetica-18+
-                                (char-code (aref str i))))))
+    (draw-string str
+                 x-pos
+                 y-pos
+                 glut:+bitmap-helvetica-18+)))
 
 
 ;; Draw frame of the figure: outline
@@ -46,53 +58,83 @@
      (gl:vertex x1 y1 0)))
 
 
-;; Draw each scale line
-(defun draw-scale-line ()
+;; Draw each scale line and number
+(defun draw-scale (min-max)
   (let ((x-init-pos 0.13)
         (x-final-pos 0.93)
         (x-buffer 0.025)
-        (x-split-time 6)
+        (x-split-time 5)
         (y-init-pos 0.10)
         (y-final-pos 0.90)
         (y-buffer 0.02)
         (y-split-time 8)
-        (scale-line-len 0.01))
+        (scale-line-len 0.01)
+        (x-min (caar min-max))
+        (x-max (cadr min-max))
+        (y-min (cadar min-max))
+        (y-max (caddr min-max)))
     (gl:color 0 0 0)
     ;; x-axis
-    (loop for i from 0 below x-split-time do
-         (gl:with-primitive :line-strip
-           (gl:vertex (+ x-init-pos
-                         x-buffer
-                         (* i
-                            (/ (- x-final-pos x-init-pos)
-                               x-split-time)))
-                      y-init-pos
-                      0)
-           (gl:vertex (+ x-init-pos
-                         x-buffer
-                         (* i
-                            (/ (- x-final-pos x-init-pos)
-                               x-split-time)))
-                      (- y-init-pos scale-line-len)
-                      0)))
+    (loop for i from 0 to x-split-time do
+         (let* ((x-pos (+ x-init-pos
+                          x-buffer
+                          (* i
+                             (/ (- x-final-pos
+                                   x-init-pos
+                                   (* x-buffer 2))
+                                x-split-time))))
+                (num (write-to-string (float
+                                         (+ x-min
+                                           (* (/ (- x-max x-min)
+                                                 x-split-time)
+                                              i)))))
+                (num-pos (- x-pos        
+                            (* 0.012    ; 1 character = 0.012 point
+                               (/ (length num)
+                                  2)))))
+           ;; scale line
+           (gl:with-primitive :line-strip
+             (gl:vertex x-pos
+                        y-init-pos
+                        0)
+             (gl:vertex x-pos
+                        (- y-init-pos scale-line-len)
+                        0))
+           ;; scale num
+           (draw-string num
+                        num-pos
+                        (- y-init-pos 0.04)
+                        glut:+bitmap-helvetica-12+)))
     ;; y-axis
-    (loop for i from 0 below y-split-time do
-         (gl:with-primitive :line-strip
-           (gl:vertex x-init-pos
-                      (+ y-init-pos
-                         y-buffer
-                         (* i
-                            (/ (- y-final-pos y-init-pos)
-                               y-split-time)))
-                      0)
-           (gl:vertex (- x-init-pos scale-line-len)
-                      (+ y-init-pos
-                         y-buffer
-                         (* i
-                            (/ (- y-final-pos y-init-pos)
-                               y-split-time)))
-                      0)))))
- 
+    (loop for i from 0 to y-split-time do
+         (let* ((y-pos (+ y-init-pos
+                          y-buffer
+                          (* i
+                             (/ (- y-final-pos
+                                   y-init-pos
+                                   (* 2 y-buffer))
+                                y-split-time))))
+                (num (write-to-string (float
+                                         (+ y-min
+                                            (* (/ (- y-max y-min)
+                                                  x-split-time)
+                                               i)))))
+                (num-pos (- x-init-pos
+                            0.02
+                            (* 0.012 (length num)))))
+           ;; scale line
+           (gl:with-primitive :line-strip
+             (gl:vertex x-init-pos
+                        y-pos
+                        0)
+             (gl:vertex (- x-init-pos scale-line-len)
+                        y-pos
+                        0))
+           ;; scale num
+           (draw-string num
+                        num-pos
+                        y-pos
+                        glut:+bitmap-helvetica-12+)))))
 
 
 ;; Draw input data and frame
@@ -101,11 +143,14 @@
      (gl:clear :color-buffer)
      
      ;; Draw frame
-     (draw-frame-2d ,0.13 ,0.10 ,0.93 ,0.90)
+     (draw-frame-2d ,*x0-lim*
+                    ,*y0-lim*
+                    ,*x1-lim*
+                    ,*y1-lim*)
 
 
      ;; Draw Scale
-     (draw-scale-line)
+     (draw-scale '((1.0 10.0) -3.2 10.5))
      
 
      ;; FIXME: Draw input data.
