@@ -21,21 +21,35 @@
 
 
 
+;;;; General functions
+;;;
+;;; In making window like a figure, we have to draw outline, scale
+;;; and other character.
+;;; To make it easy to draw line and string, we make some general functions.
 
 (defun draw-string (str x y font)
   (gl:raster-pos x y)
-  (gl:color 0 0 0)
+  (set-color :black)
   (loop for i from 0 below (length str) do
        (glut:bitmap-character font
                               (char-code (aref str i)))))
 
 
 (defun draw-line (x0 y0 x1 y1)
-  (gl:color 0 0 0)
+  (set-color :black)
   (gl:with-primitive :line-strip
      (gl:vertex x0 y0 0)
      (gl:vertex x1 y1 0)))
 
+
+
+;;;; Basic functions
+;;;
+;;; These functions draw outlines and scales of the figure.
+;;; They cover some user interface:
+;;;       1) draw title
+;;;       2) set frame
+;;;       3) set scales
 
 ;; Draw title of the figure
 (defun draw-title (str)
@@ -90,13 +104,10 @@
                                (/ (length num)
                                   2)))))
            ;; scale line
-           (gl:with-primitive :line-strip
-             (gl:vertex x-pos
-                        *y0-lim*
-                        0)
-             (gl:vertex x-pos
-                        (- *y0-lim* scale-line-len)
-                        0))
+           (draw-line x-pos
+                      *y0-lim*
+                      x-pos
+                      (- *y0-lim* scale-line-len))
            ;; scale num
            (draw-string num
                         num-pos
@@ -120,13 +131,10 @@
                             0.02
                             (* 0.012 (length num)))))
            ;; scale line
-           (gl:with-primitive :line-strip
-             (gl:vertex *x0-lim*
-                        y-pos
-                        0)
-             (gl:vertex (- *x0-lim* scale-line-len)
-                        y-pos
-                        0))
+           (draw-line *x0-lim*
+                      y-pos
+                      (- *x0-lim* scale-line-len)
+                      y-pos)
            ;; scale num
            (draw-string num
                         num-pos
@@ -134,6 +142,33 @@
                         glut:+bitmap-helvetica-12+)))))
 
 
+
+;;;; Plotting
+;;;
+;;; Here we finally plot or dot in the figure.
+;;; To make user interface simple, we wrap functions (plotting, dotting ...)
+;;; with generic functions or macros.
+
+(defun plot-dot (x y color)
+  (set-color color)
+  (gl:with-primitive :points
+    (gl:vertex x y 0)))
+
+;; To plot with line, connect each dot.
+(defun connect-dot (x0 y0 x1 y1 color)
+  (set-color color)
+  (gl:line-width 3)
+  (gl:with-primitive :line-strip
+     (gl:vertex x0 y0 0)
+     (gl:vertex x1 y1 0)))
+
+
+
+
+;;;; Draw
+;;;
+;;; Finally we draw a figure.
+;;;
 
 ;; Draw input data and frame
 (defmacro make-figure ()
@@ -153,6 +188,9 @@
 
      ;; FIXME: Draw input data.
      (draw-title "Figure 1")
+
+
+     (plot-line 0.3 0.2 0.6 0.7 :blue)
      
      ;; Start processing buffered OpenGL routines.
      (gl:flush)))
