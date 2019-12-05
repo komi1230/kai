@@ -7,7 +7,8 @@
                "cl-glut")
   :components ((:module "src"
                 :components
-                ((:file "main")
-                 (:file "util")
-                 (:file "window"))))
+                ((:file "main" :depends-on ("window" "plot"))
+                 (:file "plot" :depends-on ("util" "window"))
+                 (:file "window" :depends-on ("util"))
+                 (:file "util"))))
   :description "Plotter for Common Lisp")

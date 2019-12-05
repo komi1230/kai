@@ -9,7 +9,15 @@
 
 (in-package :cl-user)
 (defpackage #:kai.plot
-  (:use :cl))
+  (:use :cl)
+  (:import-from :kai.window
+                :draw-line
+                :draw-string)
+  (:import-from :kai.util
+                :set-color
+                :find-min-max
+                :to-array)
+  (:export :make-figure))
 (in-package #:kai.plot)
 
 
@@ -192,26 +200,28 @@
 ;;;
 
 ;; Draw input data and frame
-(defmacro make-figure (data title)
-  `(defmethod glut:display ((w base-window))
-     (gl:clear :color-buffer)
+(defmacro make-figure (data type color title)
+  (let ((converted-data (set-accordings (to-array data))))
+    `(defmethod glut:display ((w base-window))
+       (gl:clear :color-buffer)
      
-     ;; Draw frame
-     (draw-frame-2d *x0-lim*
-                    *y0-lim*
-                    *x1-lim*
-                    *y1-lim*)
+       ;; Draw frame
+       (draw-frame-2d *x0-lim*
+                      *y0-lim*
+                      *x1-lim*
+                      *y1-lim*)
 
+       ;; Draw Scale
+       (draw-scale (find-min-max ,converted-data))
 
-     ;; Draw Scale
-     (draw-scale '((1.0 10.0) -3.2 10.5))
+       ;; FIXME: Draw input data.
+       (draw-title ,title)
+
+       ;; Draw line or dot
+       (case ,type
+         (:dot (plot-dot ,converted-data ,color))
+         (:line (plot-line ,converted-data ,color))
+         (t (plot-line ,converted-data ,color)))
      
-
-     ;; FIXME: Draw input data.
-     (draw-title "Figure 1")
-
-
-     (connect-dot 0.3 0.2 0.6 0.7 :blue)
-     
-     ;; Start processing buffered OpenGL routines.
-     (gl:flush)))
+       ;; Start processing buffered OpenGL routines.
+       (gl:flush))))
