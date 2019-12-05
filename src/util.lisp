@@ -256,7 +256,7 @@
 
 ;; Case 6)
 (defun nested-array-to-array (data)
-  (nested-lst-to-2d-array (mapcar #'(lambda (x) (coerce x 'list))
+  (nested-lst-to-array (mapcar #'(lambda (x) (coerce x 'list))
                                   (coerce data 'list))))
 
 

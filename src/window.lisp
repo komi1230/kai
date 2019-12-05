@@ -8,16 +8,14 @@
 
 
 (in-package :cl-user)
-
-(ql:quickload :cl-opengl)
-(ql:quickload :cl-glu)
-(ql:quickload :cl-glut)
-
 (defpackage #:kai.window
   (:use :cl)
-  (:export :make-base-window
-           :setup-base-window
-           :plot))
+  (:import-from :kai.util
+                :set-color)
+  (:export :draw-string
+           :draw-line
+           :make-base-window
+           :setup-base-window))
 (in-package #:kai.window)
 
 
@@ -68,7 +66,9 @@
 ;;; class to 
 
 ;; Open base window
-(defmacro make-base-window (title width height)
+(defmacro make-base-window (&key (title *title*)
+                                 (width *width*)
+                                 (height *height*))
   `(defclass base-window (glut:window)
      ()
      (:default-initargs :pos-x ,100
@@ -89,14 +89,3 @@
      (gl:load-identity)
      (gl:ortho ,0 ,1 ,0 ,1 ,-1 ,1)))
 
-
-
-
-
-
-;;----------------- For Debug ---------------------
-(defun main ()
-  (make-base-window *title* *width* *height*)
-  (setup-base-window)
-  (make-figure)
-  (glut:display-window (make-instance 'base-window)))
