@@ -132,13 +132,56 @@
   (gl:with-primitive :points
     (gl:vertex x y 0)))
 
-;; To plot with line, connect each dot.
+(defun plot-dot (data color)
+  (let ((num (car (array-dimensions data))))
+    (loop for i from 0 below num do
+         (plot-one-dot (aref data i 0)
+                       (aref data i 1)
+                       color))))
+
+;; Plot with line, connect each dot.
 (defun connect-dot (x0 y0 x1 y1 color)
   (set-color color)
   (gl:line-width 3)
   (gl:with-primitive :line-strip
      (gl:vertex x0 y0 0)
      (gl:vertex x1 y1 0)))
+
+(defun plot-line (data color)
+  (let ((num (car (array-dimensions data))))
+    (loop for i from 0 below (1- num) do
+         (connect-dot (aref data i 0)
+                      (aref data i 1)
+                      (aref data (1+ i) 0)
+                      (aref data (1+ i) 1)
+                      color))))
+
+
+;; Regularize each element to accordings
+(defun set-accordings (data)
+  (let* ((shape (array-dimensions data))
+         (min-max (find-min-max data))
+         (x-min (caar min-max))
+         (x-max (cadr min-max))
+         (x-range (- x-max x-min))
+         (y-min (cadar min-max))
+         (y-max (caddr min-max))
+         (y-range (- y-max y-min))
+         (data-accord (make-array shape)))
+    (loop for i from 0 below (car shape) do
+         (setf (aref data-accord i 0)
+               (+ *x0-lim*
+                  *x-buffer*
+                  (* (- *x1-lim* *x0-lim* (* *x-buffer* 2))
+                     (/ (- (aref data i 0) x-min)
+                        x-range))))
+         (setf (aref data-accord i 1)
+               (+ *y0-lim*
+                  *y-buffer*
+                  (* (- *y1-lim* *y0-lim* (* *y-buffer* 2))
+                     (/ (- (aref data i 1) y-min)
+                        y-range)))))
+    data-accord))
 
 
 
@@ -149,7 +192,7 @@
 ;;;
 
 ;; Draw input data and frame
-(defmacro make-figure ()
+(defmacro make-figure (data title)
   `(defmethod glut:display ((w base-window))
      (gl:clear :color-buffer)
      
