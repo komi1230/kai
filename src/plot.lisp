@@ -18,7 +18,8 @@
 (defparameter *y0-lim* 0.10)
 (defparameter *x1-lim* 0.93)
 (defparameter *y1-lim* 0.90)
-
+(defparameter *x-buffer* 0.025)
+(defparameter *y-buffer* 0.02)
 
 
 ;;;; General functions
