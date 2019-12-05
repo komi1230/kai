@@ -111,7 +111,7 @@
                 (num (write-to-string (float
                                          (+ y-min
                                             (* (/ (- y-max y-min)
-                                                  x-split-time)
+                                                  y-split-time)
                                                i)))))
                 (num-pos (- *x0-lim*
                             0.02

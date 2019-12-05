@@ -240,10 +240,12 @@
 ;; Case 3)
 (defun complex-lst-to-2d-array (data)
   (make-array (list (length data) 2)
-              :initial-contents (mapcar #'(lambda (x)
-                                            (list (realpart x)
-                                                  (imagpart x)))
-                                        data)))
+              :initial-contents (sort (mapcar #'(lambda (x)
+                                                  (list (realpart x)
+                                                        (imagpart x)))
+                                              data)
+                                      #'<
+                                      :key #'car)))
 
 ;; Case 4)
 (defun complex-array-to-2d-array (data)
@@ -252,12 +254,12 @@
 ;; Case 5)
 (defun nested-lst-to-array (data)
   (make-array (list (length data) (length (car data)))
-              :initial-contents data))
+              :initial-contents (sort data #'< :key #'car)))
 
 ;; Case 6)
 (defun nested-array-to-array (data)
   (nested-lst-to-array (mapcar #'(lambda (x) (coerce x 'list))
-                                  (coerce data 'list))))
+                               (coerce data 'list))))
 
 
 (defun to-array (data)

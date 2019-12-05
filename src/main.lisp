@@ -18,7 +18,8 @@
 (in-package :kai)
 
 
-(defun plot (data &key (color :blue) (type :line) (title ""))
+
+(defun plot (data &key (type :line) (color :blue) (title ""))
   (make-base-window)
   (setup-base-window)
   (make-figure data type color title)
