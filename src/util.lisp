@@ -102,35 +102,25 @@
 ;;; make some functions for each shape of the input data.
 ;;;
 ;;; Each finding function returns cons:
-;;;     Simple => (MIN . MAX)
-;;;     Nested => ((X-MIN Y-MIN) . (X-MAX Y-MAX))
-;;;                  or ((X-MIN Y-MIN Z-MIN) . (X-MAX Y-MAX Z-MAX))
+;;;     Simple => ((0 Y-MIN) (LEN-1 Y-MAX))
+;;;     Nested => ((X-MIN Y-MIN) (X-MAX Y-MAX))
+;;;                  or ((X-MIN Y-MIN Z-MIN) (X-MAX Y-MAX Z-MAX))
 ;;;
 ;;; These accept 3-dimensional input data.
 
 ;; Case 1)
 (defun find-min-max-simple-lst (data)
-  (labels ((f (min-value max-value lst)
+  (labels ((f (idx lst)
              (if (null lst)
-                 (list min-value max-value)
-                 (if (< max-value (car lst))
-                     (f min-value (car lst) (cdr lst))
-                     (if (< (car lst) min-value)
-                         (f (car lst) max-value (cdr lst))
-                         (f min-value max-value (cdr lst)))))))
-    (f (car data) (car data) data)))
+                 nil
+                 (cons (list idx (car lst))
+                       (f (1+ idx) (cdr lst))))))
+    (find-min-max-nested-lst (f 0 data))))
 
 
 ;; Case 2)
 (defun find-min-max-simple-array (data)
-  (let ((min-value (aref data 0))
-        (max-value (aref data 0)))
-    (loop for i from 0 below (length data) do
-         (if (< (aref data i) min-value)
-             (setq min-value (aref data i))
-             (if (< max-value (aref data i))
-                 (setq max-value (aref data i)))))
-    (list min-value max-value)))
+  (find-min-max-simple-lst (coerce data 'list)))
 
 ;; Case 3)
 (defun find-min-max-complex-lst (data)
@@ -215,7 +205,7 @@
               (find-min-max-complex-lst data)
               (find-min-max-simple-lst data)))
       (if (= (length (array-dimensions data)) 2)
-          data
+          (find-min-max-multiple data)
           (if (and (vectorp (aref data 0))
                    (not (stringp (aref data 0))))
               (if (vectorp (aref data 0))
