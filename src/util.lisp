@@ -11,7 +11,8 @@
 (defpackage #:kai.util
   (:use :cl)
   (:export :check-shape-type
-           :find-min-max))
+           :find-min-max
+           :to-array))
 (in-package #:kai.util)
 
 
@@ -62,6 +63,17 @@
          data))
 
 ;; Case 7)
+(defun check-shape-type-multiple (data)
+  (let ((shape (array-dimensions data)))
+    (if (= (length shape) 2)
+        (if (or (= (cadr shape) 2)
+                (= (cadr shape) 3))
+            (every #'identity
+               (loop for i from 0 below (car shape) do
+                    (loop for j from 0 below (cadr shape)
+                       collect (numberp (aref data i j)))))
+            nil)
+        nil)))
 
 
 (defun check-shape-type (data)
@@ -69,11 +81,14 @@
       (if (listp (nth 0 data))
           (check-shape-type-nested data)
           (check-shape-type-simple data))
-      (if (and (vectorp data) (not (stringp data)))
-          (if (vectorp (aref data 0))
-              (check-shape-type-nested data)
-              (check-shape-type-simple data))
-          (error "Invalid input data: ~A~&" data))))
+      (if (= (length (array-dimensions data)) 2)
+          (check-shape-type-multiple data)
+          (if (and (vectorp (aref data 0))
+                   (not (stringp (aref data 0))))
+              (if (vectorp (aref data 0))
+                  (check-shape-type-nested data)
+                  (check-shape-type-simple data))
+              (error "Invalid input data: ~A~&" data)))))
 
 
 
@@ -107,7 +122,7 @@
 
 
 ;; Case 2)
-(defun find-min-max-simple-vector (data)
+(defun find-min-max-simple-array (data)
   (let ((min-value (aref data 0))
         (max-value (aref data 0)))
     (loop for i from 0 below (length data) do
@@ -118,13 +133,13 @@
     (list min-value max-value)))
 
 ;; Case 3)
-(defun find-min-max-simple-complex-lst (data)
+(defun find-min-max-complex-lst (data)
   (find-min-max-nested-lst (mapcar #'(lambda (x) (list (realpart x)
                                                        (imagpart x)))
                                    data)))
 
 ;; Case 4)
-(defun find-min-max-nested-complex-vector (data)
+(defun find-min-max-complex-array (data)
   (find-min-max-nested-lst (coerce (map 'vector
                                         #'(lambda (x) (list (realpart x)
                                                             (imagpart x)))
@@ -163,7 +178,7 @@
           (get-big-pair (car data) data))))
 
 ;; Case 6)
-(defun find-min-max-nested-vector (data)
+(defun find-min-max-nested-array (data)
   (let ((init-small (coerce (aref data 0) 'list))
         (init-big (coerce (aref data 0) 'list)))
     (loop for ith from 0 below (length data) do
@@ -176,21 +191,39 @@
     (cons (coerce init-small 'list)
           (coerce init-big 'list))))
 
+;; Case 7)
+(defun find-min-max-multiple (data)
+  (labels ((array-to-list (array)
+             (let* ((dimensions (array-dimensions array))
+                    (depth (1- (length dimensions)))
+                    (indices (make-list (1+ depth) :initial-element 0)))
+               (labels ((recurse (n)
+                          (loop for j below (nth n dimensions) do
+                               (setf (nth n indices) j)
+                               collect (if (= n depth)
+                                           (apply #'aref array indices)
+                                           (recurse (1+ n))))))
+                 (recurse 0)))))
+    (find-min-max-nested-lst (array-to-list data))))
+
 ;; Summarize functions to find min max value.
 (defun find-min-max (data)
   (if (listp data)
-      (if (listp (car data))
+      (if (listp (nth 0 data))
           (find-min-max-nested-lst data)
-          (if (complexp (car data))
-              (find-min-max-simple-complex-lst data)
+          (if (complexp (nth 0 data))
+              (find-min-max-complex-lst data)
               (find-min-max-simple-lst data)))
-      (if (and (vectorp data) (not (stringp data)))
-          (if (vectorp (aref data 0))
-              (find-min-max-nested-vector data)
+      (if (= (length (array-dimensions data)) 2)
+          data
+          (if (and (vectorp (aref data 0))
+                   (not (stringp (aref data 0))))
+              (if (vectorp (aref data 0))
+                  (find-min-max-nested-array data)
+                  (find-min-max-simple-array data))
               (if (complexp (aref data 0))
-                  (find-min-max-nested-complex-vector data)
-                  (find-min-max-simple-vector data)))
-          (error "Invalid input data: ~a~&" data))))
+                  (find-min-max-complex-array data)
+                  (error "Invalid input data: ~A~&" data))))))
 
 
 
@@ -199,8 +232,62 @@
 ;;; Before plotting, the input data should be proper shape and type.
 ;;; These functions makes the data structure of the input data LIST.
 
-(defun simple-lst-to-2d-array (data))
 
+;; Case 1)
+(defun simple-lst-to-2d-array (data)
+  (labels ((f (idx lst)
+             (if (null lst)
+                 nil
+                 (cons (list idx (car lst))
+                       (f (1+ idx) (cdr lst))))))
+    (make-array (list (length data) 2)
+                :initial-contents (f 0 data))))
+
+;; Case 2)
+(defun simple-array-to-2d-array (data)
+  (simple-lst-to-2d-array (coerce data 'list)))
+
+;; Case 3)
+(defun complex-lst-to-2d-array (data)
+  (make-array (list (length data) 2)
+              :initial-contents (mapcar #'(lambda (x)
+                                            (list (realpart x)
+                                                  (imagpart x)))
+                                        data)))
+
+;; Case 4)
+(defun complex-array-to-2d-array (data)
+  (complex-lst-to-2d-array (coerce data 'list)))
+
+;; Case 5)
+(defun nested-lst-to-array (data)
+  (make-array (list (length data) (length (car data)))
+              :initial-contents data))
+
+;; Case 6)
+(defun nested-array-to-array (data)
+  (nested-lst-to-2d-array (mapcar #'(lambda (x) (coerce x 'list))
+                                  (coerce data 'list))))
+
+
+(defun to-array (data)
+  (if (listp data)
+      (if (listp (nth 0 data))
+          (nested-lst-to-array data)
+          (if (complexp (nth 0 data))
+              (complex-lst-to-2d-array data)
+              (simple-lst-to-2d-array data)))
+      (if (= (length (array-dimensions data)) 2)
+          data
+          (if (and (vectorp (aref data 0))
+                   (not (stringp (aref data 0))))
+              (if (vectorp (aref data 0))
+                  (nested-array-to-array data)
+                  (simple-array-to-2d-array data))
+              (if (complexp (aref data 0))
+                  (complex-array-to-2d-array data)
+                  (error "Invalid input data: ~A~&" data))))))
+              
 
 
 
