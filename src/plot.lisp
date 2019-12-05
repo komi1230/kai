@@ -76,9 +76,7 @@
 
 ;; Draw each scale line and number
 (defun draw-scale (min-max)
-  (let ((x-buffer 0.025)
-        (x-split-time 5)
-        (y-buffer 0.02)
+  (let ((x-split-time 5)
         (y-split-time 8)
         (scale-line-len 0.01)
         (x-min (caar min-max))
@@ -89,11 +87,11 @@
     ;; x-axis
     (loop for i from 0 to x-split-time do
          (let* ((x-pos (+ *x0-lim*
-                          x-buffer
+                          *x-buffer*
                           (* i
                              (/ (- *x1-lim*
                                    *x0-lim*
-                                   (* x-buffer 2))
+                                   (* *x-buffer* 2))
                                 x-split-time))))
                 (num (write-to-string (float
                                          (+ x-min
@@ -117,11 +115,11 @@
     ;; y-axis
     (loop for i from 0 to y-split-time do
          (let* ((y-pos (+ *y0-lim*
-                          y-buffer
+                          *y-buffer*
                           (* i
                              (/ (- *y1-lim*
                                    *y0-lim*
-                                   (* 2 y-buffer))
+                                   (* 2 *y-buffer*))
                                 y-split-time))))
                 (num (write-to-string (float
                                          (+ y-min
