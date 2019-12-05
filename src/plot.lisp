@@ -22,27 +22,6 @@
 (defparameter *y-buffer* 0.02)
 
 
-;;;; General functions
-;;;
-;;; In making window like a figure, we have to draw outline, scale
-;;; and other character.
-;;; To make it easy to draw line and string, we make some general functions.
-
-(defun draw-string (str x y font)
-  (gl:raster-pos x y)
-  (set-color :black)
-  (loop for i from 0 below (length str) do
-       (glut:bitmap-character font
-                              (char-code (aref str i)))))
-
-
-(defun draw-line (x0 y0 x1 y1)
-  (set-color :black)
-  (gl:with-primitive :line-strip
-     (gl:vertex x0 y0 0)
-     (gl:vertex x1 y1 0)))
-
-
 
 ;;;; Basic functions
 ;;;
@@ -148,7 +127,7 @@
 ;;; To make user interface simple, we wrap functions (plotting, dotting ...)
 ;;; with generic functions or macros.
 
-(defun plot-dot (x y color)
+(defun plot-one-dot (x y color)
   (set-color color)
   (gl:with-primitive :points
     (gl:vertex x y 0)))
@@ -189,7 +168,7 @@
      (draw-title "Figure 1")
 
 
-     (plot-line 0.3 0.2 0.6 0.7 :blue)
+     (connect-dot 0.3 0.2 0.6 0.7 :blue)
      
      ;; Start processing buffered OpenGL routines.
      (gl:flush)))

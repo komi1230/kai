@@ -19,30 +19,34 @@
 ;;; 
 ;;; The shape of input data should be
 ;;;
-;;;   1) (value1 value2 ...)      : Simple list
+;;;   1) (value1 value2 ...)       : Simple list
 ;;;
-;;;   2) #(value1 value2 ...)     : Simple vector
+;;;   2) #(value1 value2 ...)      : Simple vector
 ;;;
-;;;   3) (#C(value-r1 value-i1)   : Simple list with
-;;;       #C(value-r2 value-i2)     complex number
+;;;   3) (#C(value-r1 value-i1)    : Simple list with
+;;;       #C(value-r2 value-i2)      complex number
 ;;;       ...)
 ;;;
-;;;   4) #(#C(value-r1 value-i1)  : Simple vector with
-;;;        #C(value-r2 value-i2)    complex number
+;;;   4) #(#C(value-r1 value-i1)   : Simple vector with
+;;;        #C(value-r2 value-i2)     complex number
 ;;;        ...)
 ;;;
-;;;   5) ((value-x1 value-y1)     : Nested list
+;;;   5) ((value-x1 value-y1)      : Nested list
 ;;;       (value-x2 value-y2)
 ;;;        ...)
 ;;;
-;;;   6) #(#(value-x1 value-y1)   : Nested vector
+;;;   6) #(#(value-x1 value-y1)    : Nested vector
 ;;;        #(value-x2 value-y2)
 ;;;        ...)
 ;;;
+;;;   7) #{N}A((value-x1 value-y1) : Multi-dimensional
+;;;            (value-x2 value-y2)   array
+;;;             ...)
 ;;;
 ;;;
 ;;; And all of the input data should be integer or float.
 ;;;
+;;; These accept 3-dimensional input data.
 
 
 ;; Case 1), 2), 3) and 4)
@@ -56,6 +60,9 @@
                   (or (= (length x) 2)  ; check dimension
                       (= (length x) 3))))
          data))
+
+;; Case 7)
+
 
 (defun check-shape-type (data)
   (if (listp data)
@@ -83,6 +90,8 @@
 ;;;     Simple => (MIN . MAX)
 ;;;     Nested => ((X-MIN Y-MIN) . (X-MAX Y-MAX))
 ;;;                  or ((X-MIN Y-MIN Z-MIN) . (X-MAX Y-MAX Z-MAX))
+;;;
+;;; These accept 3-dimensional input data.
 
 ;; Case 1)
 (defun find-min-max-simple-lst (data)
@@ -182,6 +191,16 @@
                   (find-min-max-nested-complex-vector data)
                   (find-min-max-simple-vector data)))
           (error "Invalid input data: ~a~&" data))))
+
+
+
+;;;; Data Converter
+;;;
+;;; Before plotting, the input data should be proper shape and type.
+;;; These functions makes the data structure of the input data LIST.
+
+(defun simple-lst-to-2d-array (data))
+
 
 
 

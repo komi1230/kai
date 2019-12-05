@@ -39,6 +39,34 @@
 
 
 
+
+;;;; General functions
+;;;
+;;; In making window with a figure, we have to draw outline, scale
+;;; and other character.
+;;; To make it easy to draw line and string, we prepare some general functions.
+
+(defun draw-string (str x y font)
+  (gl:raster-pos x y)
+  (set-color :black)
+  (loop for i from 0 below (length str) do
+       (glut:bitmap-character font
+                              (char-code (aref str i)))))
+
+
+(defun draw-line (x0 y0 x1 y1)
+  (set-color :black)
+  (gl:with-primitive :line-strip
+     (gl:vertex x0 y0 0)
+     (gl:vertex x1 y1 0)))
+
+
+
+;;;; Base window class
+;;;
+;;; First of all, we have to setup window class inheriting GLUT
+;;; class to 
+
 ;; Open base window
 (defmacro make-base-window (title width height)
   `(defclass base-window (glut:window)
