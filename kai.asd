@@ -7,7 +7,7 @@
                "cl-glut")
   :components ((:module "src"
                 :components
-                ((:file "main" :depends-on ("window" "plot"))
+                ((:file "main" :depends-on ("plot"))
                  (:file "plot" :depends-on ("util" "window"))
                  (:file "window" :depends-on ("util"))
                  (:file "util"))))
