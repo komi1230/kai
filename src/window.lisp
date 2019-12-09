@@ -14,6 +14,7 @@
                 :set-color)
   (:export :draw-string
            :draw-line
+           :base-window
            :make-base-window
            :setup-base-window))
 (in-package #:kai.window)
@@ -57,35 +58,4 @@
   (gl:with-primitive :line-strip
      (gl:vertex x0 y0 0)
      (gl:vertex x1 y1 0)))
-
-
-
-;;;; Base window class
-;;;
-;;; First of all, we have to setup window class inheriting GLUT
-;;; class to 
-
-;; Open base window
-(defmacro make-base-window (&key (title *title*)
-                                 (width *width*)
-                                 (height *height*))
-  `(defclass base-window (glut:window)
-     ()
-     (:default-initargs :pos-x ,100
-                        :pos-y ,100
-                        :width ,width
-                        :height ,height
-                        :mode '(:single :rgb) :title ,title)))
-
-
-;; Draw initial background : 2D
-(defmacro setup-base-window ()
-  `(defmethod glut:display-window :before ((w base-window))
-     ;; Clear buffer
-     (gl:clear-color ,1 ,1 ,1 ,0)
-              
-     ;; Initialize viewing values.
-     (gl:matrix-mode ,:projection)
-     (gl:load-identity)
-     (gl:ortho ,0 ,1 ,0 ,1 ,-1 ,1)))
 
