@@ -8,17 +8,23 @@
 
 
 (in-package :cl-user)
-(defpackage #:kai.plot
+(defpackage :kai.plot
   (:use :cl)
   (:import-from :kai.window
+                :*title*
+                :*width*
+                :*height*
                 :draw-line
                 :draw-string)
   (:import-from :kai.util
                 :set-color
                 :find-min-max
                 :to-array)
-  (:export :make-figure))
-(in-package #:kai.plot)
+  (:export :make-base-window
+           :setup-base-window
+           :make-figure
+           :plot))
+(in-package :kai.plot)
 
 
 ;; Frame information
@@ -194,15 +200,45 @@
 
 
 
+;;;; Base window class
+;;;
+;;; First of all, we have to setup window class inheriting GLUT
+;;; class to 
+
+;; Open base window
+(defclass base-window (glut:window)
+  ()
+  (:default-initargs :pos-x 100
+                     :pos-y 100
+                     :width *width*
+                     :height *height*
+                     :mode '(:single :rgb) :title *title*))
+
+
+;; Draw initial background : 2D
+(defmethod glut:display-window :before ((w base-window))
+  ;; Clear buffer
+  (gl:clear-color 1 1 1 0)
+              
+  ;; Initialize viewing values.
+  (gl:matrix-mode :projection)
+  (gl:load-identity)
+  (gl:ortho 0 1 0 1 -1 1))
+
+
+
+
+
 ;;;; Draw
 ;;;
 ;;; Finally we draw a figure.
 ;;;
 
 ;; Draw input data and frame
-(defmacro make-figure (data type color title)
-  (let ((converted-data (set-accordings (to-array data))))
-    `(defmethod glut:display ((w base-window))
+(defun make-figure (data type color title)
+  (let* ((converted-data (set-accordings (to-array data)))
+         (min-max (find-min-max data)))
+    (defmethod glut:display ((w base-window))
        (gl:clear :color-buffer)
      
        ;; Draw frame
@@ -212,16 +248,28 @@
                       *y1-lim*)
 
        ;; Draw Scale
-       (draw-scale (find-min-max ,converted-data))
+       (draw-scale min-max)
 
        ;; FIXME: Draw input data.
-       (draw-title ,title)
+       (draw-title title)
 
        ;; Draw line or dot
-       (case ,type
-         (:dot (plot-dot ,converted-data ,color))
-         (:line (plot-line ,converted-data ,color))
-         (t (plot-line ,converted-data ,color)))
+       (case type
+         (:dot (plot-dot converted-data color))
+         (:line (plot-line converted-data color))
+         (t (plot-line converted-data color)))
      
        ;; Start processing buffered OpenGL routines.
        (gl:flush))))
+
+
+;;;; Plot
+;;;
+;;; Plot input data to the figure in the window.
+;;;
+
+(defun plot (data &key (type :line) (color :blue) (title ""))
+  (format t "~A~&~A~&~A~&~A~&" data type color title)
+  (make-figure data type color title)
+  (glut:display-window (make-instance 'base-window)))
+
