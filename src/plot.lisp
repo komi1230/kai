@@ -20,10 +20,7 @@
                 :set-color
                 :find-min-max
                 :to-array)
-  (:export :make-base-window
-           :setup-base-window
-           :make-figure
-           :plot))
+  (:export :plot))
 (in-package :kai.plot)
 
 
@@ -239,28 +236,28 @@
   (let* ((converted-data (set-accordings (to-array data)))
          (min-max (find-min-max data)))
     (defmethod glut:display ((w base-window))
-       (gl:clear :color-buffer)
+      (gl:clear :color-buffer)
      
-       ;; Draw frame
-       (draw-frame-2d *x0-lim*
-                      *y0-lim*
-                      *x1-lim*
-                      *y1-lim*)
+      ;; Draw frame
+      (draw-frame-2d *x0-lim*
+                     *y0-lim*
+                     *x1-lim*
+                     *y1-lim*)
 
-       ;; Draw Scale
-       (draw-scale min-max)
+      ;; Draw Scale
+      (draw-scale min-max)
 
-       ;; FIXME: Draw input data.
-       (draw-title title)
+      ;; FIXME: Draw input data.
+      (draw-title title)
 
-       ;; Draw line or dot
-       (case type
-         (:dot (plot-dot converted-data color))
-         (:line (plot-line converted-data color))
-         (t (plot-line converted-data color)))
+      ;; Draw line or dot
+      (case type
+        (:dot (plot-dot converted-data color))
+        (:line (plot-line converted-data color))
+        (t (plot-line converted-data color)))
      
-       ;; Start processing buffered OpenGL routines.
-       (gl:flush))))
+      ;; Start processing buffered OpenGL routines.
+      (gl:flush))))
 
 
 ;;;; Plot

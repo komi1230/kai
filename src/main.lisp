@@ -6,15 +6,9 @@
 
 (defpackage :kai
   (:use :cl)
-  (:import-from :kai.window
-                :*width*
-                :*height*
-                :make-base-window
-                :setup-base-window)
   (:import-from :kai.plot
                 :plot)
-  (:export :plot
-           :hoge))
+  (:export :plot))
 (in-package :kai)
 
 
