@@ -261,6 +261,14 @@
   (nested-lst-to-array (mapcar #'(lambda (x) (coerce x 'list))
                                (coerce data 'list))))
 
+;; Case 7)
+(defun multiple-array (data)
+  (let* ((shape (array-dimensions data))
+         (lst (loop for i from 0 below (car shape) collect
+                   (loop for j from 0 below (cadr shape) collect
+                        (aref data i j)))))
+    (complex-lst-to-2d-array lst)))
+
 
 (defun to-array (data)
   (if (listp data)
@@ -270,7 +278,7 @@
               (complex-lst-to-2d-array data)
               (simple-lst-to-2d-array data)))
       (if (= (length (array-dimensions data)) 2)
-          data
+          (multiple-array data)
           (if (and (vectorp (aref data 0))
                    (not (stringp (aref data 0))))
               (if (vectorp (aref data 0))
