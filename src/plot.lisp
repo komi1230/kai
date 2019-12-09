@@ -140,6 +140,7 @@
 
 (defun plot-one-dot (x y color)
   (set-color color)
+  (gl:point-size 5)
   (gl:with-primitive :points
     (gl:vertex x y 0)))
 
