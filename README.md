@@ -2,14 +2,29 @@
 
 Kai is a portable plotter for Common Lisp.
 
+![sample_sin] (./images/sample_sin.png)
+
 ## Usage
 
-```lisp
-;; Prepare input data
-(defparameter data '((3.1 4.0) (-10 2) (4.1 -7.8)))
+Prepare some input data.
 
-;; Plot
+```lisp
+(defparameter data '((3.1 4.0) (-10 2) (4.1 -7.8)))
+```
+
+Then, show plotted figure with just one command.
+
+```lisp
 (kai:plot data)
+```
+
+You can add option.
+
+```lisp
+(kai:plot data
+          :type :dot
+          :color :red
+          :title "test plot")
 ```
 
 

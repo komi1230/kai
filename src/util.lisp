@@ -267,7 +267,7 @@
          (lst (loop for i from 0 below (car shape) collect
                    (loop for j from 0 below (cadr shape) collect
                         (aref data i j)))))
-    (nested-lst-to-2d-array lst)))
+    (nested-lst-to-array lst)))
 
 
 (defun to-array (data)
