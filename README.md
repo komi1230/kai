@@ -2,7 +2,7 @@
 
 Kai is a portable plotter for Common Lisp.
 
-![sample_sin] (./images/sample_sin.png)
+![sample_sin](./images/sample_sin.png)
 
 ## Usage
 
