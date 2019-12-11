@@ -21,14 +21,10 @@
 
 
 
-;;;; Base window
+;;;; Base information about window
 ;;;
-;;; Declare initial window size, position, and display mode (single
-;;; buffer and RGBA).
+;;; Declare initial window size, position.
 ;;; Open window with "Kai" in its title bar.
-;;; Call initialization routines.
-;;; Register callback function to display graphics.
-;;; Enter main loop and process events.
 
 
 ;; Initial settings
