@@ -12,7 +12,8 @@
   (:use :cl)
   (:export :check-shape-type
            :find-min-max
-           :to-array))
+           :to-array
+           :sort-input))
 (in-package #:kai.util)
 
 
@@ -240,12 +241,10 @@
 ;; Case 3)
 (defun complex-lst-to-2d-array (data)
   (make-array (list (length data) 2)
-              :initial-contents (sort (mapcar #'(lambda (x)
-                                                  (list (realpart x)
-                                                        (imagpart x)))
-                                              data)
-                                      #'<
-                                      :key #'car)))
+              :initial-contents (mapcar #'(lambda (x)
+                                            (list (realpart x)
+                                                  (imagpart x)))
+                                        data)))
 
 ;; Case 4)
 (defun complex-array-to-2d-array (data)
@@ -254,7 +253,7 @@
 ;; Case 5)
 (defun nested-lst-to-array (data)
   (make-array (list (length data) (length (car data)))
-              :initial-contents (sort data #'< :key #'car)))
+              :initial-contents data))
 
 ;; Case 6)
 (defun nested-array-to-array (data)
@@ -290,7 +289,24 @@
               
 
 
+;;;; Sort
+;;;
+;;; As an option, we make it able to plot just as input data (not sorted).
+;;; Here we make sort function.
+;;; All input data will be converted to multiple-dimension array, so here
+;;; this sort funciton is prepared to accept multiple-dimension array.
 
+(defun sort-input (data)
+  (let* ((shape (array-dimensions data))
+         (lst (loop for i from 0 below (car shape) collect
+                   (loop for j from 0 below (cadr shape) collect
+                        (aref data i j)))))
+    (make-array shape
+                :initial-contents (sort lst #'< :key #'car))))
+
+
+
+               
 ;;;; Color
 ;;;
 ;;; When we plot or paste in the figure, we have to set color.
