@@ -2,13 +2,9 @@
   :version "0.0.1"
   :author "Yusuke Kominami"
   :license "MIT License"
-  :depends-on ("cl-opengl"
-               "cl-glu"
-               "cl-glut")
+  :depends-on ("trivial-shell")
   :components ((:module "src"
                 :components
-                ((:file "main" :depends-on ("plot"))
-                 (:file "plot" :depends-on ("util" "window"))
-                 (:file "window" :depends-on ("util"))
+                ((:file "main")
                  (:file "util"))))
   :description "Plotter for Common Lisp")
