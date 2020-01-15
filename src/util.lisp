@@ -304,21 +304,3 @@
     (make-array shape
                 :initial-contents (sort lst #'< :key #'car))))
 
-
-
-               
-;;;; Color
-;;;
-;;; When we plot or paste in the figure, we have to set color.
-;;; This function make it easy to set color.
-
-(defun set-color (color)
-  (case color
-    (:red (gl:color 1 0 0))
-    (:green (gl:color 0 1 0))
-    (:blue (gl:color 0 0 1))
-    (:cyan (gl:color 0 1 1))
-    (:magenta (gl:color 1 0 1))
-    (:yellow (gl:color 1 1 0))
-    (:black (gl:color 0 0 0))
-    (t (gl:color 0 0 0))))
