@@ -11,5 +11,3 @@
   (:export :plot))
 (in-package :kai)
 
-
-
