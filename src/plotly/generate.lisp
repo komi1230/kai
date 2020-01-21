@@ -22,9 +22,9 @@
    (merge-pathnames ".cache/kai/"
                     (user-homedir-pathname))))
 
-(defun check-plotly-file ()
-  (probe-file (merge-pathnames ".cache/kai/plotly-latest.min.js"
-                               (user-homedir-pathname))))
+(defun check-file-exist (file-name)
+  (probe-file (merge-pathnames file-name
+                               (make-kai-cache))))
 
 
 ;;;; Donwload client
@@ -45,3 +45,27 @@
   (download-file (merge-pathnames "plotly-latest.min.js"
                                   (make-kai-cache))
                  "https://cdn.plot.ly/plotly-latest.min.js"))
+
+
+;;;; HTML generator
+;;;
+;;; Create HTML file to plot in the browser.
+;;; This file will be saved in the cache directory.
+
+(defun generate-plot (plot-code &key (width 1000) (height 700))
+  (let ((style (cl-css:css `((html :height 100%)
+                             (body :height 100%
+                                   :display flex
+                                   :justify-content center
+                                   :align-items center)
+                             ("#plot" :width ,#?"${width}px"
+                                      :height ,#?"${height}px")))))
+    (who:with-html-output-to-string (_)
+      (:html
+       (:head
+        (:script :src "https://cdn.plot.ly/plotly-latest.min.js")
+        (:style (who:str style)))
+       (:body
+        (:div :id "plot")
+        (:script (who:str plot-code)))))))
+
