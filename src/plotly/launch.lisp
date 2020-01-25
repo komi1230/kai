@@ -24,14 +24,10 @@
   (trivial-shell:shell-command cmd-str))
 
 (defun open-browser ()
-  (let ((os-type (software-type))
-        (path-to-html (check-file-exist "index.html")))
-    (cond os-type
-          ;; macOS
-          ((equal os-type "Darwin")
-           (system (format nil "open ~A" path-to-html)))
-          ;; Linux
-          ((equal os-type "Linux")
-           (system (format nil "xdg-open ~A" path-to-html)))
-          ;; To DO: When OS is Windows, is this really OK ?
-          ((equal os-type "Win32") (system (format nil "start ~A" path-to-html))))))
+  (let ((path-to-html (check-file-exist "index.html")))
+    #+darwin
+    (system (format nil "open ~A" path-to-html))
+    #+linux
+    (system (format nil "xdg-open ~A" path-to-html))
+    #+win32
+    (system (format nil "start ~A" path-to-html))))
