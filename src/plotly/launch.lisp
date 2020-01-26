@@ -15,19 +15,10 @@
 
 
 
-;;;; Check OS
+;;;; Open browser
 ;;;
 ;;; When launching js file in the browser, we use system command
-;;; to open browser. Here we check user's OS.
-;;; And use system command.
-(defun system (cmd-str)
-  (trivial-shell:shell-command cmd-str))
-
+;;; to open browser.
 (defun open-browser ()
   (let ((path-to-html (check-file-exist "index.html")))
-    #+darwin
-    (system (format nil "open ~A" path-to-html))
-    #+linux
-    (system (format nil "xdg-open ~A" path-to-html))
-    #+win32
-    (system (format nil "start ~A" path-to-html))))
+    (trivial-open-browser:open-browser (namestring path-to-html))))
