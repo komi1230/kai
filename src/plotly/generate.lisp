@@ -13,20 +13,6 @@
 (in-package :kai.plotly.generate)
 
 
-;;;; File exists
-;;;
-;;; Check if .cache file exists in the home directory.
-;;; And create cache directory for Kai to put .js files.
-(defun make-kai-cache ()
-  (ensure-directories-exist
-   (merge-pathnames ".cache/kai/"
-                    (user-homedir-pathname))))
-
-(defun check-file-exist (file-name)
-  (probe-file (merge-pathnames file-name
-                               (make-kai-cache))))
-
-
 ;;;; Donwload client
 ;;;
 ;;; When using Plotly, plotly-latest.js is needed.
