@@ -5,7 +5,8 @@
   :depends-on ("trivial-shell"
                "drakma"
                "cl-who"
-               "cl-css")
+               "cl-css"
+               "cl-json")
   :components ((:module "src"
                 :components
                 ((:file "main")
