@@ -45,7 +45,9 @@
                                    :justify-content center
                                    :align-items center)
                              ("#plot" :width ,#?"${width}px"
-                                      :height ,#?"${height}px")))))
+                                      :height ,#?"${height}px"))))
+        (plotly-path (namestring (merge-pathnames "plotly-latest.min.js"
+                                                  (make-kai-cache)))))
     (who:with-html-output-to-string (_)
       (:html
        (:head

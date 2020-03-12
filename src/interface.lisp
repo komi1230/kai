@@ -9,9 +9,27 @@
 ;;; backends.
 
 (in-package :cl-user)
-(defpackage #:kai.converter
-  (:use :cl))
-(in-package #:kai.converter)
+(defpackage #:kai.interface
+  (:use :cl)
+  (:import-from :kai.converter
+                :data-to-json))
+(in-package #:kai.interface)
 
 
-;;;; 
+;;;; Scatter and Line
+;;;
+;;; This covers scatter and line plotting and their options.
+
+;; 2D
+(defun plot (data0 &optional data1 (mode "markers") (name ""))
+  (let ((len (length data0))
+        (x-axis (loop for i below len collect i)))
+    (if data1
+        (data-to-json x-axis
+                      data0
+                      :mode mode
+                      :name name)
+        (data-to-json data0
+                      data1
+                      :mode mode
+                      :name name))))

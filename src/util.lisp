@@ -26,17 +26,6 @@
   (every #'numberp data))
 
 
-
-;;;; Data Converter
-;;;
-;;; When plotting, only array can be accepted.
-;;; If the input data is list, we convert the list data to array.
-
-(defun convert-to-array (data)
-  (make-array (length data)
-              :initial-contents data))
-
-
 ;;;; Sort
 ;;;
 ;;; When plotting line, the figure should be sorted.
