@@ -37,13 +37,24 @@
         (error "Invalid input"))))
 
 
+;;;; State
+;;;
+;;; To make it able to plot multiple graph, we have a state as list.
+
+(defparameter *state* '())
+
+(defun reset! ()
+  (setf *state* '()))
+
+
 ;;;; Scatter and Line
 ;;;
 ;;; This covers scatter and line plotting and their options.
 
 ;; 2D scatter
 (defun scatter (&rest data)
-  (eval `(-scatter ,@(apply #'convert-data data))))
+  (push (eval `(-scatter ,@(apply #'convert-data data)))
+        *state*))
 
 (defun -scatter (data0
                  data1
@@ -70,3 +81,4 @@
                    :fillcolor fillcolor
                    :line line
                    :marker marker))
+
