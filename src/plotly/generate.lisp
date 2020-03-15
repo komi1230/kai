@@ -38,22 +38,26 @@
 ;;; Create HTML file to plot in the browser.
 ;;; This file will be saved in the cache directory.
 
-(defun generate-plot (plot-code &key (width 1000) (height 700))
+(defun generate-html ()
   (let ((style (cl-css:css `((html :height 100%)
                              (body :height 100%
                                    :display flex
                                    :justify-content center
-                                   :align-items center)
-                             ("#plot" :width ,#?"${width}px"
-                                      :height ,#?"${height}px"))))
+                                   :align-items center))))
         (plotly-path (namestring (merge-pathnames "plotly-latest.min.js"
                                                   (make-kai-cache)))))
     (who:with-html-output-to-string (_)
       (:html
        (:head
-        (:script :src "https://cdn.plot.ly/plotly-latest.min.js")
         (:style (who:str style)))
        (:body
-        (:div :id "plot")
-        (:script (who:str plot-code)))))))
+        (:div :id "myDiv")
+        (:script :type "text/javascript" :src plotly-path))))))
 
+(defun save-html ()
+  (let ((html-path (namestring (merge-pathnames "kai.html"
+                                                (make-kai-cache))))
+        (content (generate-html)))
+    (with-open-file (s html-path :direction :output
+                                 :if-exists :supersede)
+      (format s "~A" content))))
