@@ -36,15 +36,32 @@
 ;;; When accepted some inputs, we convert the data to JSON data at first
 ;;; because we design kai to be able to switch backends easily.
 
-(defun data-to-json (&rest data)
-  (let ((num (length data))
-        (len (length (car data)))
-        (x-axis (loop for i below len collect i)))
-    (case num
-      (1 (jonathan:to-json `(:x ,x-axis
-                             :y ,(car data))))
-      (2 (jonathan:to-json `(:x ,(car data)
-                             :y ,(cadr data)))))))
+
+(defun scatter-to-json (&key
+                          data0
+                          data1
+                          (type "scatter")
+                          (mode "markers")
+                          (name "")
+                          (text '())
+                          (error-x '())
+                          (error-y '())
+                          (fill "")
+                          (fillcolor "")
+                          (line '())
+                          (marker '()))
+  (jonathan:to-json `(:x ,data0
+                      :y ,data1
+                      :type ,type
+                      :mode ,mode
+                      :name ,name
+                      :text ,text
+                      :error-x ,error-x
+                      :error-y ,error-y
+                      :fill ,fill
+                      :fillcolor ,fillcolor
+                      :line ,line
+                      :marker ,marker)))
 
 (defun with-single-quotation (text)
   (format nil "'~A'" text))
