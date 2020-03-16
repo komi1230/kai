@@ -61,3 +61,23 @@
     (with-open-file (s html-path :direction :output
                                  :if-exists :supersede)
       (format s "~A" content))))
+
+(defun generate-js (states style)
+  (let* ((len (length states))
+         (traces (format nil "~{~A~}~3&"
+                         (loop for i below len
+                               collect (format nil "var trace~A = ~A;~&~&" i (nth i states)))))
+         (layout (format nil "var layout = ~A;~3&" style))
+         (data (format nil "var data = [~{~A~}];~3&"
+                       (loop for i below len
+                             collect (format nil "trace~A, " i))))
+         (final-set (format nil "Plotly.newPlot('myDiv', data, layout)")))
+    (format nil "~A~A~A~A" traces layout data final-set)))
+
+(defun save-js (states style)
+  (let ((js-path (namestring (merge-pathnames "kai.js"
+                                              (make-kai-cache))))
+        (content (generate-js states style)))
+    (with-open-file (s js-path :direction :output
+                               :if-exists :supersede)
+      (format s "~A" content))))
