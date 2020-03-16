@@ -63,5 +63,8 @@
                       :|line| ,line
                       :|marker| ,marker)))
 
-(defun with-single-quotation (text)
-  (format nil "'~A'" text))
+
+
+(defun style-to-json (&key
+                         title)
+  (jonathan:to-json `(:|title| ,title)))

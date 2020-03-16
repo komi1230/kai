@@ -45,14 +45,18 @@
                                    :justify-content center
                                    :align-items center))))
         (plotly-path (namestring (merge-pathnames "plotly-latest.min.js"
-                                                  (make-kai-cache)))))
+                                                  (make-kai-cache))))
+        (my-plot (namestring (merge-pathnames "kai.js"
+                                              (make-kai-cache)))))
     (who:with-html-output-to-string (_)
       (:html
        (:head
-        (:style (who:str style)))
+        (:style (who:str style))
+        (:script :type "text/javascript" :src plotly-path))
        (:body
         (:div :id "myDiv")
-        (:script :type "text/javascript" :src plotly-path))))))
+        (:script :type "text/javascript" :src my-plot))))))
+
 
 (defun save-html ()
   (let ((html-path (namestring (merge-pathnames "kai.html"
@@ -61,6 +65,9 @@
     (with-open-file (s html-path :direction :output
                                  :if-exists :supersede)
       (format s "~A" content))))
+
+
+
 
 (defun generate-js (states style)
   (let* ((len (length states))
@@ -73,6 +80,7 @@
                              collect (format nil "trace~A, " i))))
          (final-set (format nil "Plotly.newPlot('myDiv', data, layout)")))
     (format nil "~A~A~A~A" traces layout data final-set)))
+
 
 (defun save-js (states style)
   (let ((js-path (namestring (merge-pathnames "kai.js"
