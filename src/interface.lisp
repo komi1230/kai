@@ -43,8 +43,11 @@
 
 (defparameter *state* '())
 
+(defparameter *style* "")
+
 (defun reset! ()
-  (setf *state* '()))
+  (setf *state* '())
+  (setf *style* ""))
 
 
 ;;;; Scatter and Line
@@ -82,3 +85,23 @@
                    :line line
                    :marker marker))
 
+
+;;;; Layout
+;;;
+;;; To attach title or axis options to the graph.
+
+(defun style (&key
+                 (title "Scatter Plot"))
+  (setf *style* (style-to-json :title title)))
+
+
+;;;; Plot
+;;;
+;;; Launch viewer and draw traces and styles.
+
+(defun show ()
+  (save-js *state* *style*)
+  (if (equal *style* "")
+      (style))
+  (open-browser)
+  (reset!))
