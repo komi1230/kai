@@ -50,18 +50,18 @@
                           (fillcolor "")
                           (line '())
                           (marker '()))
-  (jonathan:to-json `(:x ,data0
-                      :y ,data1
-                      :type ,type
-                      :mode ,mode
-                      :name ,name
-                      :text ,text
-                      :error-x ,error-x
-                      :error-y ,error-y
-                      :fill ,fill
-                      :fillcolor ,fillcolor
-                      :line ,line
-                      :marker ,marker)))
+  (jonathan:to-json `(:|x| ,data0
+                      :|y| ,data1
+                      :|type| ,type
+                      :|mode| ,mode
+                      :|name| ,name
+                      :|text| ,text
+                      :|error_x| ,error-x
+                      :|error_y| ,error-y
+                      :|fill| ,fill
+                      :|fillcolor| ,fillcolor
+                      :|line| ,line
+                      :|marker| ,marker)))
 
 (defun with-single-quotation (text)
   (format nil "'~A'" text))
