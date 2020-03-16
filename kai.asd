@@ -6,7 +6,7 @@
                "drakma"
                "cl-who"
                "cl-css"
-               "cl-json")
+               "jonathan")
   :components ((:module "src"
                 :components
                 ((:file "main")
