@@ -40,16 +40,16 @@
 (defun scatter-to-json (&key
                           data0
                           data1
-                          (type "scatter")
-                          (mode "markers")
-                          (name "")
-                          (text '())
-                          (error-x '())
-                          (error-y '())
-                          (fill "")
-                          (fillcolor "")
-                          (line '())
-                          (marker '()))
+                          type
+                          mode
+                          name
+                          text
+                          error-x
+                          error-y
+                          fill
+                          fillcolor
+                          line
+                          marker
   (jonathan:to-json `(:|x| ,data0
                       :|y| ,data1
                       :|type| ,type
