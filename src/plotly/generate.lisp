@@ -9,7 +9,13 @@
 (in-package :cl-user)
 
 (defpackage :kai.plotly.generate
-  (:use :cl))
+  (:use :cl)
+  (:import-from :kai.converter
+                :make-kai-cache)
+  (:export :download-file
+           :download-plotlyjs
+           :save-html
+           :save-js))
 (in-package :kai.plotly.generate)
 
 
