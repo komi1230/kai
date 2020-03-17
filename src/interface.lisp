@@ -12,9 +12,13 @@
 (defpackage #:kai.interface
   (:use :cl)
   (:import-from :kai.converter
+                :check-file-exist
                 :scatter-to-json
-                :style-to-json)
+                :style-to-json
+                :make-kai-cache)
   (:import-from :kai.plotly.generate
+                :download-plotlyjs
+                :save-html
                 :save-js)
   (:import-from :kai.plotly.launch
                 :open-browser)
@@ -54,11 +58,11 @@
 
 (defparameter *state* '())
 
-(defparameter *style* "")
+(defparameter *style* "{}")
 
 (defun reset! ()
   (setf *state* '())
-  (setf *style* ""))
+  (setf *style* "{}"))
 
 
 ;;;; Scatter and Line
@@ -111,8 +115,11 @@
 ;;; Launch viewer and draw traces and styles.
 
 (defun show ()
+  (make-kai-cache)
+  (if (not (check-file-exist "kai.html"))
+      (save-html))
+  (if (not (check-file-exist "plotly-latest.min.js"))
+      (download-plotlyjs))
   (save-js *state* *style*)
-  (if (equal *style* "")
-      (style))
   (open-browser)
   (reset!))
