@@ -12,7 +12,18 @@
 (defpackage #:kai.interface
   (:use :cl)
   (:import-from :kai.converter
-                :data-to-json))
+                :scatter-to-json
+                :style-to-json)
+  (:import-from :kai.plotly.generate
+                :save-js)
+  (:import-from :kai.plotly.launch
+                :open-browser)
+  (:export :*state*
+           :*style*
+           :reset!
+           :scatter
+           :style
+           :show))
 (in-package #:kai.interface)
 
 

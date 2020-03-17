@@ -10,7 +10,11 @@
 
 (in-package :cl-user)
 (defpackage #:kai.converter
-  (:use :cl))
+  (:use :cl)
+  (:export :make-kai-cache
+           :check-file-exist
+           :scatter-to-json
+           :style-to-json))
 (in-package #:kai.converter)
 
 
@@ -49,7 +53,7 @@
                           fill
                           fillcolor
                           line
-                          marker
+                          marker)
   (jonathan:to-json `(:|x| ,data0
                       :|y| ,data1
                       :|type| ,type

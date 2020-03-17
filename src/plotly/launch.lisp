@@ -9,8 +9,9 @@
 
 (defpackage :kai.plotly.launch
   (:use :cl)
-  (:import-from :kai.plotly.generate
-                :check-file-exist))
+  (:import-from :kai.converter
+                :check-file-exist)
+  (:export :open-browser))
 (in-package :kai.plotly.launch)
 
 
