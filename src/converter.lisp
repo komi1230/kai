@@ -13,7 +13,7 @@
   (:use :cl)
   (:export :make-kai-cache
            :check-file-exist
-           :scatter-to-json
+           :data-to-json
            :style-to-json))
 (in-package #:kai.converter)
 
@@ -41,7 +41,7 @@
 ;;; because we design kai to be able to switch backends easily.
 
 
-(defun scatter-to-json (&key
+(defun data-to-json (&key
                           data0
                           data1
                           type
