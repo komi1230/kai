@@ -13,7 +13,7 @@
   (:use :cl)
   (:import-from :kai.converter
                 :check-file-exist
-                :scatter-to-json
+                :data-to-json
                 :style-to-json
                 :make-kai-cache)
   (:import-from :kai.plotly.generate
@@ -77,7 +77,6 @@
 (defun -scatter (data0
                  data1
                  &key
-                   (type "scatter")
                    (mode "markers")
                    (name "")
                    (text '())
@@ -87,9 +86,9 @@
                    (fillcolor "")
                    (line '())
                    (marker '()))
-  (scatter-to-json :data0 data0
+  (data-to-json :data0 data0
                    :data1 data1
-                   :type type
+                   :type "scatter"
                    :mode mode
                    :name name
                    :text text
@@ -98,6 +97,34 @@
                    :fill fill
                    :fillcolor fillcolor
                    :line line
+                   :marker marker))
+
+;; Bar plot
+(defun bar (&rest data)
+  (push (eval `(-bar ,@(apply #'convert-data data)))
+        *state*))
+
+(defun -bar (data0
+                 data1
+                 &key
+                   (name "")
+                   (text '())
+                   (error-x '())
+                   (error-y '())
+                   (fill "")
+                   (fillcolor "")
+                   (marker '()))
+  (data-to-json :data0 data0
+                   :data1 data1
+                   :type "bar"
+                   :mode ""
+                   :name name
+                   :text text
+                   :error-x error-x
+                   :error-y error-y
+                   :fill fill
+                   :fillcolor fillcolor
+                   :line '()
                    :marker marker))
 
 
