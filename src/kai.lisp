@@ -7,6 +7,7 @@
                 :bar
                 :pie
                 :sunburst
+                :histogram
                 :style
                 :show
                 :reset!
@@ -16,6 +17,7 @@
            :bar
            :pie
            :sunburst
+           :histogram
            :style
            :show
            :reset!

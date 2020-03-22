@@ -41,6 +41,14 @@
 ;;; because we design kai to be able to switch backends easily.
 
 
+;; Jonathan options
+(setf jonathan:*false-value* t)
+(setf jonathan:*null-value* t)
+(setf jonathan:*empty-array-value* t)
+(setf jonathan:*empty-object-value* :{})
+
+
+;; Generate
 (defun data-to-json (&key
                        data0
                        data1
@@ -56,7 +64,11 @@
                        marker
                        (value '())
                        (label '())
-                       (parents '()))
+                       (parents '())
+                       (xbins '())
+                       (ybins '())
+                       (autobinx t)
+                       (autobiny t))
   (jonathan:to-json `(:|x| ,data0
                       :|y| ,data1
                       :|type| ,type
@@ -71,8 +83,11 @@
                       :|marker| ,marker
                       :|values| ,value
                       :|labels| ,label
-                      :|parents| ,parents)))
-
+                      :|parents| ,parents
+                      :|xbins| ,xbins
+                      :|ybins| ,ybins
+                      :|autobinx| ,autobinx
+                      :|autobiny| ,autobiny)))
 
 
 (defun style-to-json (&key

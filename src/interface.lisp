@@ -28,6 +28,7 @@
            :scatter
            :pie
            :sunburst
+           :histogram
            :style
            :show))
 (in-package #:kai.interface)
@@ -179,6 +180,43 @@
                 :value value
                 :label label
                 :parents parents))
+
+;; Histogram
+(defun histogram (&rest data)
+  (push (eval `(-histogram (quote ,@data)))
+        *state*))
+
+
+(defun -histogram (x
+                   &key
+                     (y :null)
+                     (name "")
+                     (text '())
+                     (error-x '())
+                     (error-y '())
+                     (fill "")
+                     (fillcolor "")
+                     (marker '())
+                     (xbins '())
+                     (ybins '())
+                     (autobinx :false)
+                     (autobiny :false))
+  (data-to-json :data0 x
+                :data1 y
+                :type "histogram"
+                :mode ""
+                :name name
+                :text text
+                :error-x error-x
+                :error-y error-y
+                :fill fill
+                :fillcolor fillcolor
+                :line '()
+                :marker marker
+                :xbins xbins
+                :ybins ybins
+                :autobinx autobinx
+                :autobiny autobiny))
 
 
 
