@@ -26,6 +26,7 @@
            :*style*
            :reset!
            :scatter
+           :pie
            :style
            :show))
 (in-package #:kai.interface)
@@ -87,17 +88,17 @@
                    (line '())
                    (marker '()))
   (data-to-json :data0 data0
-                   :data1 data1
-                   :type "scatter"
-                   :mode mode
-                   :name name
-                   :text text
-                   :error-x error-x
-                   :error-y error-y
-                   :fill fill
-                   :fillcolor fillcolor
-                   :line line
-                   :marker marker))
+                :data1 data1
+                :type "scatter"
+                :mode mode
+                :name name
+                :text text
+                :error-x error-x
+                :error-y error-y
+                :fill fill
+                :fillcolor fillcolor
+                :line line
+                :marker marker))
 
 ;; Bar plot
 (defun bar (&rest data)
@@ -105,27 +106,53 @@
         *state*))
 
 (defun -bar (data0
-                 data1
-                 &key
-                   (name "")
-                   (text '())
-                   (error-x '())
-                   (error-y '())
-                   (fill "")
-                   (fillcolor "")
-                   (marker '()))
+             data1
+             &key
+               (name "")
+               (text '())
+               (error-x '())
+               (error-y '())
+               (fill "")
+               (fillcolor "")
+               (marker '()))
   (data-to-json :data0 data0
-                   :data1 data1
-                   :type "bar"
-                   :mode ""
-                   :name name
-                   :text text
-                   :error-x error-x
-                   :error-y error-y
-                   :fill fill
-                   :fillcolor fillcolor
-                   :line '()
-                   :marker marker))
+                :data1 data1
+                :type "bar"
+                :mode ""
+                :name name
+                :text text
+                :error-x error-x
+                :error-y error-y
+                :fill fill
+                :fillcolor fillcolor
+                :line '()
+                :marker marker))
+
+;; Pie chart
+(defun pie (&rest data)
+  (push (apply #'-pie data)
+        *state*))
+
+(defun -pie (value
+             label
+             &key
+               (name "")
+               (marker '()))
+  (data-to-json :data0 '()
+                :data1 '()
+                :type "pie"
+                :mode ""
+                :name name
+                :text '()
+                :error-x '()
+                :error-y '()
+                :fill ""
+                :fillcolor ""
+                :line '()
+                :marker marker
+                :value value
+                :label label))
+
 
 
 ;;;; Layout
@@ -133,7 +160,7 @@
 ;;; To attach title or axis options to the graph.
 
 (defun style (&key
-                 (title "Scatter Plot"))
+                (title "Scatter Plot"))
   (setf *style* (style-to-json :title title)))
 
 
