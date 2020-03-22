@@ -55,7 +55,8 @@
                        line
                        marker
                        (value '())
-                       (label '()))
+                       (label '())
+                       (parents '()))
   (jonathan:to-json `(:|x| ,data0
                       :|y| ,data1
                       :|type| ,type
@@ -69,7 +70,8 @@
                       :|line| ,line
                       :|marker| ,marker
                       :|values| ,value
-                      :|labels| ,label)))
+                      :|labels| ,label
+                      :|parents| ,parents)))
 
 
 
