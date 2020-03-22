@@ -42,18 +42,20 @@
 
 
 (defun data-to-json (&key
-                          data0
-                          data1
-                          type
-                          mode
-                          name
-                          text
-                          error-x
-                          error-y
-                          fill
-                          fillcolor
-                          line
-                          marker)
+                       data0
+                       data1
+                       type
+                       mode
+                       name
+                       text
+                       error-x
+                       error-y
+                       fill
+                       fillcolor
+                       line
+                       marker
+                       (value '())
+                       (label '()))
   (jonathan:to-json `(:|x| ,data0
                       :|y| ,data1
                       :|type| ,type
@@ -65,7 +67,9 @@
                       :|fill| ,fill
                       :|fillcolor| ,fillcolor
                       :|line| ,line
-                      :|marker| ,marker)))
+                      :|marker| ,marker
+                      :|values| ,value
+                      :|labels| ,label)))
 
 
 
