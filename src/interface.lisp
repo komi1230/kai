@@ -27,6 +27,7 @@
            :reset!
            :scatter
            :pie
+           :sunburst
            :style
            :show))
 (in-package #:kai.interface)
@@ -152,6 +153,32 @@
                 :marker marker
                 :value value
                 :label label))
+
+;; Sunburst
+(defun sunburst (&rest data)
+  (push (apply #'-sunburst data)
+        *state*))
+
+(defun -sunburst (value
+                  label
+                  parents
+                  &key
+                    (marker '()))
+  (data-to-json :data0 '()
+                :data1 '()
+                :type "sunburst"
+                :mode ""
+                :name ""
+                :text '()
+                :error-x '()
+                :error-y '()
+                :fill ""
+                :fillcolor ""
+                :line '()
+                :marker marker
+                :value value
+                :label label
+                :parents parents))
 
 
 

@@ -6,6 +6,7 @@
                 :scatter
                 :bar
                 :pie
+                :sunburst
                 :style
                 :show
                 :reset!
@@ -14,6 +15,7 @@
   (:export :scatter
            :bar
            :pie
+           :sunburst
            :style
            :show
            :reset!
