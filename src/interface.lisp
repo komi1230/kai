@@ -28,6 +28,7 @@
            :scatter
            :pie
            :sunburst
+           :box
            :style
            :show))
 (in-package #:kai.interface)
@@ -166,6 +167,18 @@
   (push (eval `(-box (quote ,@data)))
         *state*))
 
+(defun -box (data
+             &key
+               (name "")
+               (marker '())
+               (boxmean t)
+               (boxpoints :false))
+  (data-to-json :data1 data
+                :type "box"
+                :name name
+                :marker marker
+                :boxmean boxmean
+                :boxpoints boxpoints))
 
 
 
