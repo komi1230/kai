@@ -50,25 +50,21 @@
 
 ;; Generate
 (defun data-to-json (&key
-                       data0
-                       data1
-                       type
-                       mode
-                       name
-                       text
-                       error-x
-                       error-y
-                       fill
-                       fillcolor
-                       line
-                       marker
+                       (data0 '())
+                       (data1 '())
+                       (type "scatter")
+                       (mode "")
+                       (name "")
+                       (text '())
+                       (error-x '())
+                       (error-y '())
+                       (fill "")
+                       (fillcolor "")
+                       (line '())
+                       (marker '())
                        (value '())
                        (label '())
-                       (parents '())
-                       (xbins '())
-                       (ybins '())
-                       (autobinx t)
-                       (autobiny t))
+                       (parents '()))
   (jonathan:to-json `(:|x| ,data0
                       :|y| ,data1
                       :|type| ,type
@@ -83,11 +79,7 @@
                       :|marker| ,marker
                       :|values| ,value
                       :|labels| ,label
-                      :|parents| ,parents
-                      :|xbins| ,xbins
-                      :|ybins| ,ybins
-                      :|autobinx| ,autobinx
-                      :|autobiny| ,autobiny)))
+                      :|parents| ,parents)))
 
 
 (defun style-to-json (&key
