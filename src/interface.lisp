@@ -28,7 +28,6 @@
            :scatter
            :pie
            :sunburst
-           :histogram
            :style
            :show))
 (in-package #:kai.interface)
@@ -120,14 +119,12 @@
   (data-to-json :data0 data0
                 :data1 data1
                 :type "bar"
-                :mode ""
                 :name name
                 :text text
                 :error-x error-x
                 :error-y error-y
                 :fill fill
                 :fillcolor fillcolor
-                :line '()
                 :marker marker))
 
 ;; Pie chart
@@ -140,17 +137,8 @@
              &key
                (name "")
                (marker '()))
-  (data-to-json :data0 '()
-                :data1 '()
-                :type "pie"
-                :mode ""
+  (data-to-json :type "pie"
                 :name name
-                :text '()
-                :error-x '()
-                :error-y '()
-                :fill ""
-                :fillcolor ""
-                :line '()
                 :marker marker
                 :value value
                 :label label))
@@ -165,58 +153,19 @@
                   parents
                   &key
                     (marker '()))
-  (data-to-json :data0 '()
-                :data1 '()
-                :type "sunburst"
-                :mode ""
-                :name ""
-                :text '()
-                :error-x '()
-                :error-y '()
-                :fill ""
-                :fillcolor ""
-                :line '()
+  (data-to-json :type "sunburst"
                 :marker marker
                 :value value
                 :label label
                 :parents parents))
 
-;; Histogram
-(defun histogram (&rest data)
-  (push (eval `(-histogram (quote ,@data)))
+
+
+;; Box plots
+(defun box (&rest data)
+  (push (eval `(-box (quote ,@data)))
         *state*))
 
-
-(defun -histogram (x
-                   &key
-                     (y :null)
-                     (name "")
-                     (text '())
-                     (error-x '())
-                     (error-y '())
-                     (fill "")
-                     (fillcolor "")
-                     (marker '())
-                     (xbins '())
-                     (ybins '())
-                     (autobinx :false)
-                     (autobiny :false))
-  (data-to-json :data0 x
-                :data1 y
-                :type "histogram"
-                :mode ""
-                :name name
-                :text text
-                :error-x error-x
-                :error-y error-y
-                :fill fill
-                :fillcolor fillcolor
-                :line '()
-                :marker marker
-                :xbins xbins
-                :ybins ybins
-                :autobinx autobinx
-                :autobiny autobiny))
 
 
 
@@ -225,7 +174,7 @@
 ;;; To attach title or axis options to the graph.
 
 (defun style (&key
-                (title "Scatter Plot"))
+                (title ""))
   (setf *style* (style-to-json :title title)))
 
 
