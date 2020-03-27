@@ -50,7 +50,7 @@
 
 ;; Generate
 (defun data-to-json (&key
-                       (data0 '())
+                       (data0 :null)
                        (data1 '())
                        (type "scatter")
                        (mode "")
@@ -64,7 +64,9 @@
                        (marker '())
                        (value '())
                        (label '())
-                       (parents '()))
+                       (parents '())
+                       (boxmean "")
+                       (boxpoints ""))
   (jonathan:to-json `(:|x| ,data0
                       :|y| ,data1
                       :|type| ,type
@@ -79,7 +81,9 @@
                       :|marker| ,marker
                       :|values| ,value
                       :|labels| ,label
-                      :|parents| ,parents)))
+                      :|parents| ,parents
+                      :|boxmean| ,boxmean
+                      :|boxpoints| ,boxpoints)))
 
 
 (defun style-to-json (&key
