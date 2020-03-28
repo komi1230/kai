@@ -36,7 +36,7 @@ And load with ASDF:
 
 ## How to use
 
-Prepate some data:
+Prepare some data:
 
 ```lisp
 ;; x-axis
