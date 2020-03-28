@@ -8,6 +8,7 @@
                 :pie
                 :sunburst
                 :box
+                :scatter3d
                 :style
                 :show
                 :reset!
@@ -18,6 +19,7 @@
            :pie
            :sunburst
            :box
+           :scatter3d
            :style
            :show
            :reset!

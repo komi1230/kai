@@ -52,6 +52,7 @@
 (defun data-to-json (&key
                        (data0 :null)
                        (data1 '())
+                       (data2 '())
                        (type "scatter")
                        (mode "")
                        (name "")
@@ -69,6 +70,7 @@
                        (boxpoints ""))
   (jonathan:to-json `(:|x| ,data0
                       :|y| ,data1
+                      :|z| ,data2 
                       :|type| ,type
                       :|mode| ,mode
                       :|name| ,name

@@ -29,6 +29,7 @@
            :pie
            :sunburst
            :box
+           :scatter3d
            :style
            :show))
 (in-package #:kai.interface)
@@ -179,6 +180,30 @@
                 :marker marker
                 :boxmean boxmean
                 :boxpoints boxpoints))
+
+;; Scatter3D
+(defun scatter3d (&rest data)
+  (push (apply #'-scatter3d data)
+        *state*))
+
+(defun -scatter3d (x
+                   y
+                   z
+                   &key
+                     (mode "markers")
+                     (name "")
+                     (text '())
+                     (marker '())
+                     (line '()))
+  (data-to-json :data0 x
+                :data1 y
+                :data2 z
+                :type "scatter3d"
+                :mode mode
+                :name name
+                :text text
+                :marker marker
+                :line line))
 
 
 
