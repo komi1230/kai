@@ -1,5 +1,5 @@
 (defsystem "kai"
-  :version "0.0.1"
+  :version "0.1.6"
   :author "Yusuke Kominami"
   :license "MIT License"
   :depends-on ("trivial-open-browser"
