@@ -67,7 +67,9 @@
                        (label '())
                        (parents '())
                        (boxmean "")
-                       (boxpoints ""))
+                       (boxpoints "")
+                       (showscale :false)
+                       (colorscale '()))
   (jonathan:to-json `(:|x| ,data0
                       :|y| ,data1
                       :|z| ,data2 
