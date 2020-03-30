@@ -69,7 +69,9 @@
                        (boxmean "")
                        (boxpoints "")
                        (showscale :false)
-                       (colorscale '()))
+                       (colorscale '())
+                       (contours '())
+                       (autocontour :false))
   (jonathan:to-json `(:|x| ,data0
                       :|y| ,data1
                       :|z| ,data2 
@@ -87,7 +89,11 @@
                       :|labels| ,label
                       :|parents| ,parents
                       :|boxmean| ,boxmean
-                      :|boxpoints| ,boxpoints)))
+                      :|boxpoints| ,boxpoints
+                      :|showscale| ,showscale
+                      :|colorscale| ,colorscale
+                      :|contours| ,contours
+                      :|autocontour| ,autocontour)))
 
 
 (defun style-to-json (&key
