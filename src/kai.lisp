@@ -9,6 +9,7 @@
                 :sunburst
                 :box
                 :heatmap
+                :contour
                 :scatter3d
                 :style
                 :show
@@ -21,6 +22,7 @@
            :sunburst
            :box
            :heatmap
+           :contour
            :scatter3d
            :style
            :show

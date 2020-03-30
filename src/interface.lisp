@@ -30,6 +30,7 @@
            :sunburst
            :box
            :heatmap
+           :contour
            :scatter3d
            :style
            :show))
@@ -166,7 +167,7 @@
 
 ;; Box plots
 (defun box (&rest data)
-  (push (eval `(-box (quote ,@data)))
+  (push (apply #'-box data)
         *state*))
 
 (defun -box (data
@@ -184,7 +185,7 @@
 
 ;; Heatmap
 (defun heatmap (&rest data)
-  (push (eval `(-heatmap (quote ,@data)))
+  (push (apply #'-heatmap data)
         *state*))
 
 (defun -heatmap (z
@@ -199,6 +200,28 @@
                 :type "heatmap"
                 :colorscale colorscale
                 :showscale showscale))
+
+;; Contour
+(defun contour (&rest data)
+  (push (apply #'-contour data)
+        *state*))
+
+(defun -contour (z
+                 &key
+                   (x '())
+                   (y '())
+                   (colorscale '())
+                   (showscale :false)
+                   (autocontour :false)
+                   (contours '()))
+  (data-to-json :data0 x
+                :data1 y
+                :data2 z
+                :type "contour"
+                :colorscale colorscale
+                :showscale showscale
+                :autocontour autocontour
+                :contours contours))
 
 
 ;; Scatter3D
