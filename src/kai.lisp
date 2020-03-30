@@ -8,6 +8,7 @@
                 :pie
                 :sunburst
                 :box
+                :heatmap
                 :scatter3d
                 :style
                 :show
@@ -19,6 +20,7 @@
            :pie
            :sunburst
            :box
+           :heatmap
            :scatter3d
            :style
            :show

@@ -29,6 +29,7 @@
            :pie
            :sunburst
            :box
+           :heatmap
            :scatter3d
            :style
            :show))
@@ -180,6 +181,25 @@
                 :marker marker
                 :boxmean boxmean
                 :boxpoints boxpoints))
+
+;; Heatmap
+(defun heatmap (&rest data)
+  (push (eval `(-heatmap (quote ,@data)))
+        *state*))
+
+(defun -heatmap (z
+                 &key
+                   (x '())
+                   (y '())
+                   (colorscale '())
+                   (showscale :false))
+  (data-to-json :data0 x
+                :data1 y
+                :data2 z
+                :type "heatmap"
+                :colorscale colorscale
+                :showscale showscale))
+
 
 ;; Scatter3D
 (defun scatter3d (&rest data)
