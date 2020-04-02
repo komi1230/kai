@@ -73,7 +73,7 @@ You can add some options:
                      :size 12))
 ```
 
-### Style
+### Style (Not Necessary)
 
 ```lisp
 (kai:style :title "hogehoge plot"
