@@ -97,5 +97,9 @@
 
 
 (defun style-to-json (&key
-                         title)
-  (jonathan:to-json `(:|title| ,title)))
+                        title
+                        xaxis
+                        yaxis)
+  (jonathan:to-json `(:|title| ,title
+                      :|xaxis| ,xaxis
+                      :|yaxis| ,yaxis)))
