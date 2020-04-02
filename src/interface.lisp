@@ -77,7 +77,7 @@
 
 ;; 2D scatter
 (defun scatter (&rest data)
-  (push (eval `(-scatter ,@(apply #'convert-data data)))
+  (push (apply #'-scatter (apply #'convert-data data))
         *state*))
 
 (defun -scatter (data0
@@ -107,7 +107,7 @@
 
 ;; Bar plot
 (defun bar (&rest data)
-  (push (eval `(-bar ,@(apply #'convert-data data)))
+  (push (apply #'-bar (apply #'convert-data data))
         *state*))
 
 (defun -bar (data0
