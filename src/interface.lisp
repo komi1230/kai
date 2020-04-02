@@ -258,7 +258,9 @@
                 (title "")
                 (xaxis '())
                 (yaxis '()))
-  (setf *style* (style-to-json :title title)))
+  (setf *style* (style-to-json :title title
+                               :xaxis xaxis
+                               :yaxis yaxis)))
 
 
 ;;;; Plot

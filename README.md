@@ -2,6 +2,9 @@
 
 Kai is a plotter library for Common Lisp.
 
+![img1](./examples/img1.png)
+![img2](./examples/img2.png)
+
 ## Installation
 
 ### Roswell
