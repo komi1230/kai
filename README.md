@@ -76,9 +76,7 @@ You can add some options:
 ### Style (Not Necessary)
 
 ```lisp
-(kai:style :title "hogehoge plot"
-           :xaxis '(:title "hogehoge x")
-           :yaxis '(:title "hogehoge y"))
+(kai:style :title "hogehoge plot")
 ```
 
 ### Show
