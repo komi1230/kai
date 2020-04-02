@@ -52,8 +52,8 @@
         (if (or (consp y)    ; check second data  
                 (vectorp y))
             data
-            `((quote ,(loop for i below (length x) collect i))
-              (quote ,x)
+            `(,(loop for i below (length x) collect i)
+              ,x
               ,@(cdr data)))
         (error "Invalid input"))))
 
@@ -255,7 +255,9 @@
 ;;; To attach title or axis options to the graph.
 
 (defun style (&key
-                (title ""))
+                (title "")
+                (xaxis '())
+                (yaxis '()))
   (setf *style* (style-to-json :title title)))
 
 
