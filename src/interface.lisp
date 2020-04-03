@@ -78,7 +78,8 @@
 ;; 2D scatter
 (defun scatter (&rest data)
   (push (apply #'-scatter (apply #'convert-data data))
-        *state*))
+        *state*)
+  (format t "Set scatter plotting."))
 
 (defun -scatter (data0
                  data1
@@ -108,7 +109,8 @@
 ;; Bar plot
 (defun bar (&rest data)
   (push (apply #'-bar (apply #'convert-data data))
-        *state*))
+        *state*)
+  (format t "Set bar plotting."))
 
 (defun -bar (data0
              data1
@@ -134,7 +136,8 @@
 ;; Pie chart
 (defun pie (&rest data)
   (push (apply #'-pie data)
-        *state*))
+        *state*)
+  (format t "Set pie plotting."))
 
 (defun -pie (value
              label
@@ -150,7 +153,8 @@
 ;; Sunburst
 (defun sunburst (&rest data)
   (push (apply #'-sunburst data)
-        *state*))
+        *state*)
+  (format t "Set sunburst plotting."))
 
 (defun -sunburst (value
                   label
@@ -168,7 +172,8 @@
 ;; Box plots
 (defun box (&rest data)
   (push (apply #'-box data)
-        *state*))
+        *state*)
+  (format t "Set box plotting."))
 
 (defun -box (data
              &key
@@ -186,7 +191,8 @@
 ;; Heatmap
 (defun heatmap (&rest data)
   (push (apply #'-heatmap data)
-        *state*))
+        *state*)
+  (format t "Set heatmap plotting."))
 
 (defun -heatmap (z
                  &key
@@ -204,7 +210,8 @@
 ;; Contour
 (defun contour (&rest data)
   (push (apply #'-contour data)
-        *state*))
+        *state*)
+  (format t "Set contour plotting."))
 
 (defun -contour (z
                  &key
@@ -227,7 +234,8 @@
 ;; Scatter3D
 (defun scatter3d (&rest data)
   (push (apply #'-scatter3d data)
-        *state*))
+        *state*)
+  (format t "Set scatter3D plotting."))
 
 (defun -scatter3d (x
                    y
@@ -260,7 +268,8 @@
                 (yaxis '()))
   (setf *style* (style-to-json :title title
                                :xaxis xaxis
-                               :yaxis yaxis)))
+                               :yaxis yaxis))
+  (format t "Set style."))
 
 
 ;;;; Plot
@@ -275,4 +284,5 @@
       (download-plotlyjs))
   (save-js *state* *style*)
   (open-browser)
-  (reset!))
+  (reset!)
+  (format t "Show your graph."))
