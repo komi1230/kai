@@ -42,10 +42,10 @@
 
 
 ;; Jonathan options
-(setf jonathan:*false-value* t)
-(setf jonathan:*null-value* t)
-(setf jonathan:*empty-array-value* t)
-(setf jonathan:*empty-object-value* :{})
+(setf jonathan:*false-value* :false)
+(setf jonathan:*null-value* :null)
+(setf jonathan:*empty-array-value* :empty-array)
+(setf jonathan:*empty-object-value* :empty-object)
 
 
 ;; Generate
