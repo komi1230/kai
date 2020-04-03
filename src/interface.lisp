@@ -278,9 +278,11 @@
 
 (defun show ()
   (make-kai-cache)
-  (if (not (check-file-exist "kai.html"))
+  (ensure-directories-exist (merge-pathnames "plotly/"
+                                             (make-kai-cache)))
+  (if (not (check-file-exist "plotly/kai.html"))
       (save-html))
-  (if (not (check-file-exist "plotly-latest.min.js"))
+  (if (not (check-file-exist "plotly/plotly-latest.min.js"))
       (download-plotlyjs))
   (save-js *state* *style*)
   (open-browser)
