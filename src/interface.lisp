@@ -84,7 +84,7 @@
 (defun -scatter (data0
                  data1
                  &key
-                   (mode "markers")
+                   (mode "lines")
                    (name "")
                    (text '())
                    (error-x '())
