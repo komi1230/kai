@@ -21,5 +21,5 @@
 ;;; When launching js file in the browser, we use system command
 ;;; to open browser.
 (defun open-browser ()
-  (let ((path-to-html (check-file-exist "plotly/kai.html")))
+  (let ((path-to-html (check-file-exist "plotly" "kai.html")))
     (trivial-open-browser:open-browser (namestring path-to-html))))
