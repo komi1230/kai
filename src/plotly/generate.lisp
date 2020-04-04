@@ -34,8 +34,8 @@
             :do (write-byte b out)))))
 
 (defun download-plotlyjs ()
-  (download-file (merge-pathnames "plotly/plotly-latest.min.js"
-                                  (make-kai-cache))
+  (download-file (merge-pathnames "plotly-latest.min.js"
+                                  (make-kai-cache "plotly"))
                  "https://cdn.plot.ly/plotly-latest.min.js"))
 
 
@@ -50,10 +50,10 @@
                                    :display flex
                                    :justify-content center
                                    :align-items center))))
-        (plotly-path (namestring (merge-pathnames "plotly/plotly-latest.min.js"
-                                                  (make-kai-cache))))
-        (my-plot (namestring (merge-pathnames "plotly/kai.js"
-                                              (make-kai-cache)))))
+        (plotly-path (namestring (merge-pathnames "plotly-latest.min.js"
+                                                  (make-kai-cache "plotly"))))
+        (my-plot (namestring (merge-pathnames "kai.js"
+                                              (make-kai-cache "plotly")))))
     (who:with-html-output-to-string (_)
       (:html
        (:head
@@ -65,8 +65,8 @@
 
 
 (defun save-html ()
-  (let ((html-path (namestring (merge-pathnames "plotly/kai.html"
-                                                (make-kai-cache))))
+  (let ((html-path (namestring (merge-pathnames "kai.html"
+                                                (make-kai-cache "plotly"))))
         (content (generate-html)))
     (with-open-file (s html-path :direction :output
                                  :if-exists :supersede)
@@ -89,8 +89,8 @@
 
 
 (defun save-js (states style)
-  (let ((js-path (namestring (merge-pathnames "plotly/kai.js"
-                                              (make-kai-cache))))
+  (let ((js-path (namestring (merge-pathnames "kai.js"
+                                              (make-kai-cache "plotly"))))
         (content (generate-js states style)))
     (with-open-file (s js-path :direction :output
                                :if-exists :supersede)

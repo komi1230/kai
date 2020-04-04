@@ -26,14 +26,14 @@
 ;;; Check if .cache file exists in the home directory.
 ;;; And create cache directory for Kai to put .js files.
 
-(defun make-kai-cache ()
+(defun make-kai-cache (dir-name)
   (ensure-directories-exist
-   (merge-pathnames ".cache/kai/"
+   (merge-pathnames (format nil ".cache/kai/~A/" dir-name)
                     (user-homedir-pathname))))
 
-(defun check-file-exist (filename)
+(defun check-file-exist (dir filename)
   (probe-file (merge-pathnames filename
-                               (make-kai-cache))))
+                               (make-kai-cache dir))))
 
 ;;;; JSON Generator
 ;;;

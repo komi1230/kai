@@ -277,12 +277,10 @@
 ;;; Launch viewer and draw traces and styles.
 
 (defun show ()
-  (make-kai-cache)
-  (ensure-directories-exist (merge-pathnames "plotly/"
-                                             (make-kai-cache)))
-  (if (not (check-file-exist "plotly/kai.html"))
+  (ensure-directories-exist (make-kai-cache "plotly"))
+  (if (not (check-file-exist "plotly" "kai.html"))
       (save-html))
-  (if (not (check-file-exist "plotly/plotly-latest.min.js"))
+  (if (not (check-file-exist "plotly" "plotly-latest.min.js"))
       (download-plotlyjs))
   (save-js *state* *style*)
   (open-browser)
