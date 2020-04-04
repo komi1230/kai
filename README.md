@@ -71,9 +71,7 @@ You can add some options:
 ```lisp
 (kai:scatter y
              :mode "line"   ; "marker", "line" or "marker+line"
-             :name "test1"
-             :line '(:color "rgb(164, 194, 244)"
-                     :size 12))
+             :name "test1")
 ```
 
 ### Style (Not Necessary)
