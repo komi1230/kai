@@ -11,6 +11,7 @@
                 :heatmap
                 :contour
                 :scatter3d
+                :surface
                 :style
                 :show
                 :reset!
@@ -24,6 +25,7 @@
            :heatmap
            :contour
            :scatter3d
+           :surface
            :style
            :show
            :reset!

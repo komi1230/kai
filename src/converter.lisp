@@ -51,7 +51,7 @@
 ;; Generate
 (defun data-to-json (&key
                        (data0 :null)
-                       (data1 '())
+                       (data1 :null)
                        (data2 '())
                        (type "scatter")
                        (mode "")
