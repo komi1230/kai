@@ -12,10 +12,26 @@
 (defpackage :kai.gr.build
   (:use :cl)
   (:import-from :kai.util
-                :download-file)
+                :download-file
+                :get-os)
   (:import-from :kai.converter
                 :make-kai-cache))
 (in-package :kai.gr.build)
+
+
+;;;; URL branches
+;;;
+;;; We can get GR binaries via network, but the URLs is
+;;; branched depending on OS.
+;;; Here we implement a function to provide a proper URL.
+
+(defun get-url ()
+  (let* ((base "https://gr-framework.com.org/downloads/gr-latest-")
+         (os (get-os))
+         (os-url (case os
+                   ("windows" "Windows")
+                   ("darwin" "Darwin")
+                   ("ubuntu" "Ubuntu"))))
 
 
 ;;;; Donwload client
@@ -24,6 +40,7 @@
 ;;; Here is a set of file donwload client and file checker.
 
 (defun download-gr ()
-  (download-file (merge-pathnames "GR"
+  (download-file (merge-pathnames "GR.tar.gz"
                                   (make-kai-cache "GR"))
-                 "https://cdn.plot.ly/plotly-latest.min.js"))
+                 (get-url)))
+
