@@ -63,3 +63,39 @@
       (loop :for b := (read-byte input nil -1)
             :until (minusp b)
             :do (write-byte b out)))))
+
+
+;;;; OS Distribution and machine type
+;;;
+;;; SBCL can get an informatioin about OS, but it is very abstract.
+;;; Because we can find whether the OS is Linux, but we cannot find
+;;; which distribution the OS is.
+
+(defun split (x str)
+  (let ((pos (search x str))
+        (size (length x)))
+    (if pos
+      (cons (subseq str 0 pos)
+            (split x (subseq str (+ pos size))))
+      (list str))))
+
+
+(defun system (cmd-str)
+  (trivial-shell:shell-command cmd-str))
+
+
+(defun get-dist ()
+  (let ((os-data (split (string #\Newline)
+                        (system "cat /etc/*-release"))))
+    (loop for i in os-data
+          if (search "ID=" i)
+          do (return (subseq i 3)))))
+
+
+(defun get-os ()
+  #+(or win32 mswindows windows) ; Windows
+  "windows"
+  #+(or macos darwin) ; macOS
+  "darwin"
+  #-(or win32 mswindows macos darwin windows) ;Linux
+  (get-dist))
