@@ -12,6 +12,8 @@
   (:use :cl)
   (:import-from :kai.converter
                 :make-kai-cache)
+  (:import-from :kai.util
+                :download-file)
   (:export :download-file
            :download-plotlyjs
            :save-html
@@ -23,16 +25,6 @@
 ;;;
 ;;; When using Plotly, plotly-latest.js is needed.
 ;;; Here is a set of file donwload client and file checker.
-(defun download-file (filename uri)
-  (with-open-file (out filename
-                   :direction :output
-                   :if-exists :supersede
-                   :element-type '(unsigned-byte 8))
-    (with-open-stream (input (drakma:http-request uri :want-stream t :connection-timeout nil))
-      (loop :for b := (read-byte input nil -1)
-            :until (minusp b)
-            :do (write-byte b out)))))
-
 (defun download-plotlyjs ()
   (download-file (merge-pathnames "plotly-latest.min.js"
                                   (make-kai-cache "plotly"))
