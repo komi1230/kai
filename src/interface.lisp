@@ -32,6 +32,7 @@
            :heatmap
            :contour
            :scatter3d
+           :surface
            :style
            :show))
 (in-package #:kai.interface)
@@ -255,6 +256,20 @@
                 :text text
                 :marker marker
                 :line line))
+
+
+;; Surface
+(defun surface (&rest data)
+  (push (apply #'-surface data)
+        *state*)
+  (format t "Set scatter3D plotting."))
+
+(defun -surface (z
+                 &key
+                   (name ""))
+  (data-to-json :data2 z
+                :type "surface"
+                :name name))
 
 
 
