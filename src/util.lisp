@@ -81,7 +81,8 @@
 
 
 (defun system (cmd-str)
-  (trivial-shell:shell-command cmd-str))
+  (uiop:run-program cmd-str
+                    :output :string))
 
 
 (defun get-dist ()
