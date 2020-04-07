@@ -9,13 +9,13 @@
                "jonathan")
   :serial t
   :components ((:module "src"
-                        :components
+                :components
                         ((:file "util")
                          (:file "converter")
                          (:module "plotly"
-                                  :serial t
-                                  :depends-on ("converter")
-                                  :components
+                          :serial t
+                          :depends-on ("converter")
+                          :components
                                   ((:file "generate")
                                    (:file "launch")))
                          (:file "interface")
