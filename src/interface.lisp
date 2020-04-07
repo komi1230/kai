@@ -11,6 +11,8 @@
 (in-package :cl-user)
 (defpackage #:kai.interface
   (:use :cl)
+  (:import-from :kai.util
+                :convert-data)
   (:import-from :kai.converter
                 :check-file-exist
                 :data-to-json
@@ -39,26 +41,6 @@
 
 
 
-;;;; Input style converter
-;;;
-;;; When getting input data, we accept variable length args.
-;;; We cannot realize to accept one or two args with some options by
-;;; standard style, so we papare such a function to convert args.
-
-(defun convert-data (&rest data)
-  (let ((x (car data))
-        (y (cadr data)))
-    (if (or (consp x)        ; check first data
-            (vectorp x))
-        (if (or (consp y)    ; check second data  
-                (vectorp y))
-            data
-            `(,(loop for i below (length x) collect i)
-              ,x
-              ,@(cdr data)))
-        (error "Invalid input"))))
-
-
 ;;;; State
 ;;;
 ;;; To make it able to plot multiple graph, we have a state as list.
@@ -80,7 +62,7 @@
 (defun scatter (&rest data)
   (push (apply #'-scatter (apply #'convert-data data))
         *state*)
-  (format t "Set scatter plotting."))
+  (format t "Set scatter plotting.~&"))
 
 (defun -scatter (data0
                  data1
@@ -111,7 +93,7 @@
 (defun bar (&rest data)
   (push (apply #'-bar (apply #'convert-data data))
         *state*)
-  (format t "Set bar plotting."))
+  (format t "Set bar plotting.~&"))
 
 (defun -bar (data0
              data1
@@ -138,7 +120,7 @@
 (defun pie (&rest data)
   (push (apply #'-pie data)
         *state*)
-  (format t "Set pie plotting."))
+  (format t "Set pie plotting.~&"))
 
 (defun -pie (value
              label
@@ -155,7 +137,7 @@
 (defun sunburst (&rest data)
   (push (apply #'-sunburst data)
         *state*)
-  (format t "Set sunburst plotting."))
+  (format t "Set sunburst plotting.~&"))
 
 (defun -sunburst (value
                   label
@@ -174,7 +156,7 @@
 (defun box (&rest data)
   (push (apply #'-box data)
         *state*)
-  (format t "Set box plotting."))
+  (format t "Set box plotting.~&"))
 
 (defun -box (data
              &key
@@ -193,7 +175,7 @@
 (defun heatmap (&rest data)
   (push (apply #'-heatmap data)
         *state*)
-  (format t "Set heatmap plotting."))
+  (format t "Set heatmap plotting.~&"))
 
 (defun -heatmap (z
                  &key
@@ -212,7 +194,7 @@
 (defun contour (&rest data)
   (push (apply #'-contour data)
         *state*)
-  (format t "Set contour plotting."))
+  (format t "Set contour plotting.~&"))
 
 (defun -contour (z
                  &key
@@ -236,7 +218,7 @@
 (defun scatter3d (&rest data)
   (push (apply #'-scatter3d data)
         *state*)
-  (format t "Set scatter3D plotting."))
+  (format t "Set scatter3D plotting.~&"))
 
 (defun -scatter3d (x
                    y
@@ -262,7 +244,7 @@
 (defun surface (&rest data)
   (push (apply #'-surface data)
         *state*)
-  (format t "Set scatter3D plotting."))
+  (format t "Set scatter3D plotting.~&"))
 
 (defun -surface (z
                  &key
@@ -284,7 +266,7 @@
   (setf *style* (style-to-json :title title
                                :xaxis xaxis
                                :yaxis yaxis))
-  (format t "Set style."))
+  (format t "Set style.~&"))
 
 
 ;;;; Plot
@@ -300,4 +282,4 @@
   (save-js *state* *style*)
   (open-browser)
   (reset!)
-  (format t "Show your graph."))
+  (format t "Show your graph.~&"))
