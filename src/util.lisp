@@ -10,11 +10,32 @@
 (in-package :cl-user)
 (defpackage #:kai.util
   (:use :cl)
-  (:export :check-shape-type
+  (:export :convert-data
+           :check-shape-type
            :find-min-max
            :to-array
            :sort-input))
 (in-package #:kai.util)
+
+
+;;;; Input style converter
+;;;
+;;; When getting input data, we accept variable length args.
+;;; We cannot realize to accept one or two args with some options by
+;;; standard style, so we papare such a function to convert args.
+
+(defun convert-data (&rest data)
+  (let ((x (car data))
+        (y (cadr data)))
+    (if (or (consp x)        ; check first data
+            (vectorp x))
+        (if (or (consp y)    ; check second data  
+                (vectorp y))
+            data
+            `(,(loop for i below (length x) collect i)
+              ,x
+              ,@(cdr data)))
+        (error "Invalid input"))))
 
 
 ;;;; Type checker
