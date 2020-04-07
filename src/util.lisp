@@ -101,17 +101,11 @@
       (list str))))
 
 
-(defun system (cmd-str)
-  (uiop:run-program cmd-str
-                    :output :string))
-
-
 (defun get-dist ()
-  (let ((os-data (split (string #\Newline)
-                        (system "cat /etc/*-release"))))
-    (loop for i in os-data
-          if (search "ID=" i)
-          do (return (subseq i 3)))))
+  (loop :for file :in (uiop:directory-files "/etc/" "*-release")
+        :do (loop :for line :in (uiop:read-file-lines file)
+                  :if (uiop:string-prefix-p "ID=" line)
+                  :do (return-from get-dist (subseq line 3)))))
 
 
 (defun get-os ()
