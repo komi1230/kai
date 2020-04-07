@@ -1,11 +1,16 @@
-(defpackage kai/tests/main
+(defpackage kai-test
   (:use :cl
         :kai
         :rove))
-(in-package :kai/tests/main)
+(in-package :kai-test)
 
 ;; NOTE: To run this test file, execute `(asdf:test-system :kai)' in your Lisp.
 
-(deftest test-target-1
-  (testing "should (= 1 1) to be true"
-    (ok (= 1 1))))
+(ql:quickload :rove)
+
+(rove:deftest test-target-kai
+  (rove:testing "Initial setup for state"
+    (rove:ok (equal kai:*state* '())))
+
+  (testing "Initial setup for style"
+    (rove:ok (equal kai:*style "{}"))))
