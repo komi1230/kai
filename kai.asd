@@ -6,7 +6,8 @@
                "drakma"
                "cl-who"
                "cl-css"
-               "jonathan")
+               "jonathan"
+               "rove")
   :serial t
   :components ((:module "src"
                 :components
@@ -20,4 +21,5 @@
                                    (:file "launch")))
                          (:file "interface")
                          (:file "kai"))))
+  :in-order-to ((test-op (test-op kai-test)))
   :description "Plotter for Common Lisp")
