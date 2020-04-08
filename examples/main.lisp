@@ -26,7 +26,10 @@
            :sunburst-chart
            :heatmap-chart
            :box-chart
-           :contour-chart))
+           :contour-chart
+           :line3d
+           :marker3d
+           :surface-chart))
 (in-package :kai-example)
 
 
@@ -153,4 +156,35 @@
   (contour contour-data
            :showscale t)
   (style :title "Contour example")
+  (show))
+
+
+;;;; Scatter3D
+;;;
+;;; scatter3d plots: line and marker
+
+(defun line3d ()
+  (scatter3d x-data-random
+             y-data-100
+             z-data-100
+             :mode "lines")
+  (style :title "Line3D plot example")
+  (show))
+
+(defun marker3d ()
+  (scatter3d x-data-random
+             y-data-100
+             z-data-100
+             :mode "markers")
+  (style :title "Marker3D plot example")
+  (show))
+
+
+;;;; Surface
+;;;
+;;; surface chart-example
+
+(defun surface-chart ()
+  (surface contour-data)
+  (style :title "Surface chart example")
   (show))
