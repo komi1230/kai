@@ -24,7 +24,9 @@
            :marker
            :pie-chart
            :sunburst-chart
-           :box-chart))
+           :heatmap-chart
+           :box-chart
+           :contour-chart))
 (in-package :kai-example)
 
 
@@ -70,6 +72,16 @@
 (defparameter box-data
   (loop :repeat 50
         :collect (random 100.0)))
+
+(defparameter heatmap-data
+  (loop :repeat 100
+        :collect (loop :repeat 100
+                       :collect (random 10.0))))
+
+(defparameter contour-data
+  (loop :repeat 20
+        :collect (loop :repeat 20
+                       :collect (random 10.0))))
 
 
 ;;;; Basic plotting
@@ -119,4 +131,26 @@
 (defun box-chart ()
   (box box-data)
   (style :title "Box chart example")
+  (show))
+
+
+;;;; Heatmap
+;;;
+;;; heatmap example
+
+(defun heatmap-chart ()
+  (heatmap heatmap-data
+           :showscale t)
+  (style :title "Heatmap example")
+  (show))
+
+
+;;;; Contour
+;;;
+;;; Contour example
+
+(defun contour-chart ()
+  (contour contour-data
+           :showscale t)
+  (style :title "Contour example")
   (show))
