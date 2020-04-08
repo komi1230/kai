@@ -10,11 +10,21 @@
 (defpackage :kai-example
   (:use :cl)
   (:import-from :kai
-                :scatter
                 :style
+                :scatter
+                :pie
+                :sunburst
+                :box
+                :heatmap
+                :contour
+                :scatter3d
+                :surface
                 :show)
   (:export :line
-           :marker))
+           :marker
+           :pie-chart
+           :sunburst-chart
+           :box-chart))
 (in-package :kai-example)
 
 
@@ -42,6 +52,24 @@
   (loop for i from 0 below 100
         collect (random 10.0)))
 
+(defparameter pie-label
+  '("Residential" "Non-Residential" "Utility"))
+
+(defparameter pie-data
+  '(19 26 55))
+
+(defparameter sunburst-value
+  '(10 14 12 10 2 6 6 4 4))
+
+(defparameter sunburst-label
+  '("Eve" "Cain" "Seth" "Enos" "Noam" "Abel" "Awan" "Enoch" "Azura"))
+
+(defparameter sunburst-parent
+  '("" "Eve" "Eve" "Seth" "Seth" "Eve" "Eve" "Awan" "Eve"))
+
+(defparameter box-data
+  (loop :repeat 50
+        :collect (random 100.0)))
 
 
 ;;;; Basic plotting
@@ -59,4 +87,36 @@
            y-data-100
            :mode "markers")
   (style :title "Marker plot example")
+  (show))
+
+
+;;;; Pie chart
+;;;
+;;; pie cahrt with labels
+
+(defun pie-chart ()
+  (pie pie-data pie-label)
+  (style :title "Pie chart example")
+  (show))
+
+
+;;;; Sunburst
+;;;
+;;; sunburst chart can be usable only in plotly
+
+(defun sunburst-chart ()
+  (sunburst sunburst-value
+            sunburst-label
+            sunburst-parent)
+  (style :title "Sunburst chart example")
+  (show))
+
+
+;;;; Box
+;;;
+;;; box plots example
+
+(defun box-chart ()
+  (box box-data)
+  (style :title "Box chart example")
   (show))
