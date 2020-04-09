@@ -34,12 +34,16 @@
          (gksterm-path (merge-pathnames "Applications/GKSTerm.app"
                                         (make-kai-cache "gr"))))
     (download-file tarball-path url)
-    (uiop:run-program (format nil "tar xvf ~A" tarball-path)
+    (uiop:run-program (format nil "tar xvf ~A -C ~A"
+                              tarball-path (make-kai-cache "gr"))
                       :output nil)
     (uiop:run-program (format nil "~A ~A" register-cmd gksterm-path)
                       :output nil)))
 
 
+;; Windows
+(defun install-gr-win ()
+  (let))
 
 
 (defun get-url ()
