@@ -92,15 +92,6 @@
 ;;; Because we can find whether the OS is Linux, but we cannot find
 ;;; which distribution the OS is.
 
-(defun split (x str)
-  (let ((pos (search x str))
-        (size (length x)))
-    (if pos
-      (cons (subseq str 0 pos)
-            (split x (subseq str (+ pos size))))
-      (list str))))
-
-
 (defun get-dist ()
   (loop :for file :in (uiop:directory-files "/etc/" "*-release")
         :do (loop :for line :in (uiop:read-file-lines file)
