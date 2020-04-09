@@ -19,11 +19,28 @@
 (in-package :kai.gr.build)
 
 
-;;;; URL branches
+;;;; URL branches and install
 ;;;
 ;;; We can get GR binaries via network, but the URLs is
 ;;; branched depending on OS.
 ;;; Here we implement a function to provide a proper URL.
+
+;; macOS
+(defun install-gr-mac ()
+  (let* ((url "https://gr-framework.org/downloads/gr-latest-Darwin-x86_64.tar.gz")
+         (register-cmd "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f")
+         (tarball-path (merge-pathnames "gr.tar.gz"
+                                        (make-kai-cache "gr")))
+         (gksterm-path (merge-pathnames "Applications/GKSTerm.app"
+                                        (make-kai-cache "gr"))))
+    (download-file tarball-path url)
+    (uiop:run-program (format nil "tar xvf ~A" tarball-path)
+                      :output nil)
+    (uiop:run-program (format nil "~A ~A" register-cmd gksterm-path)
+                      :output nil)))
+
+
+
 
 (defun get-url ()
   (let* ((base "https://gr-framework.com.org/downloads/gr-latest-")
@@ -31,16 +48,5 @@
          (os-url (case os
                    ("windows" "Windows")
                    ("darwin" "Darwin")
-                   ("ubuntu" "Ubuntu"))))
-
-
-;;;; Donwload client
-;;;
-;;; When using GR, some sources is needed.
-;;; Here is a set of file donwload client and file checker.
-
-(defun download-gr ()
-  (download-file (merge-pathnames "GR.tar.gz"
-                                  (make-kai-cache "GR"))
-                 (get-url)))
+                   ("ubuntu" "Ubuntu"))))))
 
