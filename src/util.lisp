@@ -92,16 +92,35 @@
 ;;; Because we can find whether the OS is Linux, but we cannot find
 ;;; which distribution the OS is.
 
-(defun get-dist ()
+(defun split (x str)
+  (let ((pos (search x str))
+        (size (length x)))
+    (if pos
+      (cons (subseq str 0 pos)
+            (split x (subseq str (+ pos size))))
+      (list str))))
+
+
+(defun redhat-version ()
+  (let* ((content (uiop:read-file-lines "/etc/redhat-release"))
+         (trim-before (subseq content
+                              (+ 8 (search "release" content))))
+         (trim-after (subseq trim-before
+                             0
+                             (search " " trim-before))))
+    trim-after))
+
+
+(defun get-dist (key)
   (loop :for file :in (uiop:directory-files "/etc/" "*-release")
         :do (loop :for line :in (uiop:read-file-lines file)
-                  :if (uiop:string-prefix-p "ID=" line)
-                  :do (return-from get-dist (subseq line 3)))))
+                  :if (uiop:string-prefix-p (format nil "~A=" key) line)
+                  :do (return-from get-dist (subseq line (1+ (length key)))))))
 
 
-(defun get-os ()
+(defun get-os-and-arch ()
   #+(or win32 mswindows windows) ; Windows
-  "windows"
+  '("windows" )
   #+(or macos darwin) ; macOS
   "darwin"
   #-(or win32 mswindows macos darwin windows) ;Linux
