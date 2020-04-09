@@ -6,8 +6,7 @@
                "drakma"
                "cl-who"
                "cl-css"
-               "jonathan"
-               "rove")
+               "jonathan")
   :serial t
   :components ((:module "src"
                 :components
