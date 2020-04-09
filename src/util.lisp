@@ -92,15 +92,6 @@
 ;;; Because we can find whether the OS is Linux, but we cannot find
 ;;; which distribution the OS is.
 
-(defun split (x str)
-  (let ((pos (search x str))
-        (size (length x)))
-    (if pos
-      (cons (subseq str 0 pos)
-            (split x (subseq str (+ pos size))))
-      (list str))))
-
-
 (defun redhat-version ()
   (let* ((content (uiop:read-file-lines "/etc/redhat-release"))
          (trim-before (subseq content
