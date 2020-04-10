@@ -55,11 +55,10 @@
 
 (defun sort-array (x-data y-data)
   (let* ((len (car (array-dimensions x-data)))
-         (merged-data (loop for i from 0 below len
-                            collect (cons (aref x-data i)
-                                          (aref y-data i))))
-         (sorted-lst (sort (copy-list merged-data)
-                           #'< :key #'car))
+         (merged-data (loop for x across x-data
+                            for y across y-data
+                            collect (cons x y)))
+         (sorted-lst (sort merged-data #'< :key #'car))
          (x-axis (make-array len
                              :initial-contents
                              (mapcar #'car sorted-lst)))
