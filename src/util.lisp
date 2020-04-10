@@ -86,7 +86,7 @@
             :do (write-byte b out)))))
 
 
-;;;; OS Distribution and machine type
+;;;; OS Distribution
 ;;;
 ;;; SBCL can get an informatioin about OS, but it is very abstract.
 ;;; Because we can find whether the OS is Linux, but we cannot find
@@ -103,16 +103,9 @@
 
 
 (defun get-dist (key)
-  (loop :for file :in (uiop:directory-files "/etc/" "*-release")
-        :do (loop :for line :in (uiop:read-file-lines file)
-                  :if (uiop:string-prefix-p (format nil "~A=" key) line)
-                  :do (return-from get-dist (subseq line (1+ (length key)))))))
-
-
-(defun get-os-and-arch ()
-  #+(or win32 mswindows windows) ; Windows
-  '("windows" )
-  #+(or macos darwin) ; macOS
-  "darwin"
-  #-(or win32 mswindows macos darwin windows) ;Linux
-  (get-dist))
+  (if (probe-file #P"/etc/redhat-release")
+      "redhat"
+      (loop :for file :in (uiop:directory-files "/etc/" "*-release")
+            :do (loop :for line :in (uiop:read-file-lines file)
+                      :if (uiop:string-prefix-p (format nil "~A=" key) line)
+                      :do (return-from get-dist (subseq line (1+ (length key))))))))
