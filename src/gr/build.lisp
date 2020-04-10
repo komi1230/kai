@@ -19,6 +19,13 @@
 (in-package :kai.gr.build)
 
 
+;;;; GR version
+;;;
+;;; There are many GR versions, so we decide a version to be installed.
+
+(defparameter *gr-version* "0.48.0")
+
+
 ;;;; URL branches and install
 ;;;
 ;;; We can get GR binaries via network, but the URLs is
@@ -41,16 +48,52 @@
                       :output nil)))
 
 
-;; Windows
-(defun install-gr-win ()
-  (let))
+;; Linux
+(defun install-gr-linux ()
+  (let* ((base-url "https://github.com/sciapp/gr/releases/download")
+         (id (string-downcase (get-dist "ID")))
+         (id-like (string-downcase (get-dist "ID_LIKE")))
+         (os ((cond
+                ((equal id "redhat")
+                 (if (> (digit-char-p
+                         (aref (redhat-version)
+                               0))
+                        7)
+                     "Redhat"
+                     (error "You should upgrade OS version")))
+                ((or (equal id "ubuntu")
+                     (equal id-like "ubuntu"))
+                 "Ubuntu")
+                ((or (equal id "debian")
+                     (equal id-like "debian")
+                     (equal_id "raspbian"))
+                 "Debian")
+                ((or (equal id "arch")
+                     (equal id-like "arch"))
+                 "ArchLinux")
+                ((equal id "opensuse-tumbleweed")
+                 "CentOS"))))
+         (arch (cond
+                 ((equal (machine-type) "X86-64")
+                  "x86_64")
+                 ((or (equal (machine-type) "ARM")
+                      (equal (machine-type) "ARM64"))
+                  "armhf")))
+         (tarball-path (merge-pathnames "gr.tar.gz"
+                                        (make-kai-cache "gr"))))
+    (donwload-file tarball-path
+                   (format nil "~A/v~A/gr-~A-~A-~A.tar.gz"
+                           base-url *gr-version*
+                           *gr-version* os arch))
+    (uiop:run-program (format nil "tar xvf ~A -C ~A"
+                              tarball-path (make-kai-cache "gr")))))
 
 
-(defun get-url ()
-  (let* ((base "https://gr-framework.com.org/downloads/gr-latest-")
-         (os (get-os))
-         (os-url (case os
-                   ("windows" "Windows")
-                   ("darwin" "Darwin")
-                   ("ubuntu" "Ubuntu"))))))
 
+(defun install-gr ()
+  #+(or win32 mswindows windows) ; Windows
+  "windows"
+  #+(or macos darwin) ; macOS
+  "darwin"
+  #-(or win32 mswindows macos darwin windows) ;Linux
+  (get-dist "ID"))
