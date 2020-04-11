@@ -38,7 +38,7 @@
          (register-cmd "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f")
          (tarball-path (merge-pathnames "gr.tar.gz"
                                         (make-kai-cache "gr")))
-         (gksterm-path (merge-pathnames "Applications/GKSTerm.app"
+         (gksterm-path (merge-pathnames "gr/Applications/GKSTerm.app"
                                         (make-kai-cache "gr"))))
     (download-file tarball-path url)
     (uiop:run-program (format nil "tar xvf ~A -C ~A"
