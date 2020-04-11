@@ -55,11 +55,10 @@
 
 (defun sort-array (x-data y-data)
   (let* ((len (car (array-dimensions x-data)))
-         (merged-data (loop for i from 0 below len
-                            collect (cons (aref x-data i)
-                                          (aref y-data i))))
-         (sorted-lst (sort (copy-list merged-data)
-                           #'< :key #'car))
+         (merged-data (loop for x across x-data
+                            for y across y-data
+                            collect (cons x y)))
+         (sorted-lst (sort merged-data #'< :key #'car))
          (x-axis (make-array len
                              :initial-contents
                              (mapcar #'car sorted-lst)))
@@ -76,14 +75,7 @@
 ;;; a download client here.
 
 (defun download-file (filename uri)
-  (with-open-file (out filename
-                   :direction :output
-                   :if-exists :supersede
-                   :element-type '(unsigned-byte 8))
-    (with-open-stream (input (drakma:http-request uri :want-stream t :connection-timeout nil))
-      (loop :for b := (read-byte input nil -1)
-            :until (minusp b)
-            :do (write-byte b out)))))
+  (dex:fetch uri filename))
 
 
 ;;;; OS Distribution

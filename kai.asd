@@ -3,7 +3,7 @@
   :author "Yusuke Kominami"
   :license "MIT License"
   :depends-on ("trivial-open-browser"
-               "drakma"
+               "dexador"
                "cl-who"
                "cl-css"
                "jonathan")
