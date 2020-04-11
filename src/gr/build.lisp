@@ -89,11 +89,16 @@
                               tarball-path (make-kai-cache "gr")))))
 
 
+;; Windows
+(defun install-gr-windows ()
+  (error "Sorry, I am not familiar with Windows environment. I'm waiting for your PR."))
+
+
 
 (defun install-gr ()
   #+(or win32 mswindows windows) ; Windows
-  "windows"
+  (install-gr-windows)
   #+(or macos darwin) ; macOS
-  "darwin"
+  (install-gr-mac)
   #-(or win32 mswindows macos darwin windows) ;Linux
-  (get-dist "ID"))
+  (install-gr-linux))
