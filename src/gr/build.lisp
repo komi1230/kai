@@ -34,7 +34,7 @@
 
 ;; macOS
 (defun install-gr-mac ()
-  (let* ((url "https://gr-framework.org/downloads/gr-latest-Darwin-x86_64.tar.gz")
+  (let* ((url "https://github.com/sciapp/gr/releases/download/v0.48.0/gr-0.48.0-Darwin-x86_64.tar.gz")
          (register-cmd "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f")
          (tarball-path (merge-pathnames "gr.tar.gz"
                                         (make-kai-cache "gr")))
@@ -102,3 +102,4 @@
   (install-gr-mac)
   #-(or win32 mswindows macos darwin windows) ;Linux
   (install-gr-linux))
+

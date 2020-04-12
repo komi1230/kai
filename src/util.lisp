@@ -75,7 +75,8 @@
 ;;; a download client here.
 
 (defun download-file (filename uri)
-  (dex:fetch uri filename))
+  (dex:fetch uri filename
+             :if-exists :supersede))
 
 
 ;;;; OS Distribution
