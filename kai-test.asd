@@ -2,7 +2,7 @@
   :author ""
   :license ""
   :depends-on ("rove")
-  :components ((:module "test"
+  :components ((:module "tests"
                 :components
                         ((:file "main"))))
   :description "Test system for kai"
