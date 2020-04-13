@@ -20,7 +20,7 @@
                    (:file "launch")))
                  (:file "interface")
                  (:file "kai"))))
-  :in-order-to ((test-op (test-op kai-test)))
+  :in-order-to ((test-op (test-op :kai-test)))
   :description "Plotter for Common Lisp"
   :long-description #.(with-open-file (stream (merge-pathnames
                                                #p"README.md"
