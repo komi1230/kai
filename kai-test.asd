@@ -1,11 +1,10 @@
 (defsystem "kai-test"
   :author ""
   :license ""
-  :depends-on ("kai"
-               "rove")
+  :depends-on ("rove")
   :components ((:module "test"
                 :components
-                        ((:file "main" :depends-on ("rove" "kai")))))
+                        ((:file "main"))))
   :description "Test system for kai"
   :perform (test-op (op c)
                     (symbol-call :rove :run c)))

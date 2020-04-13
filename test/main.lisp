@@ -11,4 +11,4 @@
     (rove:ok (equal kai:*state* '())))
 
   (rove:testing "Initial setup for style"
-    (rove:ok (equal kai:*style "{}"))))
+    (rove:ok (equal kai:*style* "{}"))))
