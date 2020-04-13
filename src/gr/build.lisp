@@ -36,14 +36,17 @@
 (defun install-gr-mac ()
   (let* ((url "https://github.com/sciapp/gr/releases/download/v0.48.0/gr-0.48.0-Darwin-x86_64.tar.gz")
          (register-cmd "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f")
+         (kai-cache-dir (make-kai-cache "gr"))
          (tarball-path (merge-pathnames "gr.tar.gz"
-                                        (make-kai-cache "gr")))
-         (gksterm-path (merge-pathnames "gr/Applications/GKSTerm.app"
-                                        (make-kai-cache "gr"))))
+                                        kai-cache-dir))
+         (gksterm-path (merge-pathnames "Applications/GKSTerm.app"
+                                        kai-cache-dir)))
     (download-file tarball-path url)
     (uiop:run-program (format nil "tar xvf ~A -C ~A"
-                              tarball-path (make-kai-cache "gr"))
+                              tarball-path kai-cache-dir)
                       :output nil)
+    (uiop:run-program (format nil "mv ~A/gr/* ~A/ && rm -fr ~A/gr"
+                              kai-cache-dir kai-cache-dir kai-cache-dir))
     (uiop:run-program (format nil "~A ~A" register-cmd gksterm-path)
                       :output nil)))
 
@@ -80,13 +83,16 @@
                       (equal (machine-type) "ARM64"))
                   "armhf")))
          (tarball-path (merge-pathnames "gr.tar.gz"
-                                        (make-kai-cache "gr"))))
+                                        kai-cache-dir))
+         (ka-cache-dir (make-kai-cache "gr")))
     (donwload-file tarball-path
                    (format nil "~A/v~A/gr-~A-~A-~A.tar.gz"
                            base-url *gr-version*
                            *gr-version* os arch))
     (uiop:run-program (format nil "tar xvf ~A -C ~A"
-                              tarball-path (make-kai-cache "gr")))))
+                              tarball-path kai-cache-dir))
+    (uiop:run-program (format nil "mv ~A/gr/* ~A/ && rm -fr ~A/gr"
+                              kai-cache-dir kai-cache-dir kai-cache-dir))))
 
 
 ;; Windows

@@ -1,13 +1,61 @@
+;;;; GR.lisp --- A collection of API for GR
+;;;
+;;; This code has been placed in the Public Domain.  All warranties
+;;; are disclaimed.
+;;;
+;;; This file is composed of a collection of API for GR. These APIs
+;;; are mainly just bindings to gr.h
+;;;
+;;; see: https://github.com/jheinen/GR.jl/blob/master/src/GR.jl
+
+(in-package :cl-user)
+(defpackage :kai.GR.GR
+  (:use :cl)
+  (:import-from :kai.converter
+                :make-kai-cache))
+(in-package :kai.GR.GR)
+
+
 ;;;; Setup
 ;;;
-;;; We have to setup and confirm that installed binaries and
-;;; shared files work fine.
+;;; We load some shared files (.dll or .so) to make bindings to
+;;; GR API.
 
+;; Shared files
+(defparameter libGR
+   #+(or win32 mswindows windows) ; Windows
+   "libGR.dll"
+   #-(or win32 mswindows windows) ; macOS or Linux
+   "libGR.so")
+
+(defparameter libGR3
+  #+(or win32 mswindows windows) ; Windows
+   "libGR3.dll"
+   #-(or win32 mswindows windows) ; macOS or Linux
+   "libGR3.so")
+
+(defparameter libGRM
+  #+(or win32 mswindows windows) ; Windows
+   "libGRM.dll"
+   #-(or win32 mswindows windows) ; macOS or Linux
+   "libGRM.so")
+
+;; Set environment variables
+(defun init ()
+  (let ((kai-cache-dir (make-kai-cache "gr"))))
+  (setf (uiop:getenv "GRDIR") kai-cache-dir)
+  (setf (uiop:getenv "GKS_FONTPATH") kai-cache-dir)
+  (setf (uiop:getenv "GKS_USE_CAIRO_PNG") "true")
+  (setf (uiop:getenv )))
+
+
+
+;;;; sample codes
 
 (cffi:load-foreign-library
    ;;(merge-pathnames "gr/lib/libGR.so"
    ;;                 (make-kai-cache "gr"))
- "/Users/komi/.cache/kai/gr/gr/lib/libGR.so")
+ "/Users/komi/.cache/kai/gr/lib/libGR.so")
 
 (defparameter *x*
   (cffi:foreign-alloc :double
