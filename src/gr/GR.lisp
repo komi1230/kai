@@ -40,22 +40,35 @@
    #-(or win32 mswindows windows) ; macOS or Linux
    "libGRM.so")
 
-;; Set environment variables
+
+
+;; First Setup before launching GR
 (defun init ()
-  (let ((kai-cache-dir (make-kai-cache "gr"))))
-  (setf (uiop:getenv "GRDIR") kai-cache-dir)
-  (setf (uiop:getenv "GKS_FONTPATH") kai-cache-dir)
-  (setf (uiop:getenv "GKS_USE_CAIRO_PNG") "true")
-  (setf (uiop:getenv )))
+  (let ((kai-cache-dir (namestring (make-kai-cache "gr"))))
+    ;; Set environment variables
+    (setf (uiop:getenv "GRDIR") kai-cache-dir)
+    (setf (uiop:getenv "GKS_FONTPATH") kai-cache-dir)
+    (setf (uiop:getenv "GKS_USE_CAIRO_PNG") "true")
+
+    ;; Load shared objects
+    (cffi:load-foreign-library
+     (merge-pathnames "lib/libGR.so"
+                      (make-kai-cache "gr")))))
+
+
+;; Initialize GR states
+(cffi:defcfun ("gr_initgr" initgr) :void)
+
+(cffi:defcfun ("gr_opengks" opengks) :void)
+
+(cffi:defcfun ("gr_closegks" closegks) :void)
+
 
 
 
 ;;;; sample codes
 
-(cffi:load-foreign-library
-   ;;(merge-pathnames "gr/lib/libGR.so"
-   ;;                 (make-kai-cache "gr"))
- "/Users/komi/.cache/kai/gr/lib/libGR.so")
+
 
 (defparameter *x*
   (cffi:foreign-alloc :double
@@ -84,8 +97,4 @@
   (major-y :int)
   (tick-size :double))
 
-(cffi:defcfun ("gr_initgr" initgr) :void)
 
-(cffi:defcfun ("gr_opengks" opengks) :void)
-
-(cffi:defcfun ("gr_closegks" closegks) :void)
