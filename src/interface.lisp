@@ -54,6 +54,25 @@
   (setf *style* "{}"))
 
 
+;;;; Symbol Converter
+;;;
+;;; We will get input data as list.
+;;; When using plotly as backend, we have to convert list data to JSON.
+;;; In converting list data to JSON, symbols will be converted as capital texts.
+;;; Here we provide a function to prevent this.
+
+(defun make-keyword (name)
+  (values (intern name "KEYWORD")))
+
+(defun symbol-downcase (data)
+  (mapcar #'(lambda (x)
+              (if (keywordp x)
+                  (make-keyword (string-downcase (symbol-name x)))
+                  x))
+          data))
+
+
+
 ;;;; Scatter and Line
 ;;;
 ;;; This covers scatter and line plotting and their options.
@@ -64,8 +83,8 @@
         *state*)
   (format t "Set scatter plotting.~&"))
 
-(defun -scatter (data0
-                 data1
+(defun -scatter (x
+                 y
                  &key
                    (mode "lines")
                    (name "")
@@ -76,18 +95,28 @@
                    (fillcolor "")
                    (line '())
                    (marker '()))
-  (data-to-json :data0 data0
-                :data1 data1
-                :type "scatter"
-                :mode mode
-                :name name
-                :text text
-                :error-x error-x
-                :error-y error-y
-                :fill fill
-                :fillcolor fillcolor
-                :line line
-                :marker marker))
+  (symbol-downcase
+   `( :x ,x
+      :y ,y
+      :type "scatter"
+      :mode ,mode
+      ,@(if (not (string= name ""))
+            (list :name name))
+      ,@(if (not (null text))
+            (list :text text))
+      ,@(if (not (null error-x))
+            (list :error_x error-x))
+      ,@(if (not (null error-y))
+            (list :error_y error-y))
+      ,@(if (not (string= fill ""))
+            (list :fill fill))
+      ,@(if (not (string= fillcolor ""))
+            (list :fillcolor fillcolor))
+      ,@(if (not (null line))
+            (list :line (symbol-downcase line)))
+      ,@(if (not (null marker))
+            (list :marker (symbol-downcase marker))))))
+
 
 ;; Bar plot
 (defun bar (&rest data)
@@ -95,8 +124,8 @@
         *state*)
   (format t "Set bar plotting.~&"))
 
-(defun -bar (data0
-             data1
+(defun -bar (x
+             y
              &key
                (name "")
                (text '())
@@ -105,16 +134,25 @@
                (fill "")
                (fillcolor "")
                (marker '()))
-  (data-to-json :data0 data0
-                :data1 data1
-                :type "bar"
-                :name name
-                :text text
-                :error-x error-x
-                :error-y error-y
-                :fill fill
-                :fillcolor fillcolor
-                :marker marker))
+  (symbol-downcase
+   `( :x ,x
+      :y ,y
+      :type "bar"
+      ,@(if (not (string= name ""))
+            (list :name name))
+      ,@(if (not (null text))
+            (list :text text))
+      ,@(if (not (null error-x))
+            (list :error_x error-x))
+      ,@(if (not (null error-y))
+            (list :error_y error-y))
+      ,@(if (not (string= fill ""))
+            (list :fill fill))
+      ,@(if (not (string= fillcolor ""))
+            (list :fillcolor fillcolor))
+      ,@(if (not (null marker))
+            (list :marker (symbol-downcase marker))))))
+
 
 ;; Pie chart
 (defun pie (&rest data)
@@ -122,16 +160,16 @@
         *state*)
   (format t "Set pie plotting.~&"))
 
-(defun -pie (value
-             label
+(defun -pie (values
+             labels
              &key
-               (name "")
-               (marker '()))
-  (data-to-json :type "pie"
-                :name name
-                :marker marker
-                :value value
-                :label label))
+               (name ""))
+  (symbol-downcase
+   `(:values ,values
+     :labels ,labels
+     ,@(if (not (string= name ""))
+           (list :name name)))))
+
 
 ;; Sunburst
 (defun sunburst (&rest data)
@@ -139,17 +177,18 @@
         *state*)
   (format t "Set sunburst plotting.~&"))
 
-(defun -sunburst (value
-                  label
+(defun -sunburst (values
+                  labels
                   parents
                   &key
                     (marker '()))
-  (data-to-json :type "sunburst"
-                :marker marker
-                :value value
-                :label label
-                :parents parents))
-
+  (symbol-downcase
+   `(:value ,values
+     :label ,labels
+     :parents ,parents
+     :type "sunburst"
+     ,@(if (not (null marker))
+           (list :marker (symbol-downcase marker))))))
 
 
 ;; Box plots
@@ -158,18 +197,22 @@
         *state*)
   (format t "Set box plotting.~&"))
 
-(defun -box (data
+(defun -box (y
              &key
                (name "")
                (marker '())
                (boxmean t)
                (boxpoints :false))
-  (data-to-json :data1 data
-                :type "box"
-                :name name
-                :marker marker
-                :boxmean boxmean
-                :boxpoints boxpoints))
+  (symbol-downcase
+   `(:y ,y
+     :type "box"
+     :boxmean ,boxmean
+     :boxpoints ,boxpoints
+     ,@(if (not (string= name ""))
+           (list :name name))
+     ,@(if (not (null marker))
+           (list :marker (symbol-downcase marker))))))
+
 
 ;; Heatmap
 (defun heatmap (&rest data)
@@ -179,16 +222,15 @@
 
 (defun -heatmap (z
                  &key
-                   (x '())
-                   (y '())
                    (colorscale '())
                    (showscale :false))
-  (data-to-json :data0 x
-                :data1 y
-                :data2 z
-                :type "heatmap"
-                :colorscale colorscale
-                :showscale showscale))
+  (symbol-downcase
+   `(:z ,z
+     :type "heatmap"
+     :showscale ,showscale
+     ,@(if (not (null colorscale))
+           (list :marker (symbol-downcase colorscale))))))
+
 
 ;; Contour
 (defun contour (&rest data)
@@ -198,20 +240,19 @@
 
 (defun -contour (z
                  &key
-                   (x '())
-                   (y '())
                    (colorscale '())
                    (showscale :false)
                    (autocontour :false)
                    (contours '()))
-  (data-to-json :data0 x
-                :data1 y
-                :data2 z
-                :type "contour"
-                :colorscale colorscale
-                :showscale showscale
-                :autocontour autocontour
-                :contours contours))
+  (symbol-downcase
+   `(:z ,z
+     :type "contour"
+     :showscale ,showscale
+     :autocontour ,autocontour
+     ,@(if (not (null colorscale))
+           (list :marker (symbol-downcase colorscale)))
+     ,@(if (not (null contours))
+           (list :marker (symbol-downcase contours))))))
 
 
 ;; Scatter3D
@@ -229,15 +270,20 @@
                      (text '())
                      (marker '())
                      (line '()))
-  (data-to-json :data0 x
-                :data1 y
-                :data2 z
-                :type "scatter3d"
-                :mode mode
-                :name name
-                :text text
-                :marker marker
-                :line line))
+  (symbol-downcase
+   `(:x ,x
+     :y ,y
+     :z ,z
+     :type "scatter3d"
+     :mode ,mode
+     ,@(if (not (string= name ""))
+           (list :name name))
+     ,@(if (not (null text))
+           (list :text text))
+     ,@(if (not (null line))
+           (list :line (symbol-downcase line)))
+     ,@(if (not (null marker))
+           (list :marker (symbol-downcase marker))))))
 
 
 ;; Surface
@@ -249,9 +295,11 @@
 (defun -surface (z
                  &key
                    (name ""))
-  (data-to-json :data2 z
-                :type "surface"
-                :name name))
+  (symbol-downcase
+   `(:z ,z
+     :type "surface"
+     ,@(if (not (string= name ""))
+           (list :name name)))))
 
 
 
