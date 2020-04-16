@@ -68,6 +68,25 @@
     (cons x-axis y-axis)))
 
 
+;;;; Symbol Converter
+;;;
+;;; We will get input data as list.
+;;; When using plotly as backend, we have to convert list data to JSON.
+;;; In converting list data to JSON, symbols will be converted as capital texts.
+;;; Here we provide a function to prevent this.
+
+(defun make-keyword (name)
+  (values (intern name "KEYWORD")))
+
+(defun symbol-downcase (data)
+  (mapcar #'(lambda (x)
+              (if (keywordp x)
+                  (make-keyword (string-downcase (symbol-name x)))
+                  x))
+          data))
+
+
+
 ;;;; Download
 ;;;
 ;;; When setting up, we have to get some files via networks.

@@ -12,7 +12,8 @@
 (defpackage #:kai.interface
   (:use :cl)
   (:import-from :kai.util
-                :convert-data)
+                :convert-data
+                :symbol-downcase)
   (:import-from :kai.converter
                 :check-file-exist
                 :to-json
@@ -52,25 +53,6 @@
 (defun reset! ()
   (setf *state* '())
   (setf *style* "{}"))
-
-
-;;;; Symbol Converter
-;;;
-;;; We will get input data as list.
-;;; When using plotly as backend, we have to convert list data to JSON.
-;;; In converting list data to JSON, symbols will be converted as capital texts.
-;;; Here we provide a function to prevent this.
-
-(defun make-keyword (name)
-  (values (intern name "KEYWORD")))
-
-(defun symbol-downcase (data)
-  (mapcar #'(lambda (x)
-              (if (keywordp x)
-                  (make-keyword (string-downcase (symbol-name x)))
-                  x))
-          data))
-
 
 
 ;;;; Scatter and Line
