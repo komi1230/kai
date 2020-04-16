@@ -9,7 +9,7 @@
 
 (deftest test-target-kai
   (testing "Initial setup for state"
-    (ok (equal kai:*state* '())))
+             (ok (equal kai:*state* '())))
 
   (testing "Initial setup for style"
-    (ok (equal kai:*style* "{}"))))
+           (ok (equal kai:*style* '()))))
