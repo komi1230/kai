@@ -48,51 +48,8 @@
     (jonathan:to-json param)))
 
 ;; Generate
-(defun data-to-json (&key
-                     (data0 :null)
-                     (data1 :null)
-                     (data2 '())
-                     (type "scatter")
-                     (mode "")
-                     (name "")
-                     (text '())
-                     (error-x '())
-                     (error-y '())
-                     (fill "")
-                     (fillcolor "")
-                     (line '())
-                     (marker '())
-                     (value '())
-                     (label '())
-                     (parents '())
-                     (boxmean "")
-                     (boxpoints "")
-                     (showscale :false)
-                     (colorscale '())
-                     (contours '())
-                     (autocontour :false))
-  (to-json `(:|x| ,data0
-             :|y| ,data1
-             :|z| ,data2
-             :|type| ,type
-             :|mode| ,mode
-             :|name| ,name
-             :|text| ,text
-             :|error_x| ,error-x
-             :|error_y| ,error-y
-             :|fill| ,fill
-             :|fillcolor| ,fillcolor
-             :|line| ,line
-             :|marker| ,marker
-             :|values| ,value
-             :|labels| ,label
-             :|parents| ,parents
-             :|boxmean| ,boxmean
-             :|boxpoints| ,boxpoints
-             :|showscale| ,showscale
-             :|colorscale| ,colorscale
-             :|contours| ,contours
-             :|autocontour| ,autocontour)))
+(defun data-to-json (data)
+  (to-json data))
 
 
 (defun style-to-json (&key
