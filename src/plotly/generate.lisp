@@ -74,7 +74,7 @@
                          (loop for i below len
                                collect (format nil "var trace~A = ~A;~&~&" i
                                                (to-json (nth i states))))))
-         (layout (format nil "var layout = ~A;~3&" style))
+         (layout (format nil "var layout = ~A;~3&" (to-json style)))
          (data (format nil "var data = [~{~A~}];~3&"
                        (loop for i below len
                              collect (format nil "trace~A, " i))))

@@ -13,7 +13,7 @@
   (:use :cl)
   (:export :make-kai-cache
            :check-file-exist
-           :data-to-json
+           :to-json
            :style-to-json))
 (in-package #:kai.converter)
 
@@ -46,16 +46,3 @@
         (jonathan:*empty-array-value* :empty-array)
         (jonathan:*empty-object-value* :empty-object))
     (jonathan:to-json param)))
-
-;; Generate
-(defun data-to-json (data)
-  (to-json data))
-
-
-(defun style-to-json (&key
-                      title
-                      xaxis
-                      yaxis)
-  (to-json `(:|title| ,title
-             :|xaxis| ,xaxis
-             :|yaxis| ,yaxis)))

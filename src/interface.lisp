@@ -15,7 +15,7 @@
                 :convert-data)
   (:import-from :kai.converter
                 :check-file-exist
-                :data-to-json
+                :to-json
                 :style-to-json
                 :make-kai-cache)
   (:import-from :kai.plotly.generate
@@ -47,7 +47,7 @@
 
 (defparameter *state* '())
 
-(defparameter *style* "{}")
+(defparameter *style* '())
 
 (defun reset! ()
   (setf *state* '())
@@ -311,9 +311,12 @@
                 (title "")
                 (xaxis '())
                 (yaxis '()))
-  (setf *style* (style-to-json :title title
-                               :xaxis xaxis
-                               :yaxis yaxis))
+  (setf *style*
+        `(:title ,title
+                 ,@(if (not (null xaxis))
+                       (list :xaxis (symbol-downcase xaxis)))
+                 ,@(if (not (null yaxis))
+                       (list :yaxis (symbol-downcase yaxis)))))
   (format t "Set style.~&"))
 
 
@@ -322,10 +325,13 @@
 ;;; Launch viewer and draw traces and styles.
 
 (defun show ()
-  (ensure-directories-exist (make-kai-cache "plotly"))
-  (if (not (check-file-exist "plotly" "kai.html"))
+  (ensure-directories-exist
+   (make-kai-cache "plotly"))
+  (if (not (check-file-exist "plotly"
+                             "kai.html"))
       (save-html))
-  (if (not (check-file-exist "plotly" "plotly-latest.min.js"))
+  (if (not (check-file-exist "plotly"
+                             "plotly-latest.min.js"))
       (download-plotlyjs))
   (save-js *state* *style*)
   (open-browser)
