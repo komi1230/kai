@@ -14,7 +14,8 @@
            :check-shape-type
            :find-min-max
            :to-array
-           :sort-input))
+           :sort-input
+           :flatten))
 (in-package #:kai.util)
 
 
@@ -66,6 +67,19 @@
                              :initial-contents
                              (mapcar #'cdr sorted-lst))))
     (cons x-axis y-axis)))
+
+
+;;;; Flatten
+;;;
+;;; To adjust dimensions of input data
+
+(defun flatten (lst)
+  (if (null lst)
+      nil
+      (if (atom lst)
+          (list lst)
+          (append (flatten (car lst))
+                  (flatten (cdr lst))))))
 
 
 ;;;; Symbol Converter
