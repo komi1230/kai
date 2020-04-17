@@ -52,7 +52,7 @@
 
 (defun reset! ()
   (setf *state* '())
-  (setf *style* "{}"))
+  (setf *style* '()))
 
 
 ;;;; Scatter and Line
@@ -63,7 +63,7 @@
 (defun scatter (&rest data)
   (push (apply #'-scatter (apply #'convert-data data))
         *state*)
-  (format t "Set scatter plotting.~&"))
+  T)
 
 (defun -scatter (x
                  y
@@ -104,7 +104,7 @@
 (defun bar (&rest data)
   (push (apply #'-bar (apply #'convert-data data))
         *state*)
-  (format t "Set bar plotting.~&"))
+  T)
 
 (defun -bar (x
              y
@@ -140,7 +140,7 @@
 (defun pie (&rest data)
   (push (apply #'-pie data)
         *state*)
-  (format t "Set pie plotting.~&"))
+  T)
 
 (defun -pie (values
              labels
@@ -157,7 +157,7 @@
 (defun sunburst (&rest data)
   (push (apply #'-sunburst data)
         *state*)
-  (format t "Set sunburst plotting.~&"))
+  T)
 
 (defun -sunburst (values
                   labels
@@ -177,7 +177,7 @@
 (defun box (&rest data)
   (push (apply #'-box data)
         *state*)
-  (format t "Set box plotting.~&"))
+  T)
 
 (defun -box (y
              &key
@@ -200,7 +200,7 @@
 (defun heatmap (&rest data)
   (push (apply #'-heatmap data)
         *state*)
-  (format t "Set heatmap plotting.~&"))
+  T)
 
 (defun -heatmap (z
                  &key
@@ -218,7 +218,7 @@
 (defun contour (&rest data)
   (push (apply #'-contour data)
         *state*)
-  (format t "Set contour plotting.~&"))
+  T)
 
 (defun -contour (z
                  &key
@@ -241,7 +241,7 @@
 (defun scatter3d (&rest data)
   (push (apply #'-scatter3d data)
         *state*)
-  (format t "Set scatter3D plotting.~&"))
+  T)
 
 (defun -scatter3d (x
                    y
@@ -272,7 +272,7 @@
 (defun surface (&rest data)
   (push (apply #'-surface data)
         *state*)
-  (format t "Set scatter3D plotting.~&"))
+  T)
 
 (defun -surface (z
                  &key
@@ -299,7 +299,7 @@
                        (list :xaxis (symbol-downcase xaxis)))
                  ,@(if (not (null yaxis))
                        (list :yaxis (symbol-downcase yaxis)))))
-  (format t "Set style.~&"))
+  T)
 
 
 ;;;; Plot
@@ -318,4 +318,4 @@
   (save-js *state* *style*)
   (open-browser)
   (reset!)
-  (format t "Show your graph.~&"))
+  T)

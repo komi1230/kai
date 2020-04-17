@@ -8,8 +8,45 @@
 
 
 (deftest test-target-kai
-  (testing "Initial setup for state"
-             (ok (equal kai:*state* '())))
+    (kai:reset!)
+  (testing "Initial setup"
+           (ok (equal kai:*state* '()))
+           (ok (equal kai:*style* '())))
 
-  (testing "Initial setup for style"
-           (ok (equal kai:*style* '()))))
+  (kai:reset!)
+  (testing "Scatter"
+           (ok (kai:scatter '(1 2 3)
+                             :marker '(:size 12))))
+
+  (kai:reset!)
+  (testing "Bar plot"
+           (ok (kai:bar '(10 20 30))))
+
+  (kai:reset!)
+  (testing "Pie chart"
+           (ok (kai:pie '(1 2 3)
+                         '("hoge" "foo" "bar"))))
+
+  (kai:reset!)
+  (testing "Sunburst chart"
+           (ok (kai:sunburst '(1 2 3)
+                              '("hoge" "foo" "bar")
+                              '("" "hoge" "hoge"))))
+
+  (kai:reset!)
+  (testing "Box chart"
+           (ok (kai:box '(1 2 3))))
+
+  (kai:reset!)
+  (testing "Heatmap chart"
+           (ok (kai:heatmap '((1 2) (3 4)))))
+
+  (kai:reset!)
+  (testing "Contour chart"
+           (ok (kai:contour '((1 2) (3 4)))))
+
+  (kai:reset!)
+  (testing "Scatter3D plot"
+           (ok (kai:scatter3d '(1 2 3)
+                              '(1 2 3)
+                              '(1 2 3)))))
