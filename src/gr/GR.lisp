@@ -224,6 +224,9 @@ lst :
                                     (:double (coerce x 'double-float))))
                               lst)))
 
+(defun free (var)
+  (cffi:foreign-free var))
+
 (defun string-alloc (str)
   (cffi:foreign-string-alloc str))
 
@@ -252,9 +255,13 @@ y :
 
 (defun polyline (x y)
   (assert (= (length x) (length y)))
-  (gr-polyline (length x)
-               (data-alloc x :double)
-               (data-alloc y :double)))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double)))
+    (gr-polyline (length x)
+                 x-data
+                 y-data)
+    (free x-data)
+    (free y-data)))
 
 
 #|
@@ -277,9 +284,13 @@ y :
 
 (defun polymarker (x y)
   (assert (= (length x) (length y)))
-  (gr-polymarker (length x)
-                 (data-alloc x :double)
-                 (data-alloc y :double)))
+  (let ((x-data (data-alloc x :dobule))
+        (y-data (data-alloc y :double)))
+    (gr-polymarker (length x)
+                   x-data
+                   y-data)
+    (free x-data)
+    (free y-data)))
 
 
 #|
@@ -308,9 +319,11 @@ height, character up vector, text path and text alignment.
   (str (:pointer :char)))
 
 (defun text (x y str)
-  (gr-text (coerce x 'double-float)
-           (coerce y 'double-float)
-           (string-alloc str)))
+  (let ((str-data (string-alloc str)))
+    (gr-text (coerce x 'double-float)
+             (coerce y 'double-float)
+             (string-alloc str))
+    (free str-data)))
 
 (cffi:defcfun ("gr_inqtext" gr-inqtext) :void
   (x :double)
@@ -320,13 +333,15 @@ height, character up vector, text path and text alignment.
   (tby (:pointer :double)))
 
 (defun inqtext (x y str)
-  (let ((tbx (data-alloc '(0 0 0 0) :double))
+  (let ((str-data (string-alloc str))
+        (tbx (data-alloc '(0 0 0 0) :double))
         (tby (data-alloc '(0 0 0 0) :double)))
     (gr-inqtext (coerce x 'double-float)
                 (coerce y 'double-float)
-                (string-alloc str)
+                str-data
                 tbx
                 tby)
+    (free str-data)
     (list tbx tby)))
 
 
@@ -351,9 +366,13 @@ style, fill area style index and fill area color index.
 
 (defun fillarea (x y)
   (assert (= (length x) (length y)))
-  (gr-fillarea (length x)
-               (data-alloc x :double)
-               (data-alloc y :double)))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double)))
+    (gr-fillarea (length x)
+                 (data-alloc x :double)
+                 (data-alloc y :double))
+    (free x-data)
+    (free y-data)))
 
 
 #|
@@ -393,17 +412,19 @@ The values for xmin, xmax, ymin and ymax are in world coordinates.
   (color (:pointer :int)))
 
 (defun cellarray (xmin xmax ymin ymax dimx dimy color)
-  (gr-cellarray (coerce xmin 'double-float)
-                (coerce xmax 'double-float)
-                (coerce ymin 'double-float)
-                (coerce ymax 'double-float)
-                dimx
-                dimy
-                1    ; scol
-                1    ; srow
-                dimx ; ncol
-                dimy ; nrow
-                (data-alloc (flatten color) :int)))
+  (let ((color-data (data-alloc (flatten color) :int)))
+    (gr-cellarray (coerce xmin 'double-float)
+                  (coerce xmax 'double-float)
+                  (coerce ymin 'double-float)
+                  (coerce ymax 'double-float)
+                  dimx
+                  dimy
+                  1    ; scol
+                  1    ; srow
+                  dimx ; ncol
+                  dimy ; nrow
+                  color-data)
+    (free color-data)))
 
 
 #|
@@ -437,15 +458,17 @@ of the i-th cell in X and Y direction.
   (color (:pointer :int)))
 
 (defun nonuniformcellarray (x y dimx dimy color)
-  (gr-nonuniformcellarray (data-alloc x :double)
-                          (data-alloc y :double)
-                          dimx
-                          dimy
-                          1
-                          1
-                          dimx
-                          dimy
-                          (data-alloc (flatten color) :int)))
+  (let ((color-data (data-alloc (flatten color) :int)))
+    (gr-nonuniformcellarray (data-alloc x :double)
+                            (data-alloc y :double)
+                            dimx
+                            dimy
+                            1
+                            1
+                            dimx
+                            dimy
+                            color-data)
+    (free color-data)))
 
 
 #|
@@ -500,19 +523,21 @@ radius of the disk is `rmax`.
   (color (:pointer :int)))
 
 (defun polarcellarray (xorg yorg phimin phimax rmin rmax dimphi dimr color)
-  (gr-polarcellarray (coerce xorg 'double-float)
-                     (coerce yorg 'double-float)
-                     (coerce phimin 'double-float)
-                     (coerce phimax 'double-float)
-                     (coerce rmin 'double-float)
-                     (coerce rmax 'double-float)
-                     dimphi
-                     dimr
-                     1
-                     1
-                     dimphi
-                     dimr
-                     (data-alloc (flatten color) :int)))
+  (let ((color-data (data-alloc (flatten color) :int)))
+    (gr-polarcellarray (coerce xorg 'double-float)
+                       (coerce yorg 'double-float)
+                       (coerce phimin 'double-float)
+                       (coerce phimax 'double-float)
+                       (coerce rmin 'double-float)
+                       (coerce rmax 'double-float)
+                       dimphi
+                       dimr
+                       1
+                       1
+                       dimphi
+                       dimr
+                       color-data)
+    (free color-data)))
 
 
 #|
@@ -545,12 +570,18 @@ datrec :
 
 (defun gdp (x y primid datrec)
   (assert (= (length x) (length y)))
-  (gr-gdp (length x)
-          (data-alloc x :double)
-          (data-alloc y :double)
-          primid
-          (length primid)
-          (data-alloc datrec :int)))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double))
+        (datrec-data (data-alloc datrec :int)))
+    (gr-gdp (length x)
+            x-data
+            y-data
+            primid
+            (length primid)
+            datrec-data)
+    (free x-data)
+    (free y-data)
+    (free datrec-data)))
 
 
 #|
@@ -589,11 +620,15 @@ If method is < -1, then a cubic B-spline is calculated.
 
 (defun spline (x y m method)
   (assert (= (length x) (length y)))
-  (gr-spline (length x)
-             (data-alloc x :double)
-             (data-alloc y :double)
-             m
-             method))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double)))
+    (gr-spline (length x)
+               x-data
+               y-data
+               m
+               method)
+    (free x-data)
+    (free y-data)))
 
 (cffi:defcfun ("gr_gridit" gr-gridit) :void
   (nd :int)
@@ -608,22 +643,33 @@ If method is < -1, then a cubic B-spline is calculated.
 
 (defun gridit (xd yd zd nx ny)
   (assert (= (length xd) (length yd) (length zd)))
-  (gr-gridit (length xd)
-             (data-alloc xd :double)
-             (data-alloc yd :double)
-             (data-alloc zd :double)
-             nx
-             ny
-             (data-alloc (loop for i from 1 to nx
-                               collect i)
-                         :double)
-             (data-alloc (loop for i from 1 to ny
-                               collect i)
-                         :double)
-             (data-alloc (loop for i from 1 to (* nx ny)
-                               collect i)
-                         :double)))
-
+  (let ((xd-data (data-alloc xd :double))
+        (yd-data (data-alloc yd :double))
+        (zd-data (data-alloc zd :double))
+        (x-data (data-alloc (loop for i from 1 to nx
+                                  collect i)
+                            :double))
+        (y-data (data-alloc (loop for i from 1 to ny
+                                  collect i)
+                            :double))
+        (z-data (data-alloc (loop for i from 1 to (* nx ny)
+                                  collect i)
+                            :double)))
+    (gr-gridit (length xd)
+               xd-data
+               yd-data
+               zd-data
+               nx
+               ny
+               x-data
+               y-data
+               z-data)
+    (free xd-data)
+    (free yd-data)
+    (free zd-data)
+    (free x-data)
+    (free y-data)
+    (free z-data)))
 
 
 #|
@@ -675,7 +721,9 @@ The available line types are:
   (linetype (:pointer :int)))
 
 (defun inqlinetype (linetype)
-  (gr-setinqlinetype (data-alloc linetype :double)))
+  (let ((linetype-data (data-alloc linetype :double)))
+    (gr-setinqlinetype linetype-data)
+    (free linetype-data)))
 
 
 
@@ -705,7 +753,9 @@ The default line width is 1.0, or 1 times the line width generated on the graphi
   (width (:pointer :double)))
 
 (defun inqlinewidth (width)
-  (gr-inqlinewidth (data-alloc width :double)))
+  (let ((width-data (data-alloc width :double)))
+    (gr-inqlinewidth width-data)
+    (free width-data)))
 
 
 #|
@@ -729,7 +779,9 @@ color :
   (coli (:pointer :int)))
 
 (defun inqlinecolorind (coli)
-  (gr-inqlinecolorind (data-alloc coli :int)))
+  (let ((coli-data (data-alloc coli :int)))
+    (gr-inqlinecolorind coli-data)
+    (free coli-data)))
 
 
 #|
@@ -832,7 +884,9 @@ Polymarkers appear centered over their specified coordinates.
   (markertype (:pointer :int)))
 
 (defun inqmarkertype (markertype)
-  (gr-inqmarkertype (data-alloc markertype :int)))
+  (let ((markertype-data (data-alloc markertype :int)))
+    (gr-inqmarkertype markertype-data)
+    (free markertype-data)))
 
 
 #|
@@ -859,7 +913,9 @@ multiplied by the marker size scale factor.
   (markersize (:pointer :double)))
 
 (defun inqmarkersize (markersize)
-  (gr-inqmarkersize (data-alloc markersize :double)))
+  (let ((markersize-data (data-alloc markersize :double)))
+    (gr-inqmarkersize markersize-data)
+    (free markersize-data)))
 
 
 #|
@@ -883,7 +939,9 @@ color :
   (color (:pointer :int)))
 
 (defun inqmarkercolorind (color)
-  (gr-inqmarkercolorind (data-alloc color :int)))
+  (let ((color-data (data-alloc color :int)))
+    (gr-inqmarkercolorind color-data)
+    (free color-data)))
 
 
 
@@ -1041,7 +1099,9 @@ GR uses the default foreground color (black=1) for the default text color index.
   (color (:pointer :int)))
 
 (defun inqtextcolorind (color)
-  (gr-inqtextcolorind (data-alloc color :int)))
+  (let ((color-data (data-alloc color :int)))
+    (gr-inqtextcolorind color-data)
+    (free color-data)))
 
 
 #|
@@ -1069,7 +1129,9 @@ is defined as a percentage of the default window. GR uses the default text heigh
   (height (:pointer :double)))
 
 (defun inqcharheight (height)
-  (gr-inqcharheight (data-alloc height :double)))
+  (let ((height-data (data-alloc height :double)))
+    (gr-inqcharheight height-data)
+    (free height-data)))
 
 
 #|
@@ -1202,7 +1264,9 @@ primitives. The default interior style is HOLLOW.
   (style (:pointer :int)))
 
 (defun inqfillinstyle (style)
-  (gr-inqfillinstyle (data-alloc style :int)))
+  (let ((style-data (data-alloc style :int)))
+    (gr-inqfillinstyle style-data)
+    (free style-data)))
 
 
 #|
@@ -1232,7 +1296,9 @@ for the interior style, the fill style index is unused.
   (index (:pointer :int)))
 
 (defun inqfillstyle (index)
-  (gr-inqfillstyle (data-alloc index :int)))
+  (let ((index-data (data-alloc index :int)))
+    (gr-inqfillstyle index-data)
+    (free index-data)))
 
 
 #|
@@ -1259,7 +1325,9 @@ GR uses the default foreground color (black=1) for the default fill area color i
   (color (:pointer :int)))
 
 (defun inqfillcolorind (color)
-  (gr-inqfillcolorind (data-alloc color :int)))
+  (let ((color-data (data-alloc color :int)))
+    (gr-inqfillcolorind color-data)
+    (free color-data)))
 
 
 #|
@@ -1643,10 +1711,18 @@ between 0° and 90°.
   (tilt (:pointer :int)))
 
 (defun inqspace (zmin zmax rotation tilt)
-  (gr-inqspace (data-alloc zmin :double)
-               (data-alloc zmax :double)
-               (data-alloc rotation :int)
-               (data-alloc tilt :int)))
+  (let ((zmin-data (data-alloc zmin :double))
+        (zmax-data (data-alloc zmax :double))
+        (rotation-data (data-alloc rotation :int))
+        (tilt-data (data-alloc tilt :int)))
+    (gr-inqspace zmin-data
+                 zmax-data
+                 rotation-data
+                 tilt-data)
+    (free zmin-data)
+    (free zmax-data)
+    (free rotation-data)
+    (free tilt-data)))
 
 
 #|
@@ -1795,9 +1871,11 @@ function.
   (str (:pointer :char)))
 
 (defun textext (x y str)
-  (gr-textext (coerce x 'double-float)
-              (coerce y 'double-float)
-              (string-alloc str)))
+  (let ((str-data (string-alloc str)))
+    (gr-textext (coerce x 'double-float)
+                (coerce y 'double-float)
+                str-data)
+    (free str-data)))
 
 (cffi:defcfun ("gr_inqtextext" gr-inqtextext) :void
   (x :double)
@@ -1807,12 +1885,108 @@ function.
   (tby (:pointer :double)))
 
 (defun inqtextext (x y str)
-  (let ((tbx (data-alloc '(0 0 0 0) :double))
+  (let ((str-data (string-alloc str))
+        (tbx (data-alloc '(0 0 0 0) :double))
         (tby (data-alloc '(0 0 0 0) :double)))
     (gr-inqtextext (coerce x 'double-float)
                    (coerce y 'double-float)
                    (string-alloc str)
                    tbx
                    tby)
+    (free str-data)
     (list tbx tby)))
+
+#|
+    axes2d(x_tick::Real, y_tick::Real, x_org::Real, y_org::Real, major_x::Int, major_y::Int, tick_size::Real)
+
+Draw X and Y coordinate axes with linearly and/or logarithmically spaced tick marks.
+
+x_tick, y_tick :
+    The interval between minor tick marks on each axis.
+
+x_org, y_org :
+    The world coordinates of the origin (point of intersection) of the X
+    and Y axes.
+
+major_x, major_y :
+    Unitless integer values specifying the number of minor tick intervals
+    between major tick marks. Values of 0 or 1 imply no minor ticks.
+    Negative values specify no labels will be drawn for the associated axis.
+
+tick_size :
+    The length of minor tick marks specified in a normalized device
+    coordinate unit. Major tick marks are twice as long as minor tick marks.
+    A negative value reverses the tick marks on the axes from inward facing
+    to outward facing (or vice versa).
+
+Tick marks are positioned along each axis so that major tick marks fall on the axes
+origin (whether visible or not). Major tick marks are labeled with the corresponding
+data values. Axes are drawn according to the scale of the window. Axes and tick marks
+are drawn using solid lines; line color and width can be modified using the
+setlinetype and setlinewidth functions. Axes are drawn according to
+the linear or logarithmic transformation established by the setscale function.
+|#
+
+(cffi:defcfun ("gr_axes" gr-axes) :void
+  (x-tick :double)
+  (y-tick :double)
+  (x-org :double)
+  (y-org :double)
+  (major-x :int)
+  (major-y :int)
+  (tick-size :double))
+
+(defun axes (x-tick y-tick x-org y-org major-x major-y tick-size)
+  (gr-axes (coerce x-tick 'double-float)
+           (coerce y-tick 'double-float)
+           (coerce x-org 'double-float)
+           (coerce y-org 'double-float)
+           major-x
+           major-y
+           (coerce tick-size 'double-float)))
+
+
+#|
+    function axeslbl(x_tick::Real, y_tick::Real, x_org::Real, y_org::Real, major_x::Int, major_y::Int, tick_size::Real, fpx::Function, fpy::Function)
+
+Draw X and Y coordinate axes with linearly and/or logarithmically spaced tick marks.
+
+Tick marks are positioned along each axis so that major tick marks fall on the
+axes origin (whether visible or not). Major tick marks are labeled with the
+corresponding data values. Axes are drawn according to the scale of the window.
+Axes and tick marks are drawn using solid lines; line color and width can be
+modified using the `setlinetype` and `setlinewidth` functions.
+Axes are drawn according to the linear or logarithmic transformation established
+by the `setscale` function.
+
+x_tick, y_tick :
+    The interval between minor tick marks on each axis.
+
+x_org, y_org :
+    The world coordinates of the origin (point of intersection) of the X
+    and Y axes.
+
+major_x, major_y :
+    Unitless integer values specifying the number of minor tick intervals
+    between major tick marks. Values of 0 or 1 imply no minor ticks.
+    Negative values specify no labels will be drawn for the associated axis.
+
+tick_size :
+    The length of minor tick marks specified in a normalized device
+    coordinate unit. Major tick marks are twice as long as minor tick marks.
+    A negative value reverses the tick marks on the axes from inward facing
+    to outward facing (or vice versa).
+
+fx, fy :
+    Functions that returns a label for a given tick on the X or Y axis.
+    Those functions should have the following arguments:
+x, y :
+    Normalized device coordinates of the label in X and Y directions.
+
+svalue :
+    Internal string representation of the text drawn at (x,y).
+
+value :
+    Floating point representation of the label drawn at (x,y).
+|#
 
