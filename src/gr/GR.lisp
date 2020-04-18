@@ -248,12 +248,10 @@ y :
   (y (:pointer :double)))
 
 (defun polyline (x y)
-  (if (= (length x)
-         (length y))
-      (gr-polyline (length x)
-                   (data-alloc x :double)
-                   (data-alloc y :double))
-      (error "Invalid input data")))
+  (assert (= (length x) (length y)))
+  (gr-polyline (length x)
+               (data-alloc x :double)
+               (data-alloc y :double)))
 
 
 #|
@@ -275,12 +273,10 @@ y :
   (y (:pointer :double)))
 
 (defun polymarker (x y)
-  (if (= (length x)
-         (length y))
-      (gr-polymarker (length x)
-                     (data-alloc x :double)
-                     (data-alloc y :double))
-      (error "Invalid input data")))
+  (assert (= (length x) (length y)))
+  (gr-polymarker (length x)
+                 (data-alloc x :double)
+                 (data-alloc y :double)))
 
 
 #|
@@ -348,12 +344,10 @@ style, fill area style index and fill area color index.
   (y (:pointer :double)))
 
 (defun fillarea (x y)
-  (if (= (length x)
-         (length y))
-      (gr-fillarea (length x)
-                   (data-alloc x :double)
-                   (data-alloc y :double))
-      (error "Invalid data inputs")))
+  (assert (= (length x) (length y)))
+  (gr-fillarea (length x)
+               (data-alloc x :double)
+               (data-alloc y :double)))
 
 
 #|
@@ -393,10 +387,10 @@ The values for xmin, xmax, ymin and ymax are in world coordinates.
   (color (:pointer :int)))
 
 (defun cellarray (xmin xmax ymin ymax dimx dimy color)
-  (gr-cellarray xmin
-                xmax
-                ymin
-                ymax
+  (gr-cellarray (coerce xmin 'double-float)
+                (coerce xmax 'double-float)
+                (coerce ymin 'double-float)
+                (coerce ymax 'double-float)
                 dimx
                 dimy
                 1    ; scol
@@ -500,12 +494,12 @@ radius of the disk is `rmax`.
   (color (:pointer :int)))
 
 (defun polarcellarray (xorg yorg phimin phimax rmin rmax dimphi dimr color)
-  (gr-polarcellarray xorg
-                     yorg
-                     phimin
-                     phimax
-                     rmin
-                     rmax
+  (gr-polarcellarray (coerce xorg 'double-float)
+                     (coerce yorg 'double-float)
+                     (coerce phimin 'double-float)
+                     (coerce phimax 'double-float)
+                     (coerce rmin 'double-float)
+                     (coerce rmax 'double-float)
                      dimphi
                      dimr
                      1
@@ -515,33 +509,372 @@ radius of the disk is `rmax`.
                      (data-alloc (flatten color) :int)))
 
 
+#|
+    gdp(x, y, primid, datrec)
 
-;;;; sample codes
+Generates a generalized drawing primitive (GDP) of the type you specify,
+using specified points and any additional information contained in a data
+record.
+
+x :
+    A list containing the X coordinates
+
+y :
+    A list containing the Y coordinates
+
+primid :
+    Primitive identifier
+
+datrec :
+    Primitive data record
+|#
+
+(cffi:defcfun ("gr_gdp" gr-gdp) :void
+  (n :int)
+  (x (:pointer :double))
+  (y (:pointer :double))
+  (primid :int)
+  (ldr :int)
+  (datrec (:pointer :int)))
+
+(defun gdp (x y primid datrec)
+  (assert (= (length x) (length y)))
+  (gr-gdp (length x)
+          (data-alloc x :double)
+          (data-alloc y :double)
+          primid
+          (length primid)
+          (data-alloc datrec :int)))
+
+
+#|
+    spline(x, y, m, method)
+
+Generate a cubic spline-fit, starting from the first data point and
+ending at the last data point.
+
+x :
+    A list containing the X coordinates
+
+y :
+    A list containing the Y coordinates
+
+m :
+    The number of points in the polygon to be drawn (m > len(x))
+
+method :
+    The smoothing method
+
+The values for x and y are in world coordinates. The attributes that
+control the appearance of a spline-fit are linetype, linewidth and color
+index.
+
+If method is > 0, then a generalized cross-validated smoothing spline is calculated.
+If method is 0, then an interpolating natural cubic spline is calculated.
+If method is < -1, then a cubic B-spline is calculated.
+|#
+
+(cffi:defcfun ("gr_spline" gr-spline) :void
+  (n :int)
+  (px (:pointer :double))
+  (py (:pointer :double))
+  (m :int)
+  (method :int))
+
+(defun spline (x y m method)
+  (assert (= (length x) (length y)))
+  (gr-spline (length x)
+             (data-alloc x :double)
+             (data-alloc y :double)
+             m
+             method))
+
+(cffi:defcfun ("gr_gridit" gr-gridit) :void
+  (nd :int)
+  (xd (:pointer :double))
+  (yd (:pointer :double))
+  (zd (:pointer :double))
+  (nx :int)
+  (ny :int)
+  (x (:pointer :double))
+  (y (:pointer :double))
+  (z (:pointer :double)))
+
+(defun gridit (xd yd zd nx ny)
+  (assert (= (length xd) (length yd) (length zd)))
+  (gr-gridit (length xd)
+             (data-alloc xd :double)
+             (data-alloc yd :double)
+             (data-alloc zd :double)
+             nx
+             ny
+             (data-alloc (loop for i from 1 to nx
+                               collect i)
+                         :double)
+             (data-alloc (loop for i from 1 to ny
+                               collect i)
+                         :double)
+             (data-alloc (loop for i from 1 to (* nx ny)
+                               collect i)
+                         :double)))
 
 
 
-(defparameter *x*
-  (cffi:foreign-alloc :double
-                      :initial-contents
-                      (list 0.0d0 0.2d0 0.4d0 0.6d0 0.8d0 1.0d0)))
-(defparameter *y*
-  (cffi:foreign-alloc :double
-                      :initial-contents
-                      (list 0.3d0 0.5d0 0.4d0 0.2d0 0.6d0 0.7d0)))
+#|
+    setlinetype(style::Int)
+
+Specify the line style for polylines.
+
+style :
+    The polyline line style
+
+The available line types are:
+
+    +---------------------------+----+---------------------------------------------------+
+    |LINETYPE_SOLID             |   1|Solid line                                         |
+    +---------------------------+----+---------------------------------------------------+
+    |LINETYPE_DASHED            |   2|Dashed line                                        |
+    +---------------------------+----+---------------------------------------------------+
+    |LINETYPE_DOTTED            |   3|Dotted line                                        |
+    +---------------------------+----+---------------------------------------------------+
+    |LINETYPE_DASHED_DOTTED     |   4|Dashed-dotted line                                 |
+    +---------------------------+----+---------------------------------------------------+
+    |LINETYPE_DASH_2_DOT        |  -1|Sequence of one dash followed by two dots          |
+    +---------------------------+----+---------------------------------------------------+
+    |LINETYPE_DASH_3_DOT        |  -2|Sequence of one dash followed by three dots        |
+    +---------------------------+----+---------------------------------------------------+
+    |LINETYPE_LONG_DASH         |  -3|Sequence of long dashes                            |
+    +---------------------------+----+---------------------------------------------------+
+    |LINETYPE_LONG_SHORT_DASH   |  -4|Sequence of a long dash followed by a short dash   |
+    +---------------------------+----+---------------------------------------------------+
+    |LINETYPE_SPACED_DASH       |  -5|Sequence of dashes double spaced                   |
+    +---------------------------+----+---------------------------------------------------+
+    |LINETYPE_SPACED_DOT        |  -6|Sequence of dots double spaced                     |
+    +---------------------------+----+---------------------------------------------------+
+    |LINETYPE_DOUBLE_DOT        |  -7|Sequence of pairs of dots                          |
+    +---------------------------+----+---------------------------------------------------+
+    |LINETYPE_TRIPLE_DOT        |  -8|Sequence of groups of three dots                   |
+    +---------------------------+----+---------------------------------------------------+
+
+|#
+
+(cffi:defcfun ("gr_setlinetype" gr-setlinetype) :void
+  (linetype :int))
+
+(defun setlinetype (linetype)
+  (gr-setlinetype linetype))
+
+
+(cffi:defcfun ("gr_inqlinetype" gr-inqlinetype) :void
+  (linetype (:pointer :int)))
+
+(defun inqlinetype (linetype)
+  (gr-setinqlinetype (data-alloc linetype :double)))
 
 
 
-(cffi:defcfun ("gr_tick" tick) :double
-  (a :double)
-  (b :double))
+#|
+    setlinewidth(width::Real)
 
-(cffi:defcfun ("gr_axes" axes) :void
-  (x-tick :double)
-  (y-tick :double)
-  (x-org :double)
-  (y-org :double)
-  (major-x :int)
-  (major-y :int)
-  (tick-size :double))
+Define the line width of subsequent polyline output primitives.
+
+width :
+    The polyline line width scale factor
+
+The line width is calculated as the nominal line width generated
+on the workstation multiplied by the line width scale factor.
+This value is mapped by the workstation to the nearest available line width.
+The default line width is 1.0, or 1 times the line width generated on the graphics device.
+
+|#
+
+(cffi:defcfun ("gr_setlinewidth" gr-setlinewidth) :void
+  (width :double))
+
+(defun setlinewidth (width)
+  (gr-setlinetype (coerce width 'double-float)))
 
 
+(cffi:defcfun ("gr_inqlinewidth" gr-inqlinewidth) :void
+  (width (:pointer :double)))
+
+(defun inqlinewidth (width)
+  (gr-inqlinewidth (data-alloc width :double)))
+
+
+#|
+    setlinecolorind(color::Int)
+
+Define the color of subsequent polyline output primitives.
+
+color :
+    The polyline color index (COLOR < 1256)
+
+|#
+
+(cffi:defcfun ("gr_setlinecolorind" gr-setlinecolorind) :void
+  (color :int))
+
+(defun setlinecolorind (color)
+  (gr-setlinecolorind (color)))
+
+
+(cffi:defcfun ("gr_inqlinecolorind" gr-inqlinecolorind) :void
+  (coli (:pointer :int)))
+
+(defun inqlinecolorind (coli)
+  (gr-inqlinecolorind (data-alloc coli :int)))
+
+
+#|
+    setmarkertype(mtype::Int)
+
+Specifiy the marker type for polymarkers.
+
+style :
+    The polymarker marker type
+
+The available marker types are:
+
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_DOT               |    1|Smallest displayable dot                        |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_PLUS              |    2|Plus sign                                       |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_ASTERISK          |    3|Asterisk                                        |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_CIRCLE            |    4|Hollow circle                                   |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_DIAGONAL_CROSS    |    5|Diagonal cross                                  |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_SOLID_CIRCLE      |   -1|Filled circle                                   |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_TRIANGLE_UP       |   -2|Hollow triangle pointing upward                 |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_SOLID_TRI_UP      |   -3|Filled triangle pointing upward                 |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_TRIANGLE_DOWN     |   -4|Hollow triangle pointing downward               |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_SOLID_TRI_DOWN    |   -5|Filled triangle pointing downward               |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_SQUARE            |   -6|Hollow square                                   |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_SOLID_SQUARE      |   -7|Filled square                                   |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_BOWTIE            |   -8|Hollow bowtie                                   |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_SOLID_BOWTIE      |   -9|Filled bowtie                                   |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_HGLASS            |  -10|Hollow hourglass                                |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_SOLID_HGLASS      |  -11|Filled hourglass                                |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_DIAMOND           |  -12|Hollow diamond                                  |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_SOLID_DIAMOND     |  -13|Filled Diamond                                  |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_STAR              |  -14|Hollow star                                     |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_SOLID_STAR        |  -15|Filled Star                                     |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_TRI_UP_DOWN       |  -16|Hollow triangles pointing up and down overlaid  |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_SOLID_TRI_RIGHT   |  -17|Filled triangle point right                     |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_SOLID_TRI_LEFT    |  -18|Filled triangle pointing left                   |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_HOLLOW PLUS       |  -19|Hollow plus sign                                |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_SOLID PLUS        |  -20|Solid plus sign                                 |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_PENTAGON          |  -21|Pentagon                                        |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_HEXAGON           |  -22|Hexagon                                         |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_HEPTAGON          |  -23|Heptagon                                        |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_OCTAGON           |  -24|Octagon                                         |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_STAR_4            |  -25|4-pointed star                                  |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_STAR_5            |  -26|5-pointed star (pentagram)                      |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_STAR_6            |  -27|6-pointed star (hexagram)                       |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_STAR_7            |  -28|7-pointed star (heptagram)                      |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_STAR_8            |  -29|8-pointed star (octagram)                       |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_VLINE             |  -30|verical line                                    |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_HLINE             |  -31|horizontal line                                 |
+    +-----------------------------+-----+------------------------------------------------+
+    |MARKERTYPE_OMARK             |  -32|o-mark                                          |
+    +-----------------------------+-----+------------------------------------------------+
+Polymarkers appear centered over their specified coordinates.
+
+|#
+
+(cffi:defcfun ("gr_setmarkertype" gr-setmarkertype) :void
+  (markertype :int))
+
+(defun setmarkertype (markertype)
+  (gr-setlinetype markertype))
+
+
+(cffi:defcfun ("gr_inqmarkertype" gr-inqmarkertype) :void
+  (markertype (:pointer :int)))
+
+(defun inqmarkertype (markertype)
+  (gr-inqmarkertype (data-alloc markertype :int)))
+
+
+#|
+    setmarkersize(mtype::Real)
+
+Specify the marker size for polymarkers.
+
+size :
+    Scale factor applied to the nominal marker size
+
+The polymarker size is calculated as the nominal size generated on the graphics device
+multiplied by the marker size scale factor.
+
+|#
+
+(cffi:defcfun ("gr_setmarkersize" gr-setmarkersize) :void
+  (markersize :double))
+
+(defun setmarkersize (markersize)
+  (gr-setmarkersize (coerce markersize 'double-float)))
+
+
+(cffi:defcfun ("gr_inqmarkersize" gr-inqmarkersize) :void
+  (markersize (:pointer :double)))
+
+(defun inqmarkersize (markersize)
+  (gr-inqmarkersize (data-alloc markersize :double)))
+
+
+#|
+    setmarkercolorind(color::Int)
+
+Define the color of subsequent polymarker output primitives.
+
+color :
+    The polymarker color index (COLOR < 1256)
+
+|#
+
+(cffi:defcfun ("gr_setmarkercolorind" gr-setmarkercolorind) :void
+  (color :int))
+
+(defun setmarkercolorind (color)
+  (gr-setmarkercolorind color))
+
+
+(cffi:defcfun ("gr_inqmarkercolorind" gr-inqmarkercolorind) :void
+  (color (:pointer :int)))
+
+(defun inqmarkercolorind (color)
+  (gr-inqmarkercolorind (data-alloc color :int)))
