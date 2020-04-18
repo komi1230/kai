@@ -227,6 +227,9 @@ lst :
 (defun string-alloc (str)
   (cffi:foreign-string-alloc str))
 
+(defun arr-aref (arr type index)
+  (cffi:mem-aref arr type index))
+
 
 #|
     polyline
@@ -317,11 +320,14 @@ height, character up vector, text path and text alignment.
   (tby (:pointer :double)))
 
 (defun inqtext (x y str)
-  (gr-inqtext (coerce x 'double-float)
-              (coerce y 'double-float)
-              (string-alloc str)
-              (data-alloc '(0 0 0 0) :double)
-              (data-alloc '(0 0 0 0) :double)))
+  (let ((tbx (data-alloc '(0 0 0 0) :double))
+        (tby (data-alloc '(0 0 0 0) :double)))
+    (gr-inqtext (coerce x 'double-float)
+                (coerce y 'double-float)
+                (string-alloc str)
+                tbx
+                tby)
+    (list tbx tby)))
 
 
 #|
@@ -878,3 +884,524 @@ color :
 
 (defun inqmarkercolorind (color)
   (gr-inqmarkercolorind (data-alloc color :int)))
+
+
+
+#|
+    settextfontprec(font::Int, precision::Int)
+
+Specify the text font and precision for subsequent text output primitives.
+
+font :
+    Text font (see tables below)
+
+precision :
+    Text precision (see table below)
+
+The available text fonts are:
+
+    +--------------------------------------+-----+
+    |FONT_TIMES_ROMAN                      |  101|
+    +--------------------------------------+-----+
+    |FONT_TIMES_ITALIC                     |  102|
+    +--------------------------------------+-----+
+    |FONT_TIMES_BOLD                       |  103|
+    +--------------------------------------+-----+
+    |FONT_TIMES_BOLDITALIC                 |  104|
+    +--------------------------------------+-----+
+    |FONT_HELVETICA                        |  105|
+    +--------------------------------------+-----+
+    |FONT_HELVETICA_OBLIQUE                |  106|
+    +--------------------------------------+-----+
+    |FONT_HELVETICA_BOLD                   |  107|
+    +--------------------------------------+-----+
+    |FONT_HELVETICA_BOLDOBLIQUE            |  108|
+    +--------------------------------------+-----+
+    |FONT_COURIER                          |  109|
+    +--------------------------------------+-----+
+    |FONT_COURIER_OBLIQUE                  |  110|
+    +--------------------------------------+-----+
+    |FONT_COURIER_BOLD                     |  111|
+    +--------------------------------------+-----+
+    |FONT_COURIER_BOLDOBLIQUE              |  112|
+    +--------------------------------------+-----+
+    |FONT_SYMBOL                           |  113|
+    +--------------------------------------+-----+
+    |FONT_BOOKMAN_LIGHT                    |  114|
+    +--------------------------------------+-----+
+    |FONT_BOOKMAN_LIGHTITALIC              |  115|
+    +--------------------------------------+-----+
+    |FONT_BOOKMAN_DEMI                     |  116|
+    +--------------------------------------+-----+
+    |FONT_BOOKMAN_DEMIITALIC               |  117|
+    +--------------------------------------+-----+
+    |FONT_NEWCENTURYSCHLBK_ROMAN           |  118|
+    +--------------------------------------+-----+
+    |FONT_NEWCENTURYSCHLBK_ITALIC          |  119|
+    +--------------------------------------+-----+
+    |FONT_NEWCENTURYSCHLBK_BOLD            |  120|
+    +--------------------------------------+-----+
+    |FONT_NEWCENTURYSCHLBK_BOLDITALIC      |  121|
+    +--------------------------------------+-----+
+    |FONT_AVANTGARDE_BOOK                  |  122|
+    +--------------------------------------+-----+
+    |FONT_AVANTGARDE_BOOKOBLIQUE           |  123|
+    +--------------------------------------+-----+
+    |FONT_AVANTGARDE_DEMI                  |  124|
+    +--------------------------------------+-----+
+    |FONT_AVANTGARDE_DEMIOBLIQUE           |  125|
+    +--------------------------------------+-----+
+    |FONT_PALATINO_ROMAN                   |  126|
+    +--------------------------------------+-----+
+    |FONT_PALATINO_ITALIC                  |  127|
+    +--------------------------------------+-----+
+    |FONT_PALATINO_BOLD                    |  128|
+    +--------------------------------------+-----+
+    |FONT_PALATINO_BOLDITALIC              |  129|
+    +--------------------------------------+-----+
+    |FONT_ZAPFCHANCERY_MEDIUMITALIC        |  130|
+    +--------------------------------------+-----+
+    |FONT_ZAPFDINGBATS                     |  131|
+    +--------------------------------------+-----+
+
+The available text precisions are:
+
+    +---------------------------+---+--------------------------------------+
+    |TEXT_PRECISION_STRING      |  0|String precision (higher quality)     |
+    +---------------------------+---+--------------------------------------+
+    |TEXT_PRECISION_CHAR        |  1|Character precision (medium quality)  |
+    +---------------------------+---+--------------------------------------+
+    |TEXT_PRECISION_STROKE      |  2|Stroke precision (lower quality)      |
+    +---------------------------+---+--------------------------------------+
+
+The appearance of a font depends on the text precision value specified.
+STRING, CHARACTER or STROKE precision allows for a greater or lesser
+realization of the text primitives, for efficiency. STRING is the default
+precision for GR and produces the highest quality output.
+
+|#
+
+(cffi:defcfun ("gr_settextfontprec" gr-settextfontprec) :void
+  (font :int)
+  (precision :int))
+
+(defun settextfontprec (font precision)
+  (gr-settextfontprec font precision))
+
+
+#|
+    setcharexpan(factor::Real)
+
+Set the current character expansion factor (width to height ratio).
+
+factor :
+    Text expansion factor applied to the nominal text width-to-height ratio
+
+setcharexpan defines the width of subsequent text output primitives. The expansion
+factor alters the width of the generated characters, but not their height. The default
+text expansion factor is 1, or one times the normal width-to-height ratio of the text.
+
+|#
+
+(cffi:defcfun ("gr_setcharexpan" gr-setcharexpan) :void
+  (factor :double))
+
+(defun setcharexpan (factor)
+  (gr-setcharexpan (coerce factor 'double-float)))
+
+
+(cffi:defcfun ("gr_setcharspace" gr-setcharspace) :void
+  (spacing :double))
+
+(defun setcharspace (spacing)
+  (gr-setcharspace (double spaced 'double-float)))
+
+
+#|
+    settextcolorind(color::Int)
+
+Sets the current text color index.
+
+color :
+    The text color index (COLOR < 1256)
+
+settextcolorind defines the color of subsequent text output primitives.
+GR uses the default foreground color (black=1) for the default text color index.
+
+|#
+
+(cffi:defcfun ("gr_settextcolorind" gr-settextcolorind) :void
+  (color :int))
+
+(defun settextcolorind (color)
+  (gr-settextcolorind color))
+
+
+(cffi:defcfun ("gr_inqtextcolorind" gr-inqtextcolorind) :void
+  (color (:pointer :int)))
+
+(defun inqtextcolorind (color)
+  (gr-inqtextcolorind (data-alloc color :int)))
+
+
+#|
+    setcharheight(height::Real)
+
+Set the current character height.
+
+height :
+    Text height value
+
+setcharheight defines the height of subsequent text output primitives. Text height
+is defined as a percentage of the default window. GR uses the default text height of
+0.027 (2.7% of the height of the default window).
+
+|#
+
+(cffi:defcfun ("gr_setcharheight" gr-setcharheight) :void
+  (height :double))
+
+(defun setcharheight (height)
+  (gr-setcharheight (coerce height 'double-float)))
+
+
+(cffi:defcfun ("gr_inqcharheight" gr-inqcharheight) :void
+  (height (:pointer :double)))
+
+(defun inqcharheight (height)
+  (gr-inqcharheight (data-alloc height :double)))
+
+
+#|
+    setcharup(ux::Real, uy::Real)
+
+Set the current character text angle up vector.
+
+ux, uy :
+    Text up vector
+
+setcharup defines the vertical rotation of subsequent text output primitives.
+The text up vector is initially set to (0, 1), horizontal to the baseline.
+
+|#
+
+(cffi:defcfun ("gr_setcharup" gr-setcharup) :void
+  (ux :double)
+  (uy :double))
+
+(defun setcharup (ux uy)
+  (gr-setcharup (coerce ux 'double-float)
+                (coerce uy 'double-float)))
+
+
+#|
+    settextpath(path::Int)
+
+Define the current direction in which subsequent text will be drawn.
+
+path :
+    Text path (see table below)
+
+    +----------------------+---+---------------+
+    |TEXT_PATH_RIGHT       |  0|left-to-right  |
+    +----------------------+---+---------------+
+    |TEXT_PATH_LEFT        |  1|right-to-left  |
+    +----------------------+---+---------------+
+    |TEXT_PATH_UP          |  2|downside-up    |
+    +----------------------+---+---------------+
+    |TEXT_PATH_DOWN        |  3|upside-down    |
+    +----------------------+---+---------------+
+|#
+
+(cffi:defcfun ("gr_settextpath" gr-settextpath) :void
+  (path :int))
+
+(defun settextpath (path)
+  (gr-settextpath path))
+
+
+#|
+    settextalign(horizontal::Int, vertical::Int)
+
+Set the current horizontal and vertical alignment for text.
+
+horizontal :
+    Horizontal text alignment (see the table below)
+
+vertical :
+    Vertical text alignment (see the table below)
+
+settextalign specifies how the characters in a text primitive will be aligned
+in horizontal and vertical space. The default text alignment indicates horizontal left
+alignment and vertical baseline alignment.
+
+    +-------------------------+---+----------------+
+    |TEXT_HALIGN_NORMAL       |  0|                |
+    +-------------------------+---+----------------+
+    |TEXT_HALIGN_LEFT         |  1|Left justify    |
+    +-------------------------+---+----------------+
+    |TEXT_HALIGN_CENTER       |  2|Center justify  |
+    +-------------------------+---+----------------+
+    |TEXT_HALIGN_RIGHT        |  3|Right justify   |
+    +-------------------------+---+----------------+
+    +-------------------------+---+------------------------------------------------+
+    |TEXT_VALIGN_NORMAL       |  0|                                                |
+    +-------------------------+---+------------------------------------------------+
+    |TEXT_VALIGN_TOP          |  1|Align with the top of the characters            |
+    +-------------------------+---+------------------------------------------------+
+    |TEXT_VALIGN_CAP          |  2|Aligned with the cap of the characters          |
+    +-------------------------+---+------------------------------------------------+
+    |TEXT_VALIGN_HALF         |  3|Aligned with the half line of the characters    |
+    +-------------------------+---+------------------------------------------------+
+    |TEXT_VALIGN_BASE         |  4|Aligned with the base line of the characters    |
+    +-------------------------+---+------------------------------------------------+
+    |TEXT_VALIGN_BOTTOM       |  5|Aligned with the bottom line of the characters  |
+    +-------------------------+---+------------------------------------------------+
+|#
+
+(cffi:defcfun ("gr_settextalign" gr-settextalign) :void
+  (horizontal :int)
+  (vertical :int))
+
+(defun settextalign (horizontal vertical)
+  (gr-settextalign horizontal vertical))
+
+
+#|
+    setfillintstyle(style::Int)
+
+
+Set the fill area interior style to be used for fill areas.
+
+style :
+    The style of fill to be used
+
+setfillintstyle defines the interior style  for subsequent fill area output
+primitives. The default interior style is HOLLOW.
+
+    +---------+---+--------------------------------------------------------------------------------+
+    |HOLLOW   |  0|No filling. Just draw the bounding polyline                                     |
+    +---------+---+--------------------------------------------------------------------------------+
+    |SOLID    |  1|Fill the interior of the polygon using the fill color index                     |
+    +---------+---+--------------------------------------------------------------------------------+
+    |PATTERN  |  2|Fill the interior of the polygon using the style index as a pattern index       |
+    +---------+---+--------------------------------------------------------------------------------+
+    |HATCH    |  3|Fill the interior of the polygon using the style index as a cross-hatched style |
+    +---------+---+--------------------------------------------------------------------------------+
+
+|#
+
+(cffi:defcfun ("gr_setfillinstyle" gr-setfillinstyle) :void
+  (style :int))
+
+(defun setfillinstyle (style)
+  (gr-setfillinstyle style))
+
+
+(cffi:defcfun ("gr_inqfillinstyle" gr-inqfillinstyle) :void
+  (style (:pointer :int)))
+
+(defun inqfillinstyle (style)
+  (gr-inqfillinstyle (data-alloc style :int)))
+
+
+#|
+    setfillstyle(index::Int)
+
+Sets the fill style to be used for subsequent fill areas.
+
+index :
+    The fill style index to be used
+
+setfillstyle specifies an index when PATTERN fill or HATCH fill is requested by the
+setfillintstyle function. If the interior style is set to PATTERN, the fill style
+index points to a device-independent pattern table. If interior style is set to HATCH
+the fill style index indicates different hatch styles. If HOLLOW or SOLID is specified
+for the interior style, the fill style index is unused.
+
+|#
+
+(cffi:defcfun ("gr_setfillstyle" gr-setfillstyle) :void
+  (index :int))
+
+(defun setfillstyle (index)
+  (gr-setfillstyle index))
+
+
+(cffi:defcfun ("gr_inqfillstyle" gr-inqfillstyle) :void
+  (index (:pointer :int)))
+
+(defun inqfillstyle (index)
+  (gr-inqfillstyle (data-alloc index :int)))
+
+
+#|
+    setfillcolorind(color::Int)
+
+Sets the current fill area color index.
+
+color :
+    The fill area color index (COLOR < 1256)
+
+setfillcolorind defines the color of subsequent fill area output primitives.
+GR uses the default foreground color (black=1) for the default fill area color index.
+
+|#
+
+(cffi:defcfun ("gr_setfillcolorind" gr-setfillcolorind) :void
+  (color :int))
+
+(defun setfillcolorind (color)
+  (gr-setfillcolorind color))
+
+
+(cffi:defcfun ("gr_inqfillcolorind" gr-inqfillcolorind) :void
+  (color (:pointer :int)))
+
+(defun inqfillcolorind (color)
+  (gr-inqfillcolorind (data-alloc color :int)))
+
+
+#|
+    setcolorrep(index::Int, red::Real, green::Real, blue::Real)
+
+`setcolorrep` allows to redefine an existing color index representation by specifying
+an RGB color triplet.
+
+index :
+    Color index in the range 0 to 1256
+
+red :
+    Red intensity in the range 0.0 to 1.0
+
+green :
+    Green intensity in the range 0.0 to 1.0
+
+blue:
+    Blue intensity in the range 0.0 to 1.0
+
+|#
+
+(cffi:defcfun ("gr_setcolorrep" gr-setcolorrep) :void
+  (index :int)
+  (red :double)
+  (green :double)
+  (blue :double))
+
+(defun setcolorrep (index red green blue)
+  (gr-setcolorrep index
+                  (coerce red 'double-float)
+                  (coerce green 'double-float)
+                  (coerce blue 'double-float)))
+
+
+#|
+    setscale(options::Int)
+
+setscale sets the type of transformation to be used for subsequent GR output
+primitives.
+
+options :
+    Scale specification (see Table below)
+
+    +---------------+--------------------+
+    |OPTION_X_LOG   |Logarithmic X-axis  |
+    +---------------+--------------------+
+    |OPTION_Y_LOG   |Logarithmic Y-axis  |
+    +---------------+--------------------+
+    |OPTION_Z_LOG   |Logarithmic Z-axis  |
+    +---------------+--------------------+
+    |OPTION_FLIP_X  |Flip X-axis         |
+    +---------------+--------------------+
+    |OPTION_FLIP_Y  |Flip Y-axis         |
+    +---------------+--------------------+
+    |OPTION_FLIP_Z  |Flip Z-axis         |
+    +---------------+--------------------+
+
+setscale defines the current transformation according to the given scale
+specification which may be or'ed together using any of the above options. GR uses
+these options for all subsequent output primitives until another value is provided.
+The scale options are used to transform points from an abstract logarithmic or
+semi-logarithmic coordinate system, which may be flipped along each axis, into the
+world coordinate system.
+
+Note: When applying a logarithmic transformation to a specific axis, the system
+assumes that the axes limits are greater than zero.
+
+|#
+
+(cffi:defcfun ("gr_setscale" gr-setscale) :int
+  (options :int))
+
+(defun setscale (options)
+  (gr-setscale options))
+
+
+(cffi:defcfun ("gr_inqscale" gr-inqscale) :void
+  (options (:pointer :int)))
+
+(defun inqscale ()
+  (let ((options 0))
+    (gr-inqscale (data-alloc optinos :int))
+    options))
+
+
+#|
+    setwindow(xmin::Real, xmax::Real, ymin::Real, ymax::Real)
+
+setwindow establishes a window, or rectangular subspace, of world coordinates to be
+plotted. If you desire log scaling or mirror-imaging of axes, use the SETSCALE function.
+
+xmin :
+    The left horizontal coordinate of the window (`xmin` < `xmax`).
+
+xmax :
+    The right horizontal coordinate of the window.
+
+ymin :
+    The bottom vertical coordinate of the window (`ymin` < `ymax`).
+
+ymax :
+    The top vertical coordinate of the window.
+
+setwindow defines the rectangular portion of the World Coordinate space (WC) to be
+associated with the specified normalization transformation. The WC window and the
+Normalized Device Coordinates (NDC) viewport define the normalization transformation
+through which all output primitives are mapped. The WC window is mapped onto the
+rectangular NDC viewport which is, in turn, mapped onto the display surface of the
+open and active workstation, in device coordinates. By default, GR uses the range
+[0,1] x [0,1], in world coordinates, as the normalization transformation window.
+
+|#
+
+(cffi:defcfun ("gr_setwindow" gr-setwindow) :void
+  (xmin :double)
+  (xmax :double)
+  (ymin :double)
+  (ymax :double))
+
+(defun setwindow (xmin xmax ymin ymax)
+  (gr-setwindow (coerce xmin 'double-float)
+                (coerce xmax 'double-float)
+                (coerce ymin 'double-float)
+                (coerce ymax 'double-float)))
+
+
+(cffi:defcfun ("gr_inqwindow" gr-inqwindow) :void
+  (xmin (:pointer :double))
+  (xmax (:pointer :double))
+  (ymin (:pointer :double))
+  (ymax (:pointer :double)))
+
+(defun inqwindow ()
+  (let ((xmin (data-alloc '(0) :double))
+        (xmax (data-alloc '(0) :doubl))
+        (ymin (data-alloc '(0) :doubl))
+        (ymax (data-alloc '(0) :doubl)))
+    (gr-inqwindow xmin xmax ymin ymax)
+    (list (arr-aref xmin :double 0)
+          (arr-aref xmax :double 0)
+          (arr-aref ymin :double 0)
+          (arr-aref ymax :double 0))))
+
+
