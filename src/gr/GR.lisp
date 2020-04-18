@@ -1405,3 +1405,188 @@ open and active workstation, in device coordinates. By default, GR uses the rang
           (arr-aref ymax :double 0))))
 
 
+#|
+    setviewport(xmin::Real, xmax::Real, ymin::Real, ymax::Real)
+
+setviewport establishes a rectangular subspace of normalized device coordinates.
+
+xmin :
+    The left horizontal coordinate of the viewport.
+
+xmax :
+    The right horizontal coordinate of the viewport (0 <= xmin < xmax <= 1).
+
+ymin :
+    The bottom vertical coordinate of the viewport.
+
+ymax :
+    The top vertical coordinate of the viewport (0 <= ymin < ymax <= 1).
+
+setviewport defines the rectangular portion of the Normalized Device Coordinate
+(NDC) space to be associated with the specified normalization transformation. The
+NDC viewport and World Coordinate (WC) window define the normalization transformation
+through which all output primitives pass. The WC window is mapped onto the rectangular
+NDC viewport which is, in turn, mapped onto the display surface of the open and active
+workstation, in device coordinates.
+
+|#
+
+(cffi:defcfun ("gr_setviewport" gr-setviewport) :void
+  (xmin :double)
+  (xmax :double)
+  (ymin :double)
+  (ymax :double))
+
+(defun setviewport (xmin xmax ymin ymax)
+  (gr-setviewport (coerce xmin 'double-float)
+                  (coerce xmax 'double-float)
+                  (coerce ymin 'double-float)
+                  (coerce ymax 'double-float)))
+
+
+(cffi:defcfun ("gr_inqviewport" gr-inqviewport) :void
+  (xmin (:pointer :double))
+  (xmax (:pointer :double))
+  (ymin (:pointer :double))
+  (ymax (:pointer :double)))
+
+(defun inqviewport ()
+  (let ((xmin (data-alloc '(0) :double))
+        (xmax (data-alloc '(0) :double))
+        (ymin (data-alloc '(0) :double))
+        (ymax (data-alloc '(0) :double)))
+    (gr-inqviewport xmin xmax ymin ymax)
+    (list (arr-aref xmin :double 0)
+          (arr-aref xmax :double 0)
+          (arr-aref ymin :double 0)
+          (arr-aref ymax :double 0))))
+
+
+#|
+    selntran(transform::Int)
+
+selntran selects a predefined transformation from world coordinates to normalized
+device coordinates.
+
+transform :
+    A normalization transformation number.
+
+    +------+----------------------------------------------------------------------------------------------------+
+    |     0|Selects the identity transformation in which both the window and viewport have the range of 0 to 1  |
+    +------+----------------------------------------------------------------------------------------------------+
+    |  >= 1|Selects a normalization transformation as defined by setwindow and setviewport                      |
+    +------+----------------------------------------------------------------------------------------------------+
+
+|#
+
+(cffi:defcfun ("gr_selntran" gr-selntran) :void
+  (transform :int))
+
+(defun selntran (transform)
+  (gr-selntran transform))
+
+
+#|
+    setclip(indicator::Int)
+
+Set the clipping indicator.
+
+indicator :
+    An indicator specifying whether clipping is on or off.
+
+    +----+---------------------------------------------------------------+
+    |   0|Clipping is off. Data outside of the window will be drawn.     |
+    +----+---------------------------------------------------------------+
+    |   1|Clipping is on. Data outside of the window will not be drawn.  |
+    +----+---------------------------------------------------------------+
+
+setclip enables or disables clipping of the image drawn in the current window.
+Clipping is defined as the removal of those portions of the graph that lie outside of
+the defined viewport. If clipping is on, GR does not draw generated output primitives
+past the viewport boundaries. If clipping is off, primitives may exceed the viewport
+boundaries, and they will be drawn to the edge of the workstation window.
+By default, clipping is on.
+
+|#
+
+(cffi:defcfun ("gr_setclip" gr-setclip) :void
+  (indicator :int))
+
+(defun setclip (indicator)
+  (gr-setclip indicator))
+
+
+#|
+    setwswindow(xmin::Real, xmax::Real, ymin::Real, ymax::Real)
+
+Set the area of the NDC viewport that is to be drawn in the workstation window.
+
+xmin :
+    The left horizontal coordinate of the workstation window.
+
+xmax :
+    The right horizontal coordinate of the workstation window (0 <= `xmin` < `xmax` <= 1).
+
+ymin :
+    The bottom vertical coordinate of the workstation window.
+
+ymax :
+    The top vertical coordinate of the workstation window (0 <= ymin < ymax <= 1).
+
+setwswindow defines the rectangular area of the Normalized Device Coordinate space
+to be output to the device. By default, the workstation transformation will map the
+range [0,1] x [0,1] in NDC onto the largest square on the workstation’s display
+surface. The aspect ratio of the workstation window is maintained at 1 to 1.
+
+|#
+
+(cffi:defcfun ("gr_setwswindow" gr-setwswindow) :void
+  (xmin :double)
+  (xmax :double)
+  (ymin :double)
+  (ymax :double))
+
+(defun setwswindow (xmin xmax ymin ymax)
+  (gr-setwswindow (coerce xmin 'double-float)
+                  (coerce xmax 'double-float)
+                  (coerce ymin 'double-float)
+                  (coerce ymax 'double-float)))
+
+
+#|
+    setwsviewport(xmin::Real, xmax::Real, ymin::Real, ymax::Real)
+
+Define the size of the workstation graphics window in meters.
+
+xmin :
+    The left horizontal coordinate of the workstation viewport.
+
+xmax :
+    The right horizontal coordinate of the workstation viewport.
+
+ymin :
+    The bottom vertical coordinate of the workstation viewport.
+
+ymax :
+    The top vertical coordinate of the workstation viewport.
+
+setwsviewport places a workstation window on the display of the specified size in
+meters. This command allows the workstation window to be accurately sized for a
+display or hardcopy device, and is often useful for sizing graphs for desktop
+publishing applications.
+
+|#
+
+(cffi:defcfun ("gr_setwsviewport" gr-setwsviewport) :void
+  (xmin :double)
+  (xmax :double)
+  (ymin :double)
+  (ymax :double))
+
+(defun setwsviewport (xmin xmax ymin ymax)
+  (gr-setwsviewport (coerce xmin 'double-float)
+                    (coerce xmax 'double-float)
+                    (coerce ymin 'double-float)
+                    (coerce ymax 'double-float)))
+
+
