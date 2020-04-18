@@ -1296,57 +1296,6 @@ blue:
 
 
 #|
-    setscale(options::Int)
-
-setscale sets the type of transformation to be used for subsequent GR output
-primitives.
-
-options :
-    Scale specification (see Table below)
-
-    +---------------+--------------------+
-    |OPTION_X_LOG   |Logarithmic X-axis  |
-    +---------------+--------------------+
-    |OPTION_Y_LOG   |Logarithmic Y-axis  |
-    +---------------+--------------------+
-    |OPTION_Z_LOG   |Logarithmic Z-axis  |
-    +---------------+--------------------+
-    |OPTION_FLIP_X  |Flip X-axis         |
-    +---------------+--------------------+
-    |OPTION_FLIP_Y  |Flip Y-axis         |
-    +---------------+--------------------+
-    |OPTION_FLIP_Z  |Flip Z-axis         |
-    +---------------+--------------------+
-
-setscale defines the current transformation according to the given scale
-specification which may be or'ed together using any of the above options. GR uses
-these options for all subsequent output primitives until another value is provided.
-The scale options are used to transform points from an abstract logarithmic or
-semi-logarithmic coordinate system, which may be flipped along each axis, into the
-world coordinate system.
-
-Note: When applying a logarithmic transformation to a specific axis, the system
-assumes that the axes limits are greater than zero.
-
-|#
-
-(cffi:defcfun ("gr_setscale" gr-setscale) :int
-  (options :int))
-
-(defun setscale (options)
-  (gr-setscale options))
-
-
-(cffi:defcfun ("gr_inqscale" gr-inqscale) :void
-  (options (:pointer :int)))
-
-(defun inqscale ()
-  (let ((options 0))
-    (gr-inqscale (data-alloc optinos :int))
-    options))
-
-
-#|
     setwindow(xmin::Real, xmax::Real, ymin::Real, ymax::Real)
 
 setwindow establishes a window, or rectangular subspace, of world coordinates to be
@@ -1590,3 +1539,162 @@ publishing applications.
                     (coerce ymax 'double-float)))
 
 
+(cffi:defcfun ("gr_createseg" gr-createseg) :void
+  (segment :int))
+
+(defun createseg (segment)
+  (gr-createseg segment))
+
+
+(cffi:defcfun ("gr_copysegws" gr-copysegws) :void
+  (segment :int))
+
+(defun copysegws (segment)
+  (gr-copysegws segment))
+
+
+(cffi:defcfun ("gr_redrawsegws" gr-redrawsegws) :void)
+
+(defun redrawsegws ()
+  (gr-redrawsegws))
+
+
+(cffi:defcfun ("gr_setsegtran" gr-setsegtran) :void
+  (segment :int)
+  (fx :double)
+  (fy :double)
+  (transx :double)
+  (transy :double)
+  (phi :double)
+  (scalex :double)
+  (scaley :double))
+
+(defun setsegtran (segment fx fy transx transy phi scalex scaley)
+  (gr-setsegtran segment
+                 (coerce fx 'double-float)
+                 (coerce fy 'double-float)
+                 (coerce transx 'double-float)
+                 (coerce transy 'double-float)
+                 (coerce phi 'double-float)
+                 (coerce scalex 'double-float)
+                 (coerce scaley 'double-float)))
+
+
+(cffi:defcfun ("gr_closeseg" gr-closeseg) :void)
+
+(defun closeseg ()
+  (gr-closeseg))
+
+
+(cffi:defcfun ("gr_emergencycloseseg" gr-emergencycloseseg) :void)
+
+(defun emergencycloseseg ()
+  (gr-emergencycloseseg))
+
+
+(cffi:defcfun ("gr_updategks" gr-updategks) :void)
+
+(defun updategks ()
+  (gr-updategks))
+
+
+#|
+    setspace(zmin::Real, zmax::Real, rotation::Int, tilt::Int)
+
+Set the abstract Z-space used for mapping three-dimensional output primitives into
+the current world coordinate space.
+
+zmin :
+    Minimum value for the Z-axis.
+
+zmax :
+    Maximum value for the Z-axis.
+
+rotation :
+    Angle for the rotation of the X axis, in degrees.
+
+tilt :
+    Viewing angle of the Z axis in degrees.
+
+setspace establishes the limits of an abstract Z-axis and defines the angles for
+rotation and for the viewing angle (tilt) of a simulated three-dimensional graph,
+used for mapping corresponding output primitives into the current window.
+These settings are used for all subsequent three-dimensional output primitives until
+other values are specified. Angles of rotation and viewing angle must be specified
+between 0° and 90°.
+|#
+
+(cffi:defcfun ("gr_setspace" gr-setspace) :int
+  (zmin :double)
+  (zmax :double)
+  (rotation :int)
+  (tilt :int))
+
+(defun setspace (zmin zmax rotation tilt)
+  (gr-setspace (coerce zmin 'double-float)
+               (coerce zmax 'double-float)
+               rotation
+               tilt))
+
+(cffi:defcfun ("gr_inqspace" gr-inqspace) :void
+  (zmin (:pointer :double))
+  (zmax (:pointer :double))
+  (rotation (:pointer :int))
+  (tilt (:pointer :int)))
+
+(defun inqspace (zmin zmax rotation tilt)
+  (gr-inqspace (data-alloc zmin :double)
+               (data-alloc zmax :double)
+               (data-alloc rotation :int)
+               (data-alloc tilt :int)))
+
+
+#|
+    setscale(options::Int)
+
+setscale sets the type of transformation to be used for subsequent GR output
+primitives.
+
+options :
+    Scale specification (see Table below)
+
+    +---------------+--------------------+
+    |OPTION_X_LOG   |Logarithmic X-axis  |
+    +---------------+--------------------+
+    |OPTION_Y_LOG   |Logarithmic Y-axis  |
+    +---------------+--------------------+
+    |OPTION_Z_LOG   |Logarithmic Z-axis  |
+    +---------------+--------------------+
+    |OPTION_FLIP_X  |Flip X-axis         |
+    +---------------+--------------------+
+    |OPTION_FLIP_Y  |Flip Y-axis         |
+    +---------------+--------------------+
+    |OPTION_FLIP_Z  |Flip Z-axis         |
+    +---------------+--------------------+
+
+setscale defines the current transformation according to the given scale
+specification which may be or'ed together using any of the above options. GR uses
+these options for all subsequent output primitives until another value is provided.
+The scale options are used to transform points from an abstract logarithmic or
+semi-logarithmic coordinate system, which may be flipped along each axis, into the
+world coordinate system.
+
+Note: When applying a logarithmic transformation to a specific axis, the system
+assumes that the axes limits are greater than zero.
+
+|#
+
+(cffi:defcfun ("gr_setscale" gr-setscale) :int
+  (options :int))
+
+(defun setscale (options)
+  (gr-setscale options))
+
+
+(cffi:defcfun ("gr_inqscale" gr-inqscale) :void
+  (options (:pointer :int)))
+
+(defun inqscale ()
+  (let ((options '(0)))
+    (gr-inqscale (data-alloc options :int))
+    options))
