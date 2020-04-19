@@ -2019,4 +2019,5 @@ value :
     (eval (list fy a b str c)))
   (gr-axeslbl x-tick y-tick x-org y-org
               major-x major-y tick-size
-              (cffi:callback fpx) (cffi:callback fpy)))
+              (cffi:callback fpx) (cffi:callback fpy))
+  (free fpx fpy))
