@@ -86,6 +86,9 @@ lst :
 (defun string-alloc (str)
   (cffi:foreign-string-alloc str))
 
+(defun string-free (str)
+  (cffi:foreign-string-free str))
+
 (defun arr-aref (arr type index)
   (cffi:mem-aref arr type index))
 
@@ -177,10 +180,16 @@ Available workstation types:
     +-------------+------------------------------------------------------+
 |#
 
-(cffi:defcfun ("gr_openws" openws) :void
+(cffi:defcfun ("gr_openws" gr-openws) :void
   (workstation-id :int)
   (connection (:pointer :char))
   (type :int))
+
+(defun openws (ws-id connection type)
+  (let ((conn-data (string-alloc connection)))
+    (gr-openws ws-id
+               conn-data
+               type)))
 
 
 #|
@@ -192,8 +201,11 @@ workstation_id :
     A workstation identifier.
 |#
 
-(cffi:defcfun ("gr_closews" closews) :void
+(cffi:defcfun ("gr_closews" gr-closews) :void
   (workstation-id :int))
+
+(defun closews (ws-id)
+  (gr-closews ws-id))
 
 
 #| 
@@ -206,8 +218,11 @@ workstation_id :
 
 |#
 
-(cffi:defcfun ("gr_activatews" activatews) :void
+(cffi:defcfun ("gr_activatews" gr-activatews) :void
   (workstation-id :int))
+
+(defun activatews (ws-id)
+  (gr-activatews ws-id))
 
 
 #|
@@ -219,8 +234,11 @@ workstation_id :
     A workstation identifier.
 |#
 
-(cffi:defcfun ("gr_deactivatews" deactivatews) :void
+(cffi:defcfun ("gr_deactivatews" gr-deactivatews) :void
   (workstation-id :int))
+
+(defun deactivatews (ws-id)
+  (gr-deactivatews ws-id))
 
 
 ;; Configure the specified workstation
@@ -325,7 +343,7 @@ height, character up vector, text path and text alignment.
     (gr-text (coerce x 'double-float)
              (coerce y 'double-float)
              (string-alloc str))
-    (free str-data)))
+    (string-free str-data)))
 
 (cffi:defcfun ("gr_inqtext" gr-inqtext) :void
   (x :double)
@@ -343,7 +361,7 @@ height, character up vector, text path and text alignment.
                 str-data
                 tbx
                 tby)
-    (free str-data)
+    (string-free str-data)
     (list tbx tby)))
 
 
@@ -1877,7 +1895,7 @@ function.
     (gr-textext (coerce x 'double-float)
                 (coerce y 'double-float)
                 str-data)
-    (free str-data)))
+    (string-free str-data)))
 
 (cffi:defcfun ("gr_inqtextext" gr-inqtextext) :void
   (x :double)
@@ -1895,7 +1913,7 @@ function.
                    (string-alloc str)
                    tbx
                    tby)
-    (free str-data)
+    (string-free str-data)
     (list tbx tby)))
 
 #|
