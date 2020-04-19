@@ -1992,3 +1992,31 @@ value :
     Floating point representation of the label drawn at (x,y).
 |#
 
+(cffi:defcfun ("gr_axeslbl" gr-axeslbl) :void
+  (x-tick :double)
+  (y-tick :double)
+  (x-org :double)
+  (y-org :double)
+  (major-x :double)
+  (major-y :double)
+  (tick-size :double)
+  (fpx :pointer)
+  (fpy :pointer))
+
+(defun axeslbl (x-tick y-tick x-org y-org
+                major-x major-y tick-size fx fy)
+  (cffi:defcallback fpx :void
+    ((a :double)
+     (b :double)
+     (str (:pointer :char))
+     (c :double))
+    (eval (list fx a b str c)))
+  (cffi:defcallback fpy :void
+    ((a :double)
+     (b :double)
+     (str (:pointer :char))
+     (c :double))
+    (eval (list fy a b str c)))
+  (gr-axeslbl x-tick y-tick x-org y-org
+              major-x major-y tick-size
+              (cffi:callback fpx) (cffi:callback fpy)))
