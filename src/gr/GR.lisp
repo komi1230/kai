@@ -18,6 +18,7 @@
 (in-package :kai.GR.GR)
 
 
+
 ;;;; Setup
 ;;;
 ;;; We load some shared files (.dll or .so) to make bindings to
@@ -56,6 +57,38 @@
     (cffi:load-foreign-library
      (merge-pathnames (format nil "lib/~A" libGR)
                       (make-kai-cache "gr")))))
+
+
+#|
+    Memory allocation for Array
+
+When drawing graph, we have to provide data as array pointer
+to drawing function.
+
+lst : 
+    A list containing data to plot
+|#
+
+(defun data-alloc (lst type)
+  (cffi:foreign-alloc type
+                      :initial-contents
+                      (mapcar #'(lambda (x)
+                                  (case type
+                                    (:int (coerce x 'integer))
+                                    (:float (coerce x 'single-float))
+                                    (:double (coerce x 'double-float))))
+                              lst)))
+
+(defun free (&rest vars)
+  (loop for var in vars
+        do (cffi:foreign-free var)))
+
+(defun string-alloc (str)
+  (cffi:foreign-string-alloc str))
+
+(defun arr-aref (arr type index)
+  (cffi:mem-aref arr type index))
+
 
 
 
@@ -203,37 +236,6 @@ workstation_id :
 (cffi:defcfun ("gr_updatews" updatews) :void)
 
 
-
-#|
-    Memory allocation for Array
-
-When drawing graph, we have to provide data as array pointer
-to drawing function.
-
-lst : 
-    A list containing data to plot
-|#
-
-(defun data-alloc (lst type)
-  (cffi:foreign-alloc type
-                      :initial-contents
-                      (mapcar #'(lambda (x)
-                                  (case type
-                                    (:int (coerce x 'integer))
-                                    (:float (coerce x 'single-float))
-                                    (:double (coerce x 'double-float))))
-                              lst)))
-
-(defun free (var)
-  (cffi:foreign-free var))
-
-(defun string-alloc (str)
-  (cffi:foreign-string-alloc str))
-
-(defun arr-aref (arr type index)
-  (cffi:mem-aref arr type index))
-
-
 #|
     polyline
 
@@ -260,8 +262,8 @@ y :
     (gr-polyline (length x)
                  x-data
                  y-data)
-    (free x-data)
-    (free y-data)))
+    (free x-data
+          y-data)))
 
 
 #|
@@ -371,8 +373,8 @@ style, fill area style index and fill area color index.
     (gr-fillarea (length x)
                  (data-alloc x :double)
                  (data-alloc y :double))
-    (free x-data)
-    (free y-data)))
+    (free x-data
+          y-data)))
 
 
 #|
@@ -579,9 +581,9 @@ datrec :
             primid
             (length primid)
             datrec-data)
-    (free x-data)
-    (free y-data)
-    (free datrec-data)))
+    (free x-data
+          y-data
+          datrec-data)))
 
 
 #|
@@ -627,8 +629,8 @@ If method is < -1, then a cubic B-spline is calculated.
                y-data
                m
                method)
-    (free x-data)
-    (free y-data)))
+    (free x-data
+          y-data)))
 
 (cffi:defcfun ("gr_gridit" gr-gridit) :void
   (nd :int)
@@ -664,12 +666,12 @@ If method is < -1, then a cubic B-spline is calculated.
                x-data
                y-data
                z-data)
-    (free xd-data)
-    (free yd-data)
-    (free zd-data)
-    (free x-data)
-    (free y-data)
-    (free z-data)))
+    (free xd-data
+          yd-data
+          zd-data
+          x-data
+          y-data
+          z-data)))
 
 
 #|
@@ -1719,10 +1721,10 @@ between 0° and 90°.
                  zmax-data
                  rotation-data
                  tilt-data)
-    (free zmin-data)
-    (free zmax-data)
-    (free rotation-data)
-    (free tilt-data)))
+    (free zmin-data
+          zmax-data
+          rotation-data
+          tilt-data)))
 
 
 #|
