@@ -79,15 +79,15 @@ lst :
                                     (:double (coerce x 'double-float))))
                               lst)))
 
-(defun free (&rest vars)
-  (loop for var in vars
-        do (cffi:foreign-free var)))
+(defun free (str)
+  (cffi:foreign-string-alloc str))
 
 (defun string-alloc (str)
   (cffi:foreign-string-alloc str))
 
-(defun string-free (str)
-  (cffi:foreign-string-free str))
+(defun string-free (&rest strs)
+  (loop for str in strs
+        do (cffi:foreign-string-free str)))
 
 (defun arr-aref (arr type index)
   (cffi:mem-aref arr type index))
@@ -342,7 +342,7 @@ height, character up vector, text path and text alignment.
   (let ((str-data (string-alloc str)))
     (gr-text (coerce x 'double-float)
              (coerce y 'double-float)
-             (string-alloc str))
+             str-data)
     (string-free str-data)))
 
 (cffi:defcfun ("gr_inqtext" gr-inqtext) :void
@@ -2039,3 +2039,292 @@ value :
               major-x major-y tick-size
               (cffi:callback fpx) (cffi:callback fpy))
   (free fpx fpy))
+
+
+#|
+    grid(x_tick::Real, y_tick::Real, x_org::Real, y_org::Real, major_x::Int, major_y::Int)
+
+Draw a linear and/or logarithmic grid.
+
+x_tick, y_tick :
+    The length in world coordinates of the interval between minor grid
+    lines.
+
+x_org, y_org :
+    The world coordinates of the origin (point of intersection) of the grid.
+
+major_x, major_y :
+    Unitless integer values specifying the number of minor grid lines
+    between major grid lines. Values of 0 or 1 imply no grid lines.
+
+Major grid lines correspond to the axes origin and major tick marks whether visible
+or not. Minor grid lines are drawn at points equal to minor tick marks. Major grid
+lines are drawn using black lines and minor grid lines are drawn using gray lines.
+|#
+
+(cffi:defcfun ("gr_grid" gr-grid) :void
+  (x-tick :double)
+  (y-tick :double)
+  (x-org :double)
+  (y-org :double)
+  (major-x :int)
+  (major-y :int))
+
+(defun grid (x-tick y-tick x-org y-org major-x major-y)
+  (gr-grid (coerce x-tick 'double-float)
+           (coerce y-tick 'double-float)
+           (coerce x-org 'double-float)
+           (coerce y-org 'double-float)
+           major-x
+           major-y))
+
+
+(cffi:defcfun ("gr_grid3d" gr-grid3d) :void
+  (x-tick :double)
+  (y-tick :double)
+  (z-tick :double)
+  (x-org :double)
+  (y-org :double)
+  (z-org :double)
+  (major-x :int)
+  (major-y :int)
+  (major-z :int))
+
+(defun grid3d (x-tick y-tick z-tick x-org y-org z-org
+               major-x major-y major-z)
+  (gr-grid3d (coerce x-tick 'double-float)
+             (coerce y-tick 'double-float)
+             (coerce z-tick 'double-float)
+             (coerce x-org 'double-float)
+             (coerce y-org 'double-float)
+             (coerce z-org 'double-float)
+             major-x
+             major-y
+             major-z))
+
+
+#|
+    verrorbars(px, py, e1, e2)
+
+Draw a standard vertical error bar graph.
+
+px :
+    A list of length N containing the X coordinates
+
+py :
+    A list of length N containing the Y coordinates
+
+e1 :
+     The absolute values of the lower error bar data
+
+e2 :
+     The absolute values of the upper error bar data
+|#
+
+(cffi:defcfun ("gr_verrorbars" gr-verrorbars) :void
+  (n :int)
+  (px (:pointer :double))
+  (py (:pointer :double))
+  (e1 (:pointer :double))
+  (e2 (:pointer :double)))
+
+(defun verrorbars (n px py e1 e2)
+  (assert (= (length px)
+             (length py)
+             (length e1)
+             (length e2)))
+  (let ((px-data (data-alloc px :double))
+        (py-data (data-alloc py :double))
+        (e1-data (data-alloc e1 :double))
+        (e2-data (data-alloc e2 :double)))
+    (gr-verrorbars (length px)
+                   px-data
+                   py-data
+                   e1-data
+                   e2-data)
+    (free px-data
+          py-data
+          e1-data
+          e2-data)))
+
+
+
+#|
+    herrorbars(px, py, e1, e2)
+
+Draw a standard horizontal error bar graph.
+
+px :
+    A list of length N containing the X coordinates
+
+py :
+    A list of length N containing the Y coordinates
+
+e1 :
+     The absolute values of the lower error bar data
+
+e2 :
+     The absolute values of the upper error bar data
+|#
+
+(cffi:defcfun ("gr_herrorbars" gr-herrorbars) :void
+  (n :int)
+  (px (:pointer :double))
+  (py (:pointer :double))
+  (e1 (:pointer :double))
+  (e2 (:pointer :double)))
+
+(defun herrorbars (px py e1 e2)
+  (assert (= (length px)
+             (length py)
+             (length e1)
+             (length e2)))
+  (let ((px-data (data-alloc px :double))
+        (py-data (data-alloc py :double))
+        (e1-data (data-alloc e1 :double))
+        (e2-data (data-alloc e2 :double)))
+    (gr-herrorbars (length px)
+                   px-data
+                   py-data
+                   e1-data
+                   e2-data)
+    (free px-data
+          py-data
+          e1-data
+          e2-data)))
+
+
+#|
+    polyline3d(px, py, pz)
+
+Draw a 3D curve using the current line attributes, starting from the
+first data point and ending at the last data point.
+
+x :
+    A list of length N containing the X coordinates
+
+y :
+    A list of length N containing the Y coordinates
+
+z :
+    A list of length N containing the Z coordinates
+
+The values for x, y and z are in world coordinates. The attributes that
+control the appearance of a polyline are linetype, linewidth and color
+index.
+|#
+
+(cffi:defcfun ("gr_polyline3d" gr-polyline3d) :void
+  (n :int)
+  (px (:pointer :double))
+  (py (:pointer :double))
+  (pz (:pointer :double)))
+
+(defun polyline3d (x y z)
+  (assert (= (length x)
+             (length y)
+             (length z)))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double))
+        (z-data (data-alloc z :double)))
+    (gr-polyline3d (length x)
+                   x-data
+                   y-data
+                   z-data)
+    (free x-data
+          y-data
+          z-data)))
+
+
+#|
+    polymarker3d(px, py, pz)
+
+Draw marker symbols centered at the given 3D data points.
+
+x :
+    A list of length N containing the X coordinates
+
+y :
+    A list of length N containing the Y coordinates
+
+z :
+    A list of length N containing the Z coordinates
+
+The values for x, y and z are in world coordinates. The attributes
+that control the appearance of a polymarker are marker type, marker size
+scale factor and color index.
+|#
+
+(cffi:defcfun ("gr_polymarker3d" gr-polymarker3d) :void
+  (n :int)
+  (px (:pointer :double))
+  (py (:pointer :double))
+  (pz (:pointer :double)))
+
+(defun polymarker3d (x y z)
+  (assert (= (length x)
+             (length y)
+             (length z)))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double))
+        (z-data (data-alloc z :double)))
+    (gr-polymarker3d (length x)
+                     x-data
+                     y-data
+                     z-data)
+    (free x-data
+          y-data
+          z-data)))
+
+
+(cffi:defcfun ("gr_axes3d" gr-axes3d) :void
+  (x-tick :double)
+  (y-tick :double)
+  (z-tick :double)
+  (x-org :double)
+  (y-org :double)
+  (z-org :double)
+  (major-x :int)
+  (major-y :int)
+  (major-z :int)
+  (tick-size :double))
+
+(defun axes3d (x-tick y-tick z-tick x-org y-org z-org
+               major-x major-y major-z tick-size)
+  (gr-axes3d (coerce x-tick 'double-float)
+             (coerce y-tick 'double-float)
+             (coerce z-tick 'double-float)
+             (coerce x-org 'double-float)
+             (coerce y-org 'double-float)
+             (coerce z-org 'double-float)
+             major-x
+             major-y
+             major-z
+             (coerce tick-size 'double-float)))
+
+
+#|
+    titles3d(x_title, y_title, z_title)
+
+Display axis titles just outside of their respective axes.
+
+x_title, y_title, z_title :
+    The text to be displayed on each axis
+
+|#
+
+(cffi:defcfun ("gr_titles3d" gr-titles3d) :void
+  (x-title (:pointer :char))
+  (y-title (:pointer :char))
+  (z-title (:pointer :char)))
+
+(defun titles3d (x-title y-title z-title)
+  (let ((x-data (string-alloc x-title))
+        (y-data (string-alloc y-title))
+        (z-data (string-alloc z-title)))
+    (gr-title x-data
+              y-data
+              z-data)
+    (string-free x-data
+                 y-data
+                 z-data)))
