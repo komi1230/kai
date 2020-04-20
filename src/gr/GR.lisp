@@ -79,8 +79,9 @@ lst :
                                     (:double (coerce x 'double-float))))
                               lst)))
 
-(defun free (str)
-  (cffi:foreign-string-alloc str))
+(defun free (&rest vars)
+  (loop for var in vars
+        do (cffi:foreign-free var)))
 
 (defun string-alloc (str)
   (cffi:foreign-string-alloc str))
@@ -2328,3 +2329,243 @@ x_title, y_title, z_title :
     (string-free x-data
                  y-data
                  z-data)))
+
+
+
+#|
+    surface(px, py, pz, option::Int)
+
+Draw a three-dimensional surface plot for the given data points.
+
+x :
+    A list containing the X coordinates
+
+y :
+    A list containing the Y coordinates
+
+z :
+    A list of length len(x) * len(y) or an appropriately dimensioned
+    array containing the Z coordinates
+
+option :
+    Surface display option (see table below)
+
+x and y define a grid. z is a singly dimensioned array containing at least
+nx * ny data points. Z describes the surface height at each point on the grid.
+Data is ordered as shown in the following table:
+
+    +------------------+--+--------------------------------------------------------------+
+    |LINES             | 0|Use X Y polylines to denote the surface                       |
+    +------------------+--+--------------------------------------------------------------+
+    |MESH              | 1|Use a wire grid to denote the surface                         |
+    +------------------+--+--------------------------------------------------------------+
+    |FILLED_MESH       | 2|Applies an opaque grid to the surface                         |
+    +------------------+--+--------------------------------------------------------------+
+    |Z_SHADED_MESH     | 3|Applies Z-value shading to the surface                        |
+    +------------------+--+--------------------------------------------------------------+
+    |COLORED_MESH      | 4|Applies a colored grid to the surface                         |
+    +------------------+--+--------------------------------------------------------------+
+    |CELL_ARRAY        | 5|Applies a grid of individually-colored cells to the surface   |
+    +------------------+--+--------------------------------------------------------------+
+    |SHADED_MESH       | 6|Applies light source shading to the 3-D surface               |
+    +------------------+--+--------------------------------------------------------------+
+|#
+
+(cffi:defcfun ("gr_surface" gr-surface) :void
+  (nx :int)
+  (ny :int)
+  (px (:pointer :double))
+  (py (:pointer :double))
+  (pz (:pointer :double))
+  (option :int))
+
+(defun surface (x y z &key (option 1))
+  (assert (= (length (flatten z))
+             (* (length x) (length y))))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double))
+        (z-data (data-alloc (flatten z) :double)))
+    (gr-surface (length x)
+                (length y)
+                x-data
+                y-data
+                z-data
+                option)
+    (free x-data
+          y-data
+          z-data)))
+
+
+#|
+    contour(px, py, h, pz, major_h::Int)
+
+Draw contours of a three-dimensional data set whose values are specified over a
+rectangular mesh. Contour lines may optionally be labeled.
+
+x :
+    A list containing the X coordinates
+
+y :
+    A list containing the Y coordinates
+
+h :
+    A list containing the Z coordinate for the height values
+
+z :
+    A list of length `len(x)` * `len(y)` or an appropriately dimensioned
+    array containing the Z coordinates
+
+major_h :
+    Directs GR to label contour lines. For example, a value of 3 would label
+    every third line. A value of 1 will label every line. A value of 0
+    produces no labels. To produce colored contour lines, add an offset
+    of 1000 to major_h.
+|#
+
+(cffi:defcfun ("gr_contour" gr-contour) :void
+  (nx :int)
+  (ny :int)
+  (nh :int)
+  (px (:pointer :double))
+  (py (:pointer :double))
+  (h (:pointer :double))
+  (pz (:pointer :double))
+  (major-h :int))
+
+(defun contour (x y h z major-h)
+  (assert (= (length (flatten z))
+             (* (length x) (length y))))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double))
+        (h-data (data-alloc h :double))
+        (z-data (data-alloc z :double)))
+    (gr-contour (length x)
+                (length y)
+                (length h)
+                x-data
+                y-data
+                h-data
+                z-data
+                major-h)
+    (free x-data
+          y-data
+          h-data
+          z-data)))
+
+
+#|
+    contourf(px, py, h, pz, major_h::Int)
+
+Draw filled contours of a three-dimensional data set whose values are
+specified over a rectangular mesh.
+
+x :
+    A list containing the X coordinates
+
+y :
+    A list containing the Y coordinates
+
+h :
+    A list containing the Z coordinate for the height values
+
+z :
+    A list of length len(x) * len(y) or an appropriately dimensioned
+    array containing the Z coordinates
+
+major_h :
+    (intended for future use)
+|#
+
+(cffi:defcfun ("gr_contourf" gr-contourf) :void
+  (nx :int)
+  (ny :int)
+  (nh :int)
+  (px (:pointer :double))
+  (py (:pointer :double))
+  (h (:pointer :double))
+  (pz (:pointer :double))
+  (major-h :int))
+
+(defun contourf (x y h z major-h)
+  (assert (= (length (flatten z))
+             (* (length x) (length y))))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double))
+        (h-data (data-alloc h :double))
+        (z-data (data-alloc z :double)))
+    (gr-contourf (length x)
+                 (length y)
+                 (length h)
+                 x-data
+                 y-data
+                 h-data
+                 z-data
+                 major-h)
+    (free x-data
+          y-data
+          h-data
+          z-data)))
+
+
+#|
+    tricontour(x, y, z, levels)
+
+Draw a contour plot for the given triangle mesh.
+
+x :
+    A list containing the X coordinates
+
+y :
+    A list containing the Y coordinates
+
+z :
+    A list containing the Z coordinates
+
+levels :
+    A list containing the contour levels
+
+|#
+
+(cffi:defcfun ("gr_tricontour" gr-tricontour) :void
+  (npoints :int)
+  (x (:pointer :double))
+  (y (:pointer :double))
+  (z (:pointer :double))
+  (nlebels :int)
+  (lebels (:pointer :double)))
+
+(defun tricontour (x y z levels)
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double))
+        (z-data (data-alloc z :double))
+        (levels-data (data-alloc levels :double)))
+    (gr-tricontour (length x)
+                   x-data
+                   y-data
+                   z-data
+                   (length levels)
+                   levels-data)
+    (free x-data
+          y-data
+          z-data
+          levels-data)))
+
+
+(cffi:defcfun ("gr_hexbin" gr-hexbin) :int
+  (n :int)
+  (x (:pointer :double))
+  (y (:pointer :double))
+  (nbins :int))
+
+(defun hexbin (x y nbins)
+  (assert (= (length x)
+             (length y)))
+  (let* ((x-data (data-alloc x :double))
+         (y-data (data-alloc y :double))
+         (nhexbin (gr-hexbin (length x)
+                             x-data
+                             y-data
+                             nbins)))
+    (free x-data
+          y-data)
+    nhexbin))
