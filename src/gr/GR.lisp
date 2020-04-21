@@ -362,8 +362,13 @@ height, character up vector, text path and text alignment.
                 str-data
                 tbx
                 tby)
-    (string-free str-data)
-    (list tbx tby)))
+    (let ((-tbx (loop for i below 4
+                      collect (arr-aref tbx :double i)))
+          (-tby (loop for i below 4
+                      collect (arr-aref tby :double i))))
+      (free tbx tby)
+      (string-free str-data)
+      (list -tbx -tby))))
 
 
 #|
@@ -1437,10 +1442,12 @@ open and active workstation, in device coordinates. By default, GR uses the rang
         (ymin (data-alloc '(0) :doubl))
         (ymax (data-alloc '(0) :doubl)))
     (gr-inqwindow xmin xmax ymin ymax)
-    (list (arr-aref xmin :double 0)
-          (arr-aref xmax :double 0)
-          (arr-aref ymin :double 0)
-          (arr-aref ymax :double 0))))
+    (let ((-xmin (arr-aref xmin :double 0))
+          (-xmax (arr-aref xmax :double 0))
+          (-ymin (arr-aref ymin :double 0))
+          (-ymax (arr-aref ymax :double 0)))
+      (free xmin xmax ymin ymax)
+      (list -xmin -xmax -ymin -ymax))))
 
 
 #|
@@ -1494,10 +1501,12 @@ workstation, in device coordinates.
         (ymin (data-alloc '(0) :double))
         (ymax (data-alloc '(0) :double)))
     (gr-inqviewport xmin xmax ymin ymax)
-    (list (arr-aref xmin :double 0)
-          (arr-aref xmax :double 0)
-          (arr-aref ymin :double 0)
-          (arr-aref ymax :double 0))))
+    (let ((-xmin (arr-aref xmin :double 0))
+          (-xmax (arr-aref xmax :double 0))
+          (-ymin (arr-aref ymin :double 0))
+          (-ymax (arr-aref ymax :double 0)))
+      (free xmin xmax ymin ymax)
+      (list -xmin -xmax -ymin -ymax))))
 
 
 #|
@@ -1792,9 +1801,11 @@ assumes that the axes limits are greater than zero.
   (options (:pointer :int)))
 
 (defun inqscale ()
-  (let ((options '(0)))
-    (gr-inqscale (data-alloc options :int))
-    options))
+  (let ((options (data-alloc '(0) :int)))
+    (gr-inqscale options)
+    (let ((opt-data (arr-aref options :int 0)))
+      (free options)
+      opt-data)))
 
 
 #|
@@ -1911,11 +1922,16 @@ function.
         (tby (data-alloc '(0 0 0 0) :double)))
     (gr-inqtextext (coerce x 'double-float)
                    (coerce y 'double-float)
-                   (string-alloc str)
+                   str-data
                    tbx
                    tby)
-    (string-free str-data)
-    (list tbx tby)))
+    (let ((-tbx (loop for i below 4
+                      collect (arr-aref tbx :double i)))
+          (-tby (loop for i below 4
+                      collect (arr-aref tby :double i))))
+      (free tbx tby)
+      (string-free str-data)
+      (list -tbx -tby))))
 
 #|
     axes2d(x_tick::Real, y_tick::Real, x_org::Real, y_org::Real, major_x::Int, major_y::Int, tick_size::Real)
@@ -2569,3 +2585,65 @@ levels :
     (free x-data
           y-data)
     nhexbin))
+
+
+(cffi:defcfun ("gr_setcolormap" gr-setcolormap) :void
+  (index :int))
+
+(defun setcolormap (index)
+  (gr-setcolormap index))
+
+
+(cffi:defcfun ("gr_inqcolormap" gr-inqcolormap) :void
+  (index (:pointer :int)))
+
+(defun inqcolormap (index)
+  (let ((index-data (data-alloc index :int)))
+    (gr-inqcolormap index-data)
+    (free index-data)))
+
+
+(cffi:defcfun ("gr_setcolormapfromrgb" gr-setcolormapfromrgb) :void
+  (n :int)
+  (r (:pointer :double))
+  (g (:pointer :double))
+  (b (:pointer :double))
+  (x (:pointer :double)))
+
+(defun setcolormapfromrgb (r g b &rest position)
+  (assert (= (length r)
+             (length g)
+             (length b)))
+  (let ((r-data (data-alloc r :double))
+        (g-data (data-alloc g :double))
+        (b-data (data-alloc b :double))
+        (pos-data (if (null position)
+                      (cffi:null-pointer)
+                      (data-alloc (flatten position) :double))))
+    (gr-setcolormapfromrgb (length r)
+                           r-data
+                           g-data
+                           b-data
+                           pos-data)
+    (free r-data
+          g-data
+          b-data
+          pos-data)))
+
+
+(cffi:defcfun ("gr_colorbar" gr-colorbar) :void)
+
+(defun colorbar ()
+  (gr-colorbar))
+
+
+(cffi:defcfun ("gr_inqcolor" gr-inqcolor) :void
+  (color :int)
+  (rgb (:pointer :int)))
+
+(defun inqcolor (color)
+  (let ((rgb (data-alloc '(0) :int)))
+    (gr-inqcolor color rgb)
+    (let ((data (cffi:mem-aref rgb :int 0)))
+      (free rgb)
+      data)))
