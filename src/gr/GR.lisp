@@ -2712,8 +2712,11 @@ levels :
         (amax-data (data-alloc amax :double)))
     (gr-adjustlimits amin-data
                      amax-data)
-    (free amin-data
-          amax-data)))
+    (let ((-amin (arr-aref amin-data :double 0))
+          (-amax (arr-aref amax-data :dobule 0)))
+      (free amin-data
+            amax-data)
+      (list -amin -amax))))
 
 
 (cffi:defcfun ("gr_adjustrange" gr-adjustrange) :void
@@ -2721,11 +2724,215 @@ levels :
   (amax (:pointer :double)))
 
 (defun adjustrange (amin amax)
-  (let ((amin-data (data-alloc amin :double))
-        (amax-data (data-alloc amax :double)))
+  (let ((amin-data (data-alloc (list amin) :double))
+        (amax-data (data-alloc (list amax) :double)))
     (gr-adjustrange amin-data
                     amax-data)
-    (free amin-data
-          amax-data)))
+    (let ((-amin (arr-aref amin-data :double 0))
+          (-amax (arr-aref amax-data :dobule 0)))
+      (free amin-data
+            amax-data)
+      (list -amin -amax))))
 
 
+
+#|
+    beginprint(pathname)
+
+Open and activate a print device.
+
+pathname :
+    Filename for the print device.
+
+beginprint opens an additional graphics output device. The device type is obtained
+from the given file extension. The following file types are supported:
+
+    +-------------+---------------------------------------+
+    |.ps, .eps    |PostScript                             |
+    +-------------+---------------------------------------+
+    |.pdf         |Portable Document Format               |
+    +-------------+---------------------------------------+
+    |.bmp         |Windows Bitmap (BMP)                   |
+    +-------------+---------------------------------------+
+    |.jpeg, .jpg  |JPEG image file                        |
+    +-------------+---------------------------------------+
+    |.png         |Portable Network Graphics file (PNG)   |
+    +-------------+---------------------------------------+
+    |.tiff, .tif  |Tagged Image File Format (TIFF)        |
+    +-------------+---------------------------------------+
+    |.fig         |Xfig vector graphics file              |
+    +-------------+---------------------------------------+
+    |.svg         |Scalable Vector Graphics               |
+    +-------------+---------------------------------------+
+    |.wmf         |Windows Metafile                       |
+    +-------------+---------------------------------------+
+|#
+
+(cffi:defcfun ("gr_beginprint" gr-beginprint) :void
+  (pathname (:pointer :char)))
+
+(defun beginprint (pathname)
+  (let ((pathname-data (string-alloc pathname)))
+    (gr-beginprint pathname-data)
+    (string-free pathname-data)))
+
+
+
+#|
+    beginprintext(pathname, mode, fmt, orientation)
+
+Open and activate a print device with the given layout attributes.
+
+pathname :
+    Filename for the print device.
+mode :
+    Output mode (Color, GrayScale)
+fmt :
+    Output format (see table below)
+orientation :
+    Page orientation (Landscape, Portait)
+
+The available formats are:
+
+    +-----------+---------------+
+    |A4         |0.210 x 0.297  |
+    +-----------+---------------+
+    |B5         |0.176 x 0.250  |
+    +-----------+---------------+
+    |Letter     |0.216 x 0.279  |
+    +-----------+---------------+
+    |Legal      |0.216 x 0.356  |
+    +-----------+---------------+
+    |Executive  |0.191 x 0.254  |
+    +-----------+---------------+
+    |A0         |0.841 x 1.189  |
+    +-----------+---------------+
+    |A1         |0.594 x 0.841  |
+    +-----------+---------------+
+    |A2         |0.420 x 0.594  |
+    +-----------+---------------+
+    |A3         |0.297 x 0.420  |
+    +-----------+---------------+
+    |A5         |0.148 x 0.210  |
+    +-----------+---------------+
+    |A6         |0.105 x 0.148  |
+    +-----------+---------------+
+    |A7         |0.074 x 0.105  |
+    +-----------+---------------+
+    |A8         |0.052 x 0.074  |
+    +-----------+---------------+
+    |A9         |0.037 x 0.052  |
+    +-----------+---------------+
+    |B0         |1.000 x 1.414  |
+    +-----------+---------------+
+    |B1         |0.500 x 0.707  |
+    +-----------+---------------+
+    |B10        |0.031 x 0.044  |
+    +-----------+---------------+
+    |B2         |0.500 x 0.707  |
+    +-----------+---------------+
+    |B3         |0.353 x 0.500  |
+    +-----------+---------------+
+    |B4         |0.250 x 0.353  |
+    +-----------+---------------+
+    |B6         |0.125 x 0.176  |
+    +-----------+---------------+
+    |B7         |0.088 x 0.125  |
+    +-----------+---------------+
+    |B8         |0.062 x 0.088  |
+    +-----------+---------------+
+    |B9         |0.044 x 0.062  |
+    +-----------+---------------+
+    |C5E        |0.163 x 0.229  |
+    +-----------+---------------+
+    |Comm10E    |0.105 x 0.241  |
+    +-----------+---------------+
+    |DLE        |0.110 x 0.220  |
+    +-----------+---------------+
+    |Folio      |0.210 x 0.330  |
+    +-----------+---------------+
+    |Ledger     |0.432 x 0.279  |
+    +-----------+---------------+
+    |Tabloid    |0.279 x 0.432  |
+    +-----------+---------------+
+
+|#
+
+(cffi:defcfun ("gr_beginprinttext" gr-beginprinttext) :void
+  (pahtname (:pointer :char))
+  (mode (:pointer :char))
+  (format (:pointer :char))
+  (orientation (:pointer :char)))
+
+(defun beginprinttext (pathname mode format orientation)
+  (let ((pathname-data (string-alloc pathname))
+        (mode-data (string-alloc mode))
+        (format-data (string-alloc format))
+        (orientation-data (string-alloc orientation)))
+    (gr-beginprinttext pathname-data
+                       mode-data
+                       format-data
+                       orientation-data)
+    (string-free pathname-data
+                 mode-data
+                 format-data
+                 orientation-data)))
+
+
+(cffi:defcfun ("gr_endprint" gr-endprint) :void)
+
+(defun endprint ()
+  (gr-endprint))
+
+
+(cffi:defcfun ("gr_ndctowc" gr-ndctowc) :void
+  (x (:pointer :double))
+  (y (:pointer :double)))
+
+(defun ndctowc (x y)
+  (let ((x-data (data-alloc (list x) :double))
+        (y-data (data-alloc (list y) :double)))
+    (gr-ndctowc x-data
+                y-data)
+    (let ((-x (arr-aref x-data :double 0))
+          (-y (arr-aref y-data :double 0)))
+      (free x-data
+            y-data)
+      (list -x -y))))
+
+
+(cffi:defcfun ("gr_wctondc" gr-wctondc) :void
+  (x (:pointer :double))
+  (y (:pointer :double)))
+
+(defun wctondc (x y)
+  (let ((x-data (data-alloc (list x) :double))
+        (y-data (data-alloc (list y) :double)))
+    (gr-wctondc x-data
+                y-data)
+    (let ((-x (arr-aref x-data :double 0))
+          (-y (arr-aref y-data :double 0)))
+      (free x-data
+            y-data)
+      (list -x -y))))
+
+
+(cffi:defcfun ("gr_wc3towc" gr-wc3towc) :void
+  (x (:pointer :double))
+  (y (:pointer :double))
+  (z (:pointer :double)))
+
+(defun wc3towc (x y z)
+  (let ((x-data (data-alloc (list x) :double))
+        (y-data (data-alloc (list y) :double))
+        (z-data (data-alloc (list z) :double)))
+    (gr-wc3towc x-data
+                y-data
+                z-data)
+    (let ((-x (arr-aref x-data :double 0))
+          (-y (arr-aref y-data :double 0))
+          (-z (arr-aref z-data :double 0)))
+      (free x-data
+            y-data
+            z-data)
+      (list -x -y -z))))
