@@ -3072,3 +3072,113 @@ of the given rectangle.
               (coerce ymax 'double-float)
               (coerce a1 'double-float)
               (coerce a2 'double-float)))
+
+
+#|
+    drawpath(points, codes, fill::Int)
+
+Draw simple and compound outlines consisting of line segments and bezier curves.
+
+points :
+    (N, 2) array of (x, y) vertices
+codes :
+    N-length array of path codes
+fill :
+    A flag indication whether resulting path is to be filled or not
+
+The following path codes are recognized:
+
+    +----------+-----------------------------------------------------------+
+    |      STOP|end the entire path                                        |
+    +----------+-----------------------------------------------------------+
+    |    MOVETO|move to the given vertex                                   |
+    +----------+-----------------------------------------------------------+
+    |    LINETO|draw a line from the current position to the given vertex  |
+    +----------+-----------------------------------------------------------+
+    |    CURVE3|draw a quadratic Bézier curve                              |
+    +----------+-----------------------------------------------------------+
+    |    CURVE4|draw a cubic Bézier curve                                  |
+    +----------+-----------------------------------------------------------+
+    | CLOSEPOLY|draw a line segment to the start point of the current path |
+    +----------+-----------------------------------------------------------+
+|#
+
+(cffi:defcstruct vertex-t
+  (x :double)
+  (y :double))
+
+(cffi:defcfun ("gr_drawpath" gr-drawpath) :void
+  (n :int)
+  (vertices :pointer)
+  (codes (:pointer :unsigned-char))
+  (fill :int))
+
+(defun drawpath (points codes fill)
+  (let ((c (string-alloc codes)))
+    (cffi:with-foreign-object (v '(:struct vertex-t))
+      (setf (cffi:foreign-slot-value v '(:struct vertex-t) 'x) (car points)
+            (cffi:foreign-slot-value v '(:struct vertex-t) 'y) (cadr points))
+      (gr-drawpath (length codes)
+                   v
+                   c
+                   fill))
+    (string-free c)))
+
+
+#|
+    setarrowstyle(style::Int)
+
+Set the arrow style to be used for subsequent arrow commands.
+
+`style` :
+    The arrow style to be used
+
+setarrowstyle defines the arrow style for subsequent arrow primitives.
+The default arrow style is 1.
+
+    +---+----------------------------------+
+    |  1|simple, single-ended              |
+    +---+----------------------------------+
+    |  2|simple, single-ended, acute head  |
+    +---+----------------------------------+
+    |  3|hollow, single-ended              |
+    +---+----------------------------------+
+    |  4|filled, single-ended              |
+    +---+----------------------------------+
+    |  5|triangle, single-ended            |
+    +---+----------------------------------+
+    |  6|filled triangle, single-ended     |
+    +---+----------------------------------+
+    |  7|kite, single-ended                |
+    +---+----------------------------------+
+    |  8|filled kite, single-ended         |
+    +---+----------------------------------+
+    |  9|simple, double-ended              |
+    +---+----------------------------------+
+    | 10|simple, double-ended, acute head  |
+    +---+----------------------------------+
+    | 11|hollow, double-ended              |
+    +---+----------------------------------+
+    | 12|filled, double-ended              |
+    +---+----------------------------------+
+    | 13|triangle, double-ended            |
+    +---+----------------------------------+
+    | 14|filled triangle, double-ended     |
+    +---+----------------------------------+
+    | 15|kite, double-ended                |
+    +---+----------------------------------+
+    | 16|filled kite, double-ended         |
+    +---+----------------------------------+
+    | 17|double line, single-ended         |
+    +---+----------------------------------+
+    | 18|double line, double-ended         |
+    +---+----------------------------------+
+|#
+
+(cffi:defcfun ("gr_setarrowstyle" gr-setarrowstyle) :void
+  (style :int))
+
+(defun setarrowstyle (style)
+  (gr-setarrowstyle style))
+
+
