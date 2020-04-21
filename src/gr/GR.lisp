@@ -3182,3 +3182,77 @@ The default arrow style is 1.
   (gr-setarrowstyle style))
 
 
+#|
+    setarrowsize(size::Real)
+
+Set the arrow size to be used for subsequent arrow commands.
+
+size :
+    The arrow size to be used
+
+setarrowsize defines the arrow size for subsequent arrow primitives.
+The default arrow size is 1.
+|#
+
+(cffi:defcfun ("gr_setarrowsize" gr-setarrowsize) :void
+  (size :double))
+
+(defun setarrowsize (size)
+  (gr-setarrowsize (coerce size 'double-float)))
+
+
+#|
+    drawarrow(x1::Real, y1::Real, x2::Real, y2::Real)
+
+Draw an arrow between two points.
+
+x1, y1 :
+    Starting point of the arrow (tail)
+x2, y2 :
+    Head of the arrow
+
+Different arrow styles (angles between arrow tail and wing, optionally filled
+heads, double headed arrows) are available and can be set with the `setarrowstyle`
+function.
+|#
+
+(cffi:defcfun ("gr_drawarrow" gr-drawarrow) :void
+  (x1 :double)
+  (y1 :double)
+  (x2 :double)
+  (y2 :double))
+
+(defun drawarrow (x1 y1 x2 y2)
+  (gr-drawarrow (coerce x1 'double-float)
+                (coerce y1 'double-float)
+                (coerce x2 'double-float)
+                (coerce y2 'double-float)))
+
+
+(cffi:defcfun ("gr_readimage" gr-readimage) :void
+  (path (:pointer :char))
+  (width (:pointer :int))
+  (height (:pointer :int))
+  (data (:pointer (:pointer :int))))
+
+(defun readimage (path)
+  (let ((path-data (string-alloc path))
+        (w (data-alloc '(0) :int))
+        (h (data-alloc '(0) :int))
+        (data (cffi:foreign-alloc :pointer
+                                  :initial-element
+                                  (data-alloc '(0) :int))))
+    (gr-readimage path-data
+                  w
+                  h
+                  data)
+    (let ((-w (arr-aref w :int 0))
+          (-h (arr-aref h :int 0))
+          (img (loop for i below (* (arr-aref h :int 0)
+                                    (arr-aref w :int 0))
+                     collect (arr-aref (arr-aref data :pointer 0)
+                                       :int
+                                       i))))
+      (string-free path-data)
+      (free w h data)
+      (list -w -h img))))
