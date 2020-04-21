@@ -2861,21 +2861,21 @@ The available formats are:
 (cffi:defcfun ("gr_beginprinttext" gr-beginprinttext) :void
   (pahtname (:pointer :char))
   (mode (:pointer :char))
-  (format (:pointer :char))
+  (fmt (:pointer :char))
   (orientation (:pointer :char)))
 
-(defun beginprinttext (pathname mode format orientation)
+(defun beginprinttext (pathname mode fmt orientation)
   (let ((pathname-data (string-alloc pathname))
         (mode-data (string-alloc mode))
-        (format-data (string-alloc format))
+        (fmt-data (string-alloc fmt))
         (orientation-data (string-alloc orientation)))
     (gr-beginprinttext pathname-data
                        mode-data
-                       format-data
+                       fmt-data
                        orientation-data)
     (string-free pathname-data
                  mode-data
-                 format-data
+                 fmt-data
                  orientation-data)))
 
 
