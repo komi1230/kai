@@ -2936,3 +2936,139 @@ The available formats are:
             y-data
             z-data)
       (list -x -y -z))))
+
+
+#|
+    drawrect(xmin::Real, xmax::Real, ymin::Real, ymax::Real)
+
+Draw a rectangle using the current line attributes.
+
+xmin :
+    Lower left edge of the rectangle
+xmax :
+    Lower right edge of the rectangle
+ymin :
+    Upper left edge of the rectangle
+ymax :
+    Upper right edge of the rectangle
+|#
+
+(cffi:defcfun ("gr_drawrect" gr-drawrect) :void
+  (xmin :double)
+  (xmax :double)
+  (ymin :double)
+  (ymax :double))
+
+(defun drawrect (xmin xmax ymin ymax)
+  (gr-drawrect (coerce xmin 'double-float)
+               (coerce xmax 'double-float)
+               (coerce ymin 'double-float)
+               (coerce ymax 'double-float)))
+
+
+#|
+    fillrect(xmin::Real, xmax::Real, ymin::Real, ymax::Real)
+
+Draw a filled rectangle using the current fill attributes.
+
+xmin :
+    Lower left edge of the rectangle
+xmax :
+    Lower right edge of the rectangle
+ymin :
+    Upper left edge of the rectangle
+ymax :
+    Upper right edge of the rectangle
+|#
+
+(cffi:defcfun ("gr_fillrect" gr-fillrect) :void
+  (xmin :double)
+  (xmax :double)
+  (ymin :double)
+  (ymax :double))
+
+(defun fillrect (xmin xmax ymin ymax)
+  (gr-fillrect (coerce xmin 'double-float)
+               (coerce xmax 'double-float)
+               (coerce ymin 'double-float)
+               (coerce ymax 'double-float)))
+
+
+#|
+    drawarc(xmin::Real, xmax::Real, ymin::Real, ymax::Real, a1::Real, a2::Real)
+
+Draw a circular or elliptical arc covering the specified rectangle.
+
+xmin :
+    Lower left edge of the rectangle
+xmax :
+    Lower right edge of the rectangle
+ymin :
+    Upper left edge of the rectangle
+ymax :
+    Upper right edge of the rectangle
+a1 :
+    The start angle
+a2 :
+    The end angle
+
+The resulting arc begins at a1 and ends at a2 degrees. Angles are interpreted
+such that 0 degrees is at the 3 o'clock position. The center of the arc is the center
+of the given rectangle.
+|#
+
+(cffi:defcfun ("gr_drawarc" gr-drawarc) :void
+  (xmin :double)
+  (xmax :double)
+  (ymin :double)
+  (ymax :double)
+  (a1 :double)
+  (a2 :double))
+
+(defun drawarc (xmin xmax ymin ymax a1 a2)
+  (gr-drawarc (coerce xmin 'double-float)
+              (coerce xmax 'double-float)
+              (coerce ymin 'double-float)
+              (coerce ymax 'double-float)
+              (coerce a1 'double-float)
+              (coerce a2 'double-float)))
+
+
+#|
+    fillarc(xmin::Real, xmax::Real, ymin::Real, ymax::Real, a1::Real, a2::Real)
+
+Fill a circular or elliptical arc covering the specified rectangle.
+
+xmin :
+    Lower left edge of the rectangle
+xmax :
+    Lower right edge of the rectangle
+ymin :
+    Upper left edge of the rectangle
+ymax :
+    Upper right edge of the rectangle
+a1 :
+    The start angle
+a2 :
+    The end angle
+
+The resulting arc begins at a1 and ends at a2 degrees. Angles are interpreted
+such that 0 degrees is at the 3 o'clock position. The center of the arc is the center
+of the given rectangle.
+|#
+
+(cffi:defcfun ("gr_fillarc" gr-fillarc) :void
+  (xmin :double)
+  (xmax :double)
+  (ymin :double)
+  (ymax :double)
+  (a1 :double)
+  (a2 :double))
+
+(defun fillarc (xmin xmax ymin ymax a1 a2)
+  (gr-fillarc (coerce xmin 'double-float)
+              (coerce xmax 'double-float)
+              (coerce ymin 'double-float)
+              (coerce ymax 'double-float)
+              (coerce a1 'double-float)
+              (coerce a2 'double-float)))
