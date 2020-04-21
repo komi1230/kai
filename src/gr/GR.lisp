@@ -2647,3 +2647,85 @@ levels :
     (let ((data (cffi:mem-aref rgb :int 0)))
       (free rgb)
       data)))
+
+
+(cffi:defcfun ("gr_inqcolorfromrgb" gr-inqcolorfromrgb) :int
+  (r :double)
+  (g :double)
+  (b :double))
+
+(defun inqcolorfromrgb (r g b)
+  (gr-inqcolorfromrgb (coerce r 'double-float)
+                      (coerce g 'double-float)
+                      (coerce b 'double-float)))
+
+
+(cffi:defcfun ("gr_hsvtorgb" gr-hsvtorgb) :void
+  (h :double)
+  (s :double)
+  (v :double)
+  (r (:pointer :double))
+  (g (:pointer :double))
+  (b (:pointer :double)))
+
+(defun hsvtorgb (h s v)
+  (let ((r (data-alloc '(0) :double))
+        (g (data-alloc '(0) :double))
+        (b (data-alloc '(0) :double)))
+    (gr-hsvtorgb (coerce h 'double-float)
+                 (coerce s 'double-float)
+                 (coerce v 'double-float)
+                 f
+                 g
+                 b)
+    (let ((-h (arr-aref h :double 0))
+          (-s (arr-aref s :double 0))
+          (-v (arr-aref v :double 0)))
+      (free r g b)
+      (list -h -g -b))))
+
+
+(cffi:defcfun ("gr_tick" gr-tick) :double
+  (amin :double)
+  (amax :double))
+
+(defun tick (amin amax)
+  (gr-tick (coerce amin 'double-float)
+           (coerce amax 'double-float)))
+
+
+(cffi:defcfun ("gr_validaterange" gr-validaterange) :int
+  (amin :double)
+  (amax :double))
+
+(defun validaterange (amin max)
+  (gr-validaterange (coerce amin 'double-float)
+                    (coerce amax 'double-float)))
+
+
+(cffi:defcfun ("gr_adjustlimits" gr-adjustlimits) :void
+  (amin (:pointer :double))
+  (amax (:pointer :double)))
+
+(defun adjustlimits (amin amax)
+  (let ((amin-data (data-alloc amin :double))
+        (amax-data (data-alloc amax :double)))
+    (gr-adjustlimits amin-data
+                     amax-data)
+    (free amin-data
+          amax-data)))
+
+
+(cffi:defcfun ("gr_adjustrange" gr-adjustrange) :void
+  (amin (:pointer :double))
+  (amax (:pointer :double)))
+
+(defun adjustrange (amin amax)
+  (let ((amin-data (data-alloc amin :double))
+        (amax-data (data-alloc amax :double)))
+    (gr-adjustrange amin-data
+                    amax-data)
+    (free amin-data
+          amax-data)))
+
+
