@@ -3248,11 +3248,12 @@ function.
                   data)
     (let ((-w (arr-aref w :int 0))
           (-h (arr-aref h :int 0))
-          (img (loop for i below (* (arr-aref h :int 0)
-                                    (arr-aref w :int 0))
-                     collect (arr-aref (arr-aref data :pointer 0)
-                                       :int
-                                       i))))
+          (img (loop for i below (arr-aref h :int 0)
+                     collect (loop for j below (arr-aref w :int 0)
+                                   collect (arr-aref (arr-aref data :pointer 0)
+                                                     :int
+                                                     (+ j
+                                                        (* i (arr-aref h :int 0))))))))
       (string-free path-data)
       (free w h data)
       (list -w -h img))))
