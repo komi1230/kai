@@ -3257,3 +3257,180 @@ function.
       (string-free path-data)
       (free w h data)
       (list -w -h img))))
+
+
+#||
+    drawimage(xmin::Real, xmax::Real, ymin::Real, ymax::Real, width::Int, height::Int, data, model::Int = 0)
+
+Draw an image into a given rectangular area.
+
+xmin, ymin :
+    First corner point of the rectangle
+xmax, ymax :
+    Second corner point of the rectangle
+width, height :
+    The width and the height of the image
+data :
+    An array of color values dimensioned width by height
+model :
+    Color model (default=0)
+
+The available color models are:
+
+    +-----------------------+---+-----------+
+    |MODEL_RGB              |  0|   AABBGGRR|
+    +-----------------------+---+-----------+
+    |MODEL_HSV              |  1|   AAVVSSHH|
+    +-----------------------+---+-----------+
+
+The points (xmin, ymin) and (xmax, ymax) are world coordinates defining
+diagonally opposite corner points of a rectangle. This rectangle is divided into
+`width` by `height` cells. The two-dimensional array `data` specifies colors
+for each cell.
+
+|#
+
+(cffi:defcfun ("gr_drawimage" gr-drawimage) :void
+  (xmin :double)
+  (xmax :double)
+  (ymin :double)
+  (ymax :double)
+  (width :int)
+  (height :int)
+  (data (:pointer :int))
+  (model :int))
+
+(defun drawimage (xmin xmax ymin ymax width height data model)
+  (let ((img (data-alloc (flatten data) :int)))
+    (gr-drawimage (coerce xmin 'double-float)
+                  (coerce xmax 'double-float)
+                  (coerce ymin 'double-float)
+                  (coerce ymax 'double-float)
+                  width
+                  height
+                  img
+                  model)
+    (free img)))
+
+
+(cffi:defcfun ("gr_importgraphics" gr-importgraphics) :int
+  (path (:pointer :char)))
+
+(defun importgraphics (path)
+  (let* ((path-data (string-alloc path))
+         (ret (gr-importgraphics path-data)))
+    (string-free path-data)
+    ret))
+
+
+#|
+    setshadow(offsetx::Real, offsety::Real, blur::Real)
+
+setshadow allows drawing of shadows, realized by images painted underneath,
+and offset from, graphics objects such that the shadow mimics the effect of a light
+source cast on the graphics objects.
+
+offsetx :
+    An x-offset, which specifies how far in the horizontal direction the
+    shadow is offset from the object
+offsety :
+    A y-offset, which specifies how far in the vertical direction the shadow
+    is offset from the object
+blur :
+    A blur value, which specifies whether the object has a hard or a diffuse
+    edge
+
+|#
+
+(cffi:defcfun ("gr_setshadow" gr-setshadow) :void
+  (offsetx :double)
+  (offsety :dobule)
+  (blur :double))
+
+(defun setshadow (offsetx offsety blur)
+  (gr-setshadow (coerce offsetx 'double-float)
+                (coerce offsety 'double-float)
+                (coerce blur 'double-float)))
+
+
+#|
+    settransparency(alpha::Real)
+
+Set the value of the alpha component associated with GR colors.
+
+alpha :
+    An alpha value (0.0 - 1.0)
+
+|#
+
+(cffi:defcfun ("gr_settransparency" gr-settransparency) :void
+  (alpha :double))
+
+(defun settransparency (alpha)
+  (gr-settransparency (coerce alpha 'double-float)))
+
+
+#|
+    setcoordxform(mat)
+
+Change the coordinate transformation according to the given matrix.
+
+mat[3][2] :
+    2D transformation matrix
+|#
+
+(cffi:defcfun ("gr_setcoordxform" gr-setcoordxform) :void
+  (mat (:pointer :double)))
+
+(defun setcoordxform (mat)
+  (assert (= (length (flatten mat)) 6))
+  (let ((mat-data (data-alloc (flatten mat) :double)))
+    (gr-setcoordxform data-alloc)
+    (free data-alloc)))
+
+
+#|
+    begingraphics(path)
+
+Open a file for graphics output.
+
+path :
+    Filename for the graphics file.
+
+begingraphics allows to write all graphics output into a XML-formatted file until
+the `endgraphics` functions is called. The resulting file may later be imported with
+the `importgraphics` function.
+
+|#
+
+(cffi:defcfun ("gr_begingraphics" gr-begingraphics) :void
+  (path (:pointer :char)))
+
+(defun begingraphics (path)
+  (let ((path-data (string-alloc path)))
+    (gr-begingraphics path-data)
+    (string-free path-data)))
+
+
+(cffi:defcfun ("gr_endgraphics" gr-endgraphics) :void)
+
+(defun endgraphics ()
+  (gr-endgraphics))
+
+
+(cffi:defcfun ("gr_getgraphics" gr-getgraphics) (:pointer :char))
+
+(defun getgraphics ()
+  (cffi:foreign-string-to-list (gr-getgraphics)))
+
+
+(cffi:defcfun ("gr_drawgraphics" gr-drawgraphics) :int
+  (str (:pointer :char)))
+
+(defun drawgraphics (str)
+  (let* ((str-data (string-alloc str))
+         (ret (gr-drawgraphics str-data)))
+    (string-free str-data)
+    ret))
+
+
