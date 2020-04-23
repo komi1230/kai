@@ -3536,3 +3536,41 @@ string :
     ret))
 
 
+(cffi:defcfun ("gr_delaunay" gr-delaunay) :void
+  (npoints :int)
+  (x (:pointer :double))
+  (y (:pointer :double))
+  (ntri (:pointer :int))
+  (triangles (:pointer (:pointer :int))))
+
+(defun delaunay (x y)
+  (assert (= (length x)
+             (length y)))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double))
+        (dim-data (data-alloc '(3) :int))
+        (ntri-data (data-alloc '(0) :int))
+        (triangles-data (cffi:foreign-alloc :poiter
+                                            :initial-element
+                                            (data-alloc '(0) :int))))
+    (gr-delaunay (length x)
+                 x-data
+                 y-data
+                 ntri-data
+                 triangles-data)
+    (let ((-ntri (arr-aref ntri-data :int 0))
+          (-tri (loop for i below (arr-aref dim-data :int 0)
+                      collect (loop for j below -ntri
+                                    collect (arr-aref (arr-aref triangles-data :pointer 0)
+                                                      :int
+                                                      (+ j
+                                                         (* i (arr-aref dim-data :int 0))))))))
+      (free x-data
+            y-data
+            dim-data
+            ntri-data
+            triangles-data)
+      (list -ntri
+            -tri))))
+
+
