@@ -3434,3 +3434,55 @@ the `importgraphics` function.
     ret))
 
 
+#|
+    mathtex(x::Real, y::Real, string)
+
+Generate a character string starting at the given location. Strings can be defined
+to create mathematical symbols and Greek letters using LaTeX syntax.
+
+x, y :
+    Position of the text string specified in world coordinates
+string :
+    The text string to be drawn
+
+|#
+
+(cffi:defcfun ("gr_mathtex" gr-mathtex) :void
+  (x :double)
+  (y :double)
+  (str (:pointer :char)))
+
+(defun mathtex (x y str)
+  (let ((str-data (string-alloc str)))
+    (gr-mathtex (coerce x 'double-float)
+                (coerce y 'double-float)
+                str-data)
+    (string-free str-data)))
+
+
+(cffi:defcfun ("gr_inqmathtex" gr-inqmathtex) :void
+  (x :double)
+  (y :double)
+  (str (:pointer :char))
+  (tbx (:pointer :double))
+  (tby (:pointer :double)))
+
+(defun inqmathtex (x y str)
+  (let ((str-data (string-alloc str))
+        (tbx-data (data-alloc '(0 0 0 0) :double))
+        (tby-data (data-alloc '(0 0 0 0) :double)))
+    (gr-inqmathtex (coerce x 'double-float)
+                   (coerce y 'double-float)
+                   str-data
+                   tbx-data
+                   tby-data)
+    (let ((tbx (loop for i below 4
+                     collect (arr-aref tbx-data :double i)))
+          (tby (loop for j below 4
+                     collect (arr-aref tby-data :double j))))
+      (string-free str-data)
+      (free tbx-data tby-data)
+      (list tbx tby))))
+
+
+
