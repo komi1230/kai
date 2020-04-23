@@ -3253,7 +3253,7 @@ function.
                                    collect (arr-aref (arr-aref data :pointer 0)
                                                      :int
                                                      (+ j
-                                                        (* i (arr-aref h :int 0))))))))
+                                                        (* i (arr-aref w :int 0))))))))
       (string-free path-data)
       (free w h data)
       (list -w -h img))))
@@ -3564,7 +3564,7 @@ string :
                                     collect (arr-aref (arr-aref triangles-data :pointer 0)
                                                       :int
                                                       (+ j
-                                                         (* i (arr-aref dim-data :int 0))))))))
+                                                         (* i -ntri)))))))
       (free x-data
             y-data
             dim-data
@@ -3573,4 +3573,154 @@ string :
       (list -ntri
             -tri))))
 
+
+(cffi:defcfun ("gr_reducepoints" gr-reducepoints) :void
+  (n :int)
+  (x (:pointer :double))
+  (y (:pointer :double))
+  (points :int)
+  (x-array (:pointer :double))
+  (y-array (:pointer :double)))
+
+(defun reducepoints (xd yd n)
+  (assert (= (length xd)
+             (length yd)))
+  (let* ((nd (length xd))
+         (xd-data (data-alloc xd :double))
+         (yd-data (data-alloc yd :double))
+         (x (data-alloc (loop for i from 1 to n
+                              collect i)
+                        :double))
+         (y (data-alloc (loop for i from 1 to n
+                              collect i)
+                        :double)))
+    (gr-reducepoints nd
+                     xd-data
+                     yd-data
+                     n
+                     x
+                     y)
+    (let ((-x (loop for i below n
+                    collect (arr-aref x :double i)))
+          (-y (loop for i below n
+                    collect (arr-aref y :double i))))
+      (free xd-data
+            yd-data
+            x
+            y)
+      (list -x -y))))
+
+
+#|
+    trisurface(x, y, z)
+
+Draw a triangular surface plot for the given data points.
+
+x :
+    A list containing the X coordinates
+y :
+    A list containing the Y coordinates
+z :
+    A list containing the Z coordinates
+
+|#
+
+(cffi:defcfun ("gr_trisurface" gr-trisurface) :void
+  (n :int)
+  (px (:pointer :double))
+  (py (:pointer :double))
+  (pz (:pointer :double)))
+
+(defun trsurface (x y z)
+  (let ((n (min (length x)
+                (length y)
+                (length z)))
+        (x-data (data-alloc x :dobule))
+        (y-data (data-alloc y :double))
+        (z-data (data-alloc z :double)))
+    (gr-trisurface n
+                   x-data
+                   y-data
+                   z-data)
+    (free x-data
+          y-data
+          z-data)))
+
+
+(cffi:defcfun ("gr_gradient" gr-gradient) :void
+  (nx :int)
+  (ny :int)
+  (x (:pointer :double))
+  (y (:pointer :double))
+  (z (:pointer :double))
+  (u (:pointer :double))
+  (v (:pointer :double)))
+
+(defun gradient (x y z)
+  (assert (= (length (flatten z))
+             (* (length x) (length y))))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double))
+        (z-data (data-alloc (flatten z) :double))
+        (u-data (data-alloc (loop for i from 1 to (* (length x)
+                                                     (length y))
+                                  collect i)
+                            :double))
+        (v-data (data-alloc (loop for i from 1 to (* (length x)
+                                                     (length y))
+                                  collect i)
+                            :double)))
+    (gr-gradient (length x)
+                 (length y)
+                 x-data
+                 y-data
+                 z-data
+                 u-data
+                 v-data)
+    (let ((u (loop for i below (length y)
+                   collect (loop for j below (length x)
+                                 collect (arr-aref u-data
+                                                   :double
+                                                   (+ j
+                                                      (* i (length x)))))))
+          (v (loop for i below (length y)
+                   collect (loop for j below (length x)
+                                 collect (arr-aref v-data
+                                                   :double
+                                                   (+ j
+                                                      (* i (length x))))))))
+      (free x-data
+            y-data
+            z-data
+            u-data
+            v-data)
+      (list u v))))
+
+
+(cffi:defcfun ("gr_quiver" gr-quiver) :void
+  (nx :int)
+  (ny :int)
+  (x (:pointer :double))
+  (y (:pointer :double))
+  (u (:pointer :double))
+  (v (:pointer :double))
+  (color :int))
+
+(defun quiver (x y u v &key (color t))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double))
+        (u-data (data-alloc (flatten u) :double))
+        (v-data (data-alloc (flatten v) :double))
+        (c (if color 1 0)))
+    (gr-quiver (length x)
+               (length y)
+               x-data
+               y-data
+               u-data
+               v-data
+               c)
+    (free x-data
+          y-data
+          u-data
+          v-data)))
 
