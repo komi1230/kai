@@ -3823,3 +3823,113 @@ The available methods for interpolation are the following:
   (cffi:foreign-string-to-lisp (gr-version)))
 
 
+#|
+    shade()
+
++-----------------+---+
+| XFORM_BOOLEAN   | 0 |
++-----------------+---+
+| XFORM_LINEAR    | 1 |
++-----------------+---+
+| XFORM_LOG       | 2 |
++-----------------+---+
+| XFORM_LOGLOG    | 3 |
++-----------------+---+
+| XFORM_CUBIC     | 4 |
++-----------------+---+
+| XFORM_EQUALIZED | 5 |
++-----------------+---+
+
+|#
+
+(cffi:defcfun ("gr_shade" gr-shade) :void
+  (n :int)
+  (x (:pointer :double))
+  (y (:pointer :double))
+  (lines :int)
+  (xform :int)
+  (roi (:pointer :double))
+  (w :int)
+  (h :int)
+  (bins (:pointer :int)))
+
+(defun shade (x y roi w h &key (lines 0) (xform 0))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double))
+        (roi-data (data-alloc roi :double))
+        (bins-data (data-alloc (loop for i below (* w h)
+                                     collect 0)
+                               :int)))
+    (gr-shade (min (length x) (length y))
+              x-data
+              y-data
+              lines
+              xform
+              roi-data
+              w
+              h
+              bins-data)
+    (free x-data
+          y-data
+          roi-data
+          bins-data)))
+
+
+#|
+    shadepoints(x y dims=[1200 1200] xform=1)
+
+Display a point set as a aggregated and rasterized image.
+
+x :
+    A pointer to the X coordinates
+y :
+    A pointer to the Y coordinates
+w :
+    The width of the grid used for rasterization
+h :
+    The height of the grid used for rasterization
+xform :
+    The transformation type used for color mapping
+
+The values for `x` and `y` are in world coordinates.
+
+The available transformation types are:
+
++----------------+---+--------------------+
+|XFORM_BOOLEAN   |  0|boolean             |
++----------------+---+--------------------+
+|XFORM_LINEAR    |  1|linear              |
++----------------+---+--------------------+
+|XFORM_LOG       |  2|logarithmic         |
++----------------+---+--------------------+
+|XFORM_LOGLOG    |  3|double logarithmic  |
++----------------+---+--------------------+
+|XFORM_CUBIC     |  4|cubic               |
++----------------+---+--------------------+
+|XFORM_EQUALIZED |  5|histogram equalized |
++----------------+---+--------------------+
+|#
+
+
+(cffi:defcfun ("gr_shadepoints" gr-shadepoints) :void
+  (n :int)
+  (x (:pointer :double))
+  (y (:pointer :double))
+  (xform :int)
+  (w :int)
+  (h :int))
+
+(defun shadepoints (x y w h &key (xform 1))
+  (assert (= (length x)
+             (length y)))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double)))
+    (gr-shadepoints (length x)
+                    x-data
+                    y-data
+                    xform
+                    w
+                    h)
+    (free x-data
+          y-data)))
+
