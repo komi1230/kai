@@ -3724,3 +3724,97 @@ z :
           u-data
           v-data)))
 
+
+#|
+    interp2(x y z xq yq method=0 extrapval=0 )
+
+Interpolation in two dimensions using one of four different methods.
+The input points are located on a grid, described by `nx`, `ny`, `x`, `y` and `z`.
+The target grid ist described by `nxq`, `nyq`, `xq` and `yq` and the output
+is written to `zq` as a field of `nxq * nyq` values.
+
+nx :
+    The number of the input grid's x-values
+ny :
+    The number of the input grid's y-values
+x :
+    Pointer to the input grid's x-values
+y :
+    Pointer to the input grid's y-values
+z : 
+    Pointer to the input grid's z-values (num. of values: nx * ny)
+nxq :
+    The number of the target grid's x-values
+nyq :
+    The number of the target grid's y-values
+xq :
+    Pointer to the target grid's x-values
+yq :
+    Pointer to the target grid's y-values
+zq :
+    Pointer to the target grids's z-values, used for output
+method :
+    Used method for interpolation
+extrapval :
+    The extrapolation value
+
+The available methods for interpolation are the following:
+
++-----------------+---+-------------------------------------------+
+| INTERP2_NEAREST | 0 | Nearest neighbour interpolation           |
++-----------------+---+-------------------------------------------+
+| INTERP2_LINEAR  | 1 | Linear interpolation                      |
++-----------------+---+-------------------------------------------+
+| INTERP_2_SPLINE | 2 | Interpolation using natural cubic splines |
++-----------------+---+-------------------------------------------+
+| INTERP2_CUBIC   | 3 | Cubic interpolation                       |
++-----------------+---+-------------------------------------------+
+
+
+|#
+
+(cffi:defcfun ("gr_interp2" gr-interp2) :void
+  (nx :int)
+  (ny :int)
+  (x (:pointer :double))
+  (y (:pointer :double))
+  (z (:pointer :double))
+  (nxq :int)
+  (nyq :int)
+  (xq (:pointer :double))
+  (yq (:pointer :double))
+  (zq (:pointer :double))
+  (method :int)
+  (extrapval :double))
+
+(defun interp2 (x y z xq yq &key (method 0) (extrapval 0))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double))
+        (z-data (data-alloc z :double))
+        (xq-data (data-alloc xq :double))
+        (yq-data (data-alloc yq :double))
+        (zq-data (data-alloc (loop for i from 1 to (* (length x)
+                                                      (length y))
+                                   collect i)
+                             :double)))
+    (gr-interp2 (length x)
+                (length y)
+                x-data
+                y-data
+                z-data
+                (length xq)
+                (length yq)
+                xq-data
+                yq-data
+                zq-data
+                method
+                (coerce extrapval 'double-float))
+    (free x-data
+          y-data
+          z-data
+          xq-data
+          yq-data
+          zq-data)))
+
+
+
