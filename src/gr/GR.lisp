@@ -3485,4 +3485,54 @@ string :
       (list tbx tby))))
 
 
+(cffi:defcfun ("gr_setregenflags" gr-setregenflags) :void
+  (flags :int))
+
+(defun setregenflags (&rest flags)
+  (gr-setregenflags (if (null flags)
+                        flags
+                        0)))
+
+
+(cffi:defcfun ("gr_inqregenflags" gr-inqregenflags) :int)
+
+(defun inqregenflags ()
+  (gr-inqregenflags))
+
+
+(cffi:defcfun ("gr_savestate" gr-savestate) :void)
+
+(defun savestate ()
+  (gr-savestate))
+
+
+(cffi:defcfun ("gr_restorestate" gr-restorestate) :void)
+
+(defun restorestate ()
+  (gr-restorestate))
+
+
+(cffi:defcfun ("gr_selectcontext" gr-selectcontext) :void
+  (context :int))
+
+(defun selectcontext (context)
+  (gr-selectcontext context))
+
+
+(cffi:defcfun ("gr_destroycontext" gr-destroycontext) :void
+  (context :int))
+
+(defun destroycontext (context)
+  (gr-selectcontext context))
+
+
+(cffi:defcfun ("gr_uselinespec" gr-uselinespec) :int
+  (linespec (:pointer :char)))
+
+(defun uselinespec (linespec)
+  (let* ((linespec-data (string-alloc linespec))
+         (ret (gr-uselinespec linespec-data)))
+    (string-free linespec-data)
+    ret))
+
 
