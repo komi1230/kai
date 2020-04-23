@@ -3421,7 +3421,7 @@ the `importgraphics` function.
 (cffi:defcfun ("gr_getgraphics" gr-getgraphics) (:pointer :char))
 
 (defun getgraphics ()
-  (cffi:foreign-string-to-list (gr-getgraphics)))
+  (cffi:foreign-string-to-lisp (gr-getgraphics)))
 
 
 (cffi:defcfun ("gr_drawgraphics" gr-drawgraphics) :int
@@ -3816,5 +3816,10 @@ The available methods for interpolation are the following:
           yq-data
           zq-data)))
 
+
+(cffi:defcfun ("gr_version" gr-version) (:pointer :char))
+
+(defun version ()
+  (cffi:foreign-string-to-lisp (gr-version)))
 
 
