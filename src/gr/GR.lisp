@@ -3933,3 +3933,25 @@ The available transformation types are:
     (free x-data
           y-data)))
 
+
+(cffi:defcfun ("gr_shadelines" gr-shadelines) :void
+  (n :int)
+  (x (:pointer :double))
+  (y (:pointer :double))
+  (xform :int)
+  (w :int)
+  (h :int))
+
+(defun shadelines (x y w h &key (xform 1))
+  (assert (= (length x)
+             (length y)))
+  (let ((x-data (data-alloc x :double))
+        (y-data (data-alloc y :double)))
+    (gr-shadelines (length x)
+                   x-data
+                   y-data
+                   xform
+                   w
+                   h)
+    (free x-data
+          y-data)))
