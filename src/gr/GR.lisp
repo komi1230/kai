@@ -305,7 +305,7 @@ y :
 
 (defun polymarker (x y)
   (assert (= (length x) (length y)))
-  (let ((x-data (data-alloc x :dobule))
+  (let ((x-data (data-alloc x :double))
         (y-data (data-alloc y :double)))
     (gr-polymarker (length x)
                    x-data
@@ -2713,7 +2713,7 @@ levels :
     (gr-adjustlimits amin-data
                      amax-data)
     (let ((-amin (arr-aref amin-data :double 0))
-          (-amax (arr-aref amax-data :dobule 0)))
+          (-amax (arr-aref amax-data :double 0)))
       (free amin-data
             amax-data)
       (list -amin -amax))))
@@ -2729,7 +2729,7 @@ levels :
     (gr-adjustrange amin-data
                     amax-data)
     (let ((-amin (arr-aref amin-data :double 0))
-          (-amax (arr-aref amax-data :dobule 0)))
+          (-amax (arr-aref amax-data :double 0)))
       (free amin-data
             amax-data)
       (list -amin -amax))))
@@ -3344,7 +3344,7 @@ blur :
 
 (cffi:defcfun ("gr_setshadow" gr-setshadow) :void
   (offsetx :double)
-  (offsety :dobule)
+  (offsety :double)
   (blur :double))
 
 (defun setshadow (offsetx offsety blur)
@@ -3635,7 +3635,7 @@ z :
   (let ((n (min (length x)
                 (length y)
                 (length z)))
-        (x-data (data-alloc x :dobule))
+        (x-data (data-alloc x :double))
         (y-data (data-alloc y :double))
         (z-data (data-alloc z :double)))
     (gr-trisurface n
