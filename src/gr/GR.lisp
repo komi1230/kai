@@ -9,13 +9,13 @@
 ;;; see: https://github.com/jheinen/GR.jl/blob/master/src/GR.jl
 
 (in-package :cl-user)
-;(defpackage :kai.GR.GR
-;  (:use :cl)
-;  (:import-from :kai.converter
-;                :make-kai-cache)
-;  (:import-from :kai.util
-;                :flatten))
-;(in-package :kai.GR.GR)
+(defpackage :kai.GR.GR
+  (:use :cl)
+  (:import-from :kai.converter
+                :make-kai-cache)
+  (:import-from :kai.util
+                :flatten))
+(in-package :kai.GR.GR)
 
 
 
@@ -2043,18 +2043,18 @@ value :
                 major-x major-y tick-size fx fy)
 
   (cffi:defcallback fpx :void
-    ((a :double)
-     (b :double)
-     (str (:pointer :char))
-     (c :double))
-  (eval (list fx a b str c)))
+      ((a :double)
+       (b :double)
+       (str (:pointer :char))
+       (c :double))
+    (eval (list fx a b str c)))
 
-(cffi:defcallback fpy :void
-    ((a :double)
-     (b :double)
-     (str (:pointer :char))
-     (c :double))
-  (eval (list fy a b str c)))
+  (cffi:defcallback fpy :void
+      ((a :double)
+       (b :double)
+       (str (:pointer :char))
+       (c :double))
+    (eval (list fy a b str c)))
   
   (gr-axeslbl x-tick y-tick x-org y-org
               major-x major-y tick-size
