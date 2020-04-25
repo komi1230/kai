@@ -2038,7 +2038,11 @@ value :
   (fpx :pointer)
   (fpy :pointer))
 
-(cffi:defcallback fpx :void
+
+(defun axeslbl (x-tick y-tick x-org y-org
+                major-x major-y tick-size fx fy)
+
+  (cffi:defcallback fpx :void
     ((a :double)
      (b :double)
      (str (:pointer :char))
@@ -2051,9 +2055,7 @@ value :
      (str (:pointer :char))
      (c :double))
   (eval (list fy a b str c)))
-
-(defun axeslbl (x-tick y-tick x-org y-org
-                major-x major-y tick-size fx fy)
+  
   (gr-axeslbl x-tick y-tick x-org y-org
               major-x major-y tick-size
               (cffi:callback fpx) (cffi:callback fpy)))
@@ -2340,7 +2342,7 @@ x_title, y_title, z_title :
   (let ((x-data (string-alloc x-title))
         (y-data (string-alloc y-title))
         (z-data (string-alloc z-title)))
-    (gr-title3d x-data
+    (gr-titles3d x-data
                 y-data
                 z-data)
     (string-free x-data
