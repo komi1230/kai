@@ -9,13 +9,13 @@
 ;;; see: https://github.com/jheinen/GR.jl/blob/master/src/GR.jl
 
 (in-package :cl-user)
-(defpackage :kai.GR.GR
-  (:use :cl)
-  (:import-from :kai.converter
-                :make-kai-cache)
-  (:import-from :kai.util
-                :flatten))
-(in-package :kai.GR.GR)
+;(defpackage :kai.GR.GR
+;  (:use :cl)
+;  (:import-from :kai.converter
+;                :make-kai-cache)
+;  (:import-from :kai.util
+;                :flatten))
+;(in-package :kai.GR.GR)
 
 
 
@@ -748,7 +748,7 @@ The available line types are:
 
 (defun inqlinetype (linetype)
   (let ((linetype-data (data-alloc linetype :double)))
-    (gr-setinqlinetype linetype-data)
+    (gr-inqlinetype linetype-data)
     (free linetype-data)))
 
 
@@ -798,7 +798,7 @@ color :
   (color :int))
 
 (defun setlinecolorind (color)
-  (gr-setlinecolorind (color)))
+  (gr-setlinecolorind color))
 
 
 (cffi:defcfun ("gr_inqlinecolorind" gr-inqlinecolorind) :void
@@ -1098,7 +1098,7 @@ text expansion factor is 1, or one times the normal width-to-height ratio of the
   (spacing :double))
 
 (defun setcharspace (spacing)
-  (gr-setcharspace (double spaced 'double-float)))
+  (gr-setcharspace (coerce spacing 'double-float)))
 
 
 #|
@@ -2038,24 +2038,25 @@ value :
   (fpx :pointer)
   (fpy :pointer))
 
+(cffi:defcallback fpx :void
+    ((a :double)
+     (b :double)
+     (str (:pointer :char))
+     (c :double))
+  (eval (list fx a b str c)))
+
+(cffi:defcallback fpy :void
+    ((a :double)
+     (b :double)
+     (str (:pointer :char))
+     (c :double))
+  (eval (list fy a b str c)))
+
 (defun axeslbl (x-tick y-tick x-org y-org
                 major-x major-y tick-size fx fy)
-  (cffi:defcallback fpx :void
-    ((a :double)
-     (b :double)
-     (str (:pointer :char))
-     (c :double))
-    (eval (list fx a b str c)))
-  (cffi:defcallback fpy :void
-    ((a :double)
-     (b :double)
-     (str (:pointer :char))
-     (c :double))
-    (eval (list fy a b str c)))
   (gr-axeslbl x-tick y-tick x-org y-org
               major-x major-y tick-size
-              (cffi:callback fpx) (cffi:callback fpy))
-  (free fpx fpy))
+              (cffi:callback fpx) (cffi:callback fpy)))
 
 
 #|
@@ -2145,7 +2146,7 @@ e2 :
   (e1 (:pointer :double))
   (e2 (:pointer :double)))
 
-(defun verrorbars (n px py e1 e2)
+(defun verrorbars (px py e1 e2)
   (assert (= (length px)
              (length py)
              (length e1)
@@ -2339,9 +2340,9 @@ x_title, y_title, z_title :
   (let ((x-data (string-alloc x-title))
         (y-data (string-alloc y-title))
         (z-data (string-alloc z-title)))
-    (gr-title x-data
-              y-data
-              z-data)
+    (gr-title3d x-data
+                y-data
+                z-data)
     (string-free x-data
                  y-data
                  z-data)))
@@ -2675,14 +2676,14 @@ levels :
     (gr-hsvtorgb (coerce h 'double-float)
                  (coerce s 'double-float)
                  (coerce v 'double-float)
-                 f
+                 r
                  g
                  b)
-    (let ((-h (arr-aref h :double 0))
-          (-s (arr-aref s :double 0))
-          (-v (arr-aref v :double 0)))
+    (let ((-r (arr-aref r :double 0))
+          (-g (arr-aref g :double 0))
+          (-b (arr-aref b :double 0)))
       (free r g b)
-      (list -h -g -b))))
+      (list -r -g -b))))
 
 
 (cffi:defcfun ("gr_tick" gr-tick) :double
@@ -2698,7 +2699,7 @@ levels :
   (amin :double)
   (amax :double))
 
-(defun validaterange (amin max)
+(defun validaterange (amin amax)
   (gr-validaterange (coerce amin 'double-float)
                     (coerce amax 'double-float)))
 
@@ -3385,8 +3386,8 @@ mat[3][2] :
 (defun setcoordxform (mat)
   (assert (= (length (flatten mat)) 6))
   (let ((mat-data (data-alloc (flatten mat) :double)))
-    (gr-setcoordxform data-alloc)
-    (free data-alloc)))
+    (gr-setcoordxform mat-data)
+    (free mat-data)))
 
 
 #|
@@ -3558,13 +3559,13 @@ string :
                  y-data
                  ntri-data
                  triangles-data)
-    (let ((-ntri (arr-aref ntri-data :int 0))
-          (-tri (loop for i below (arr-aref dim-data :int 0)
-                      collect (loop for j below -ntri
-                                    collect (arr-aref (arr-aref triangles-data :pointer 0)
-                                                      :int
-                                                      (+ j
-                                                         (* i -ntri)))))))
+    (let* ((-ntri (arr-aref ntri-data :int 0))
+           (-tri (loop for i below (arr-aref dim-data :int 0)
+                       collect (loop for j below -ntri
+                                     collect (arr-aref (arr-aref triangles-data :pointer 0)
+                                                       :int
+                                                       (+ j
+                                                          (* i -ntri)))))))
       (free x-data
             y-data
             dim-data
@@ -3963,7 +3964,7 @@ The available transformation types are:
   (xzoom :double)
   (yzoom :double)
   (xmin (:pointer :double))
-  (xmax (:pointer :ouuble))
+  (xmax (:pointer :double))
   (ymin (:pointer :double))
   (ymax (:pointer :double)))
 
