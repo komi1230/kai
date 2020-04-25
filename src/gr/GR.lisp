@@ -1684,10 +1684,10 @@ publishing applications.
   (gr-closeseg))
 
 
-(cffi:defcfun ("gr_emergencycloseseg" gr-emergencycloseseg) :void)
+(cffi:defcfun ("gr_emergencyclosegks" gr-emergencyclosegks) :void)
 
-(defun emergencycloseseg ()
-  (gr-emergencycloseseg))
+(defun emergencyclosegks ()
+  (gr-emergencyclosegks))
 
 
 (cffi:defcfun ("gr_updategks" gr-updategks) :void)
@@ -1934,7 +1934,7 @@ function.
       (list -tbx -tby))))
 
 #|
-    axes2d(x_tick::Real, y_tick::Real, x_org::Real, y_org::Real, major_x::Int, major_y::Int, tick_size::Real)
+    axes(x_tick::Real, y_tick::Real, x_org::Real, y_org::Real, major_x::Int, major_y::Int, tick_size::Real)
 
 Draw X and Y coordinate axes with linearly and/or logarithmically spaced tick marks.
 
@@ -3715,7 +3715,7 @@ z :
         (u-data (data-alloc (flatten u) :double))
         (v-data (data-alloc (flatten v) :double))
         (c (if color 1 0)))
-    (gr-quiver (length x)
+   (gr-quiver (length x)
                (length y)
                x-data
                y-data
