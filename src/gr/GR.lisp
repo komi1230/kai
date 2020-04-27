@@ -11,9 +11,8 @@
 (in-package :cl-user)
 (defpackage :kai.GR.GR
   (:use :cl)
-  (:import-from :kai.converter
-                :make-kai-cache)
   (:import-from :kai.util
+                :make-kai-cache
                 :flatten)
   (:export :init
            :openws

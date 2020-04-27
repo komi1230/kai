@@ -11,9 +11,9 @@
 (defpackage :kai.plotly.generate
   (:use :cl)
   (:import-from :kai.converter
-                :make-kai-cache
                 :to-json)
   (:import-from :kai.util
+                :make-kai-cache
                 :download-file)
   (:export :download-file
            :download-plotlyjs

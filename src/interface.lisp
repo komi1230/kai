@@ -13,8 +13,7 @@
   (:use :cl)
   (:import-from :kai.util
                 :convert-data
-                :symbol-downcase)
-  (:import-from :kai.converter
+                :symbol-downcase
                 :check-file-exist
                 :make-kai-cache)
   (:import-from :kai.plotly.generate

@@ -9,7 +9,7 @@
 
 (defpackage :kai.plotly.launch
   (:use :cl)
-  (:import-from :kai.converter
+  (:import-from :kai.util
                 :check-file-exist)
   (:export :open-browser))
 (in-package :kai.plotly.launch)

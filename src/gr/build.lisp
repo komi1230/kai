@@ -13,8 +13,7 @@
   (:use :cl)
   (:import-from :kai.util
                 :download-file
-                :get-os)
-  (:import-from :kai.converter
+                :get-os
                 :make-kai-cache))
 (in-package :kai.gr.build)
 
