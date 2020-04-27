@@ -9,13 +9,13 @@
 ;;; backends.
 
 (in-package :cl-user)
-(defpackage #:kai.converter
+(defpackage :kai.converter
   (:use :cl)
   (:export :make-kai-cache
            :check-file-exist
            :to-json
            :style-to-json))
-(in-package #:kai.converter)
+(in-package :kai.converter)
 
 
 

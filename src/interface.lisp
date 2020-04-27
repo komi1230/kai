@@ -9,7 +9,7 @@
 ;;; backends.
 
 (in-package :cl-user)
-(defpackage #:kai.interface
+(defpackage :kai.interface
   (:use :cl)
   (:import-from :kai.util
                 :convert-data
@@ -36,7 +36,7 @@
            :surface
            :style
            :show))
-(in-package #:kai.interface)
+(in-package :kai.interface)
 
 
 

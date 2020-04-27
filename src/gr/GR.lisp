@@ -162,47 +162,6 @@
 (in-package :kai.GR.GR)
 
 
-
-;;;; Setup
-;;;
-;;; We load some shared files (.dll or .so) to make bindings to
-;;; GR API.
-
-;; Shared files
-(defparameter libGR
-   #+(or win32 mswindows windows) ; Windows
-   "libGR.dll"
-   #-(or win32 mswindows windows) ; macOS or Linux
-   "libGR.so")
-
-(defparameter libGR3
-   #+(or win32 mswindows windows) ; Windows
-   "libGR3.dll"
-   #-(or win32 mswindows windows) ; macOS or Linux
-   "libGR3.so")
-
-(defparameter libGRM
-   #+(or win32 mswindows windows) ; Windows
-   "libGRM.dll"
-   #-(or win32 mswindows windows) ; macOS or Linux
-   "libGRM.so")
-
-
-
-;; First Setup before launching GR
-(defun init ()
-  (let ((kai-cache-dir (namestring (make-kai-cache "gr"))))
-    ;; Set environment variables
-    (setf (uiop:getenv "GRDIR") kai-cache-dir)
-    (setf (uiop:getenv "GKS_FONTPATH") kai-cache-dir)
-    (setf (uiop:getenv "GKS_USE_CAIRO_PNG") "true")
-
-    ;; Load shared objects
-    (cffi:load-foreign-library
-     (merge-pathnames (format nil "lib/~A" libGR)
-                      (make-kai-cache "gr")))))
-
-
 ;;;; Bindings
 ;;;
 ;;; We have to wrap GR functions with CFFI.

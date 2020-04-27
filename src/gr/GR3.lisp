@@ -8,3 +8,5 @@
 ;;;
 ;;; see: https://github.com/jheinen/GR.jl/blob/master/src/GR3.jl
 
+(in-package :cl-user)
+(defpackage :kai.GR.GR3)
