@@ -7,6 +7,9 @@
 
 (in-package :cl-user)
 (defpackage :kai.GR.cl-gr
+  (:use :cl)
+  (:import-from :kai.util
+                :make-kai-cache)
   (:import-from :kai.GR.GR
                 :init
                 :openws
@@ -152,7 +155,7 @@
                 :settransformationparameters
                 :setorthographicprojection
                 :setwindow3d)
-  (:import-from :kai.GR.GR3))
+  (:export :init))
 (in-package :kai.GR.cl-gr)
 
 
