@@ -13,6 +13,11 @@
   (:use :cl)
   (:import-from :kai.util
                 :make-kai-cache
+                :data-alloc
+                :free
+                :string-alloc
+                :string-free
+                :arr-aref
                 :flatten)
   (:export :init
            :openws
