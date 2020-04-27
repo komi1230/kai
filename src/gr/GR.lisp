@@ -176,13 +176,13 @@
    "libGR.so")
 
 (defparameter libGR3
-  #+(or win32 mswindows windows) ; Windows
+   #+(or win32 mswindows windows) ; Windows
    "libGR3.dll"
    #-(or win32 mswindows windows) ; macOS or Linux
    "libGR3.so")
 
 (defparameter libGRM
-  #+(or win32 mswindows windows) ; Windows
+   #+(or win32 mswindows windows) ; Windows
    "libGRM.dll"
    #-(or win32 mswindows windows) ; macOS or Linux
    "libGRM.so")
