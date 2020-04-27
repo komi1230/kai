@@ -8,15 +8,20 @@
 
 
 (in-package :cl-user)
-(defpackage #:kai.util
+(defpackage :kai.util
   (:use :cl)
   (:export :convert-data
            :check-shape-type
            :find-min-max
            :to-array
            :sort-input
-           :flatten))
-(in-package #:kai.util)
+           :flatten
+           :data-alloc
+           :free
+           :string-alloc
+           :string-free
+           :arr-aref))
+(in-package :kai.util)
 
 
 ;;;; Input style converter
@@ -135,3 +140,35 @@
             :do (loop :for line :in (uiop:read-file-lines file)
                       :if (uiop:string-prefix-p (format nil "~A=" key) line)
                       :do (return-from get-dist (subseq line (1+ (length key))))))))
+
+
+
+
+;;;;    Memory allocation and free for Array
+;;;
+;;; When drawing graph, we have to provide data as array pointer
+;;; to drawing function.
+
+(defun data-alloc (lst type)
+  (cffi:foreign-alloc type
+                      :initial-contents
+                      (mapcar #'(lambda (x)
+                                  (case type
+                                    (:int (coerce x 'integer))
+                                    (:float (coerce x 'single-float))
+                                    (:double (coerce x 'double-float))))
+                              lst)))
+
+(defun free (&rest vars)
+  (loop for var in vars
+        do (cffi:foreign-free var)))
+
+(defun string-alloc (str)
+  (cffi:foreign-string-alloc str))
+
+(defun string-free (&rest strs)
+  (loop for str in strs
+        do (cffi:foreign-string-free str)))
+
+(defun arr-aref (arr type index)
+  (cffi:mem-aref arr type index))

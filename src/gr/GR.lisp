@@ -14,7 +14,151 @@
   (:import-from :kai.converter
                 :make-kai-cache)
   (:import-from :kai.util
-                :flatten))
+                :flatten)
+  (:export :init
+           :openws
+           :closews
+           :activatews
+           :deactivatews
+           :polyline
+           :polymarker
+           :text
+           :inqtext
+           :fillarea
+           :cellarray
+           :nonuniformcellarray
+           :polarcellarray
+           :gdp
+           :spline
+           :gridit
+           :setlinetype
+           :inqlinetype
+           :setlinewidth
+           :inqlinewidth
+           :setlinecolorind
+           :inqlinecolorind
+           :setmarkertype
+           :inqmarkertype
+           :setmarkersize
+           :inqmarkersize
+           :setmarkercolorind
+           :inqmarkercolorind
+           :settextfontprec
+           :setcharexpan
+           :setcharspace
+           :settextcolorind
+           :inqtextcolorind
+           :setcharheight
+           :inqcharheight
+           :setcharup
+           :settextpath
+           :settextalign
+           :setfillinstyle
+           :inqfillinstyle
+           :setfillstyle
+           :inqfillstyle
+           :setfillcolorind
+           :inqfillcolorind
+           :setcolorrep
+           :setwindow
+           :inqwindow
+           :setviewport
+           :inqviewport
+           :selntran
+           :setclip
+           :setwswindow
+           :setwsviewport
+           :createseg
+           :copysegws
+           :redrawsegws
+           :setsegtran
+           :closeseg
+           :emergencyclosegks
+           :updategks
+           :setspace
+           :inqspace
+           :setscale
+           :inqscale
+           :textext
+           :inqtextext
+           :axes
+           :axeslbl
+           :grid
+           :grid3d
+           :verrorbars
+           :herrorbars
+           :polyline3d
+           :polymarker3d
+           :axes3d
+           :titles3d
+           :surface
+           :contour
+           :contourf
+           :tricontour
+           :hexbin
+           :setcolormap
+           :inqcolormap
+           :setcolormapfromrgb
+           :colorbar
+           :inqcolor
+           :inqcolorfromrgb
+           :hsvtorgb
+           :tick
+           :validaterange
+           :adjustlimits
+           :adjustrange
+           :beginprint
+           :beginprinttext
+           :endprint
+           :ndctowc
+           :wctondc
+           :wc3towc
+           :drawrect
+           :fillrect
+           :drawarc
+           :fillarc
+           :drawpath
+           :setarrowstyle
+           :setarrowsize
+           :drawarrow
+           :readimage
+           :drawimage
+           :importgraphics
+           :setshadow
+           :settransparency
+           :setcoordxform
+           :begingraphics
+           :endgraphics
+           :getgraphics
+           :drawgraphics
+           :mathtex
+           :inqmathtex
+           :setregenflags
+           :inqregenflags
+           :savestate
+           :restorestate
+           :selectcontext
+           :destroycontext
+           :uselinespec
+           :delaunay
+           :reducepoints
+           :trisurface
+           :gradient
+           :quiver
+           :interp2
+           :version
+           :shade
+           :shadepoints
+           :shadelines
+           :panzoom
+           :path
+           :setborderwidth
+           :setbordercolorind
+           :setprojectiontype
+           :setperspectiveprojection
+           :settransformationparameters
+           :setorthographicprojection
+           :setwindow3d))
 (in-package :kai.GR.GR)
 
 
@@ -57,44 +201,6 @@
     (cffi:load-foreign-library
      (merge-pathnames (format nil "lib/~A" libGR)
                       (make-kai-cache "gr")))))
-
-
-#|
-    Memory allocation for Array
-
-When drawing graph, we have to provide data as array pointer
-to drawing function.
-
-lst : 
-    A list containing data to plot
-|#
-
-(defun data-alloc (lst type)
-  (cffi:foreign-alloc type
-                      :initial-contents
-                      (mapcar #'(lambda (x)
-                                  (case type
-                                    (:int (coerce x 'integer))
-                                    (:float (coerce x 'single-float))
-                                    (:double (coerce x 'double-float))))
-                              lst)))
-
-(defun free (&rest vars)
-  (loop for var in vars
-        do (cffi:foreign-free var)))
-
-(defun string-alloc (str)
-  (cffi:foreign-string-alloc str))
-
-(defun string-free (&rest strs)
-  (loop for str in strs
-        do (cffi:foreign-string-free str)))
-
-(defun arr-aref (arr type index)
-  (cffi:mem-aref arr type index))
-
-
-
 
 
 ;;;; Bindings
@@ -3634,7 +3740,7 @@ z :
   (py (:pointer :double))
   (pz (:pointer :double)))
 
-(defun trsurface (x y z)
+(defun trisurface (x y z)
   (let ((n (min (length x)
                 (length y)
                 (length z)))
@@ -3715,7 +3821,7 @@ z :
         (u-data (data-alloc (flatten u) :double))
         (v-data (data-alloc (flatten v) :double))
         (c (if color 1 0)))
-   (gr-quiver (length x)
+    (gr-quiver (length x)
                (length y)
                x-data
                y-data
