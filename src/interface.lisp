@@ -16,8 +16,6 @@
                 :symbol-downcase)
   (:import-from :kai.converter
                 :check-file-exist
-                :to-json
-                :style-to-json
                 :make-kai-cache)
   (:import-from :kai.plotly.generate
                 :download-plotlyjs

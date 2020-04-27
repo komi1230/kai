@@ -19,12 +19,12 @@
 
 
 
-;;;; JSON File Path Check
+;;;; Ensure directories and files
 ;;;
-;;; When plotting, we will generate json file from common lisp codes.
+;;; When plotting, Kai depends on some files.
 ;;; Here we check file path.
 ;;; Check if .cache file exists in the home directory.
-;;; And create cache directory for Kai to put .js files.
+;;; And create cache directory for Kai.
 
 (defun make-kai-cache (dir-name)
   (ensure-directories-exist
