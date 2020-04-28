@@ -29,7 +29,7 @@
 
 
 
-;;;; GR converter : regularization
+;;;; GR regularizer
 ;;;
 ;;; Accordings in GR is expressed with relative values between
 ;;; 0 and 1. Here we provide accordings regularizer.
@@ -47,3 +47,29 @@
                 (/ (- x (car tmp-min-max))
                    range))
             lst)))
+
+
+
+;;;; Sort argument data
+;;;
+;;; To plot sorted data, provide sort functions for Multiple
+;;; arguments.
+
+(defun sort-data (&rest data)
+  (labels ((concat (ls)
+             (if (every #'null ls)
+                 nil
+                 (cons (mapcar #'car ls)
+                       (concat (mapcar #'cdr ls)))))
+           (sort-l (l)
+             (sort (copy-list l)
+                   #'(lambda (x y)
+                      (< (car x) (car y)))))
+           (separate (l)
+             (case (length (car l))
+               (2 (list (mapcar #'first l)
+                        (mapcar #'second l)))
+               (3 (list (mapcar #'first l)
+                        (mapcar #'second l)
+                        (mapcar #'third l))))))
+    (separate (sort-l (concat data)))))
