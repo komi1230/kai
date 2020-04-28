@@ -55,27 +55,6 @@
   (every #'numberp data))
 
 
-;;;; Sort
-;;;
-;;; When plotting line, the figure should be sorted.
-;;; Here we provide sort function keeping x-value and y-value
-;;; with the same index.
-
-(defun sort-array (x-data y-data)
-  (let* ((len (car (array-dimensions x-data)))
-         (merged-data (loop for x across x-data
-                            for y across y-data
-                            collect (cons x y)))
-         (sorted-lst (sort merged-data #'< :key #'car))
-         (x-axis (make-array len
-                             :initial-contents
-                             (mapcar #'car sorted-lst)))
-         (y-axis (make-array len
-                             :initial-contents
-                             (mapcar #'cdr sorted-lst))))
-    (cons x-axis y-axis)))
-
-
 ;;;; Flatten
 ;;;
 ;;; To adjust dimensions of input data
