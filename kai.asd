@@ -2,8 +2,7 @@
   :version "0.1.10"
   :author "Yusuke Kominami"
   :license "MIT License"
-  :depends-on ("trivial-open-browser"
-               "dexador"
+  :depends-on ("dexador"
                "cl-who"
                "cl-css"
                "jonathan")

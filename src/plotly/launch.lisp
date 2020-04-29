@@ -22,4 +22,9 @@
 ;;; to open browser.
 (defun open-browser ()
   (let ((path-to-html (check-file-exist "plotly" "kai.html")))
-    (trivial-open-browser:open-browser (format nil "file:///~A" path-to-html))))
+    (uiop:run-program #+(or win32 mswindows windows)
+                      (format nil "explorer file:///~A" path-to-html)
+                      #+(or macos darwin)
+                      (format nil "open ~A" path-to-html)
+                      #-(or win32 mswindows macos darwin windows)
+                      (format nil "xdg-open ~A" path-to-html))))
