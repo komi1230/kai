@@ -22,4 +22,4 @@
 ;;; to open browser.
 (defun open-browser ()
   (let ((path-to-html (check-file-exist "plotly" "kai.html")))
-    (trivial-open-browser:open-browser (namestring path-to-html))))
+    (trivial-open-browser:open-browser (format nil "file:///~A" path-to-html))))
