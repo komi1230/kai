@@ -190,8 +190,9 @@
      :y ,(cdr (assoc :y data))
      :type "scatter"
      :mode "lines"
-     :line (:color ,(get-color (cdr (assoc :color data)))
-            :width ,(cdr (assoc :width data))))))
+     :line ,(symbol-downcase
+             `(:color ,(get-color (cdr (assoc :color data)))
+               :width ,(cdr (assoc :width data)))))))
 
 
 (defun plotly-marker (data)
@@ -200,8 +201,62 @@
      :y ,(cdr (assoc :y data))
      :type "scatter"
      :mode "markers"
-     :marker (:color ,(get-color (cdr (assoc :color data)))
-              :size ,(cdr (assoc :size data))))))   
+     :marker ,(symbol-downcase
+               `(:color ,(get-color (cdr (assoc :color data)))
+                 :size ,(cdr (assoc :size data)))))))
+
+
+(defun plotly-fill (data)
+  (list
+   (symbol-downcase
+    `(:x ,(cdr (assoc :x data))
+      :y ,(cdr (assoc :y0 data))
+      :type "scatter"
+      :mode "lines"
+      :fill "tonexty"
+      :line (:color ,(get-color (cdr (assoc :color data))))))
+   (symbol-downcase
+    `(:x ,(cdr (assoc :x data))
+      :y ,(cdr (assoc :y1 data))
+      :type "scatter"
+      :mode "lines"
+      :fill "tonexty"
+      :line ,(symbol-downcase
+              `(:color ,(get-color (cdr (assoc :color data)))))))))
+
+
+(defun plotly-errorbar (data)
+  (symbol-downcase
+   `(:x ,(cdr (assoc :x data))
+     :y ,(cdr (assoc :y data))
+     :type "scatter"
+     :mode "marker"
+     :fill "tonexty"
+     :marker (:color ,(get-color (cdr (assoc :color data))))
+     ,@(let ((errx (assoc :error-x data)))
+         (if errx
+             (symbol-downcase
+              `(:error_x
+                ,(symbol-downcase
+                  `(:type "data"
+                    :symmetric :false
+                    :color ,(get-color (cdr (assoc :color data)))
+                    ,@(if (consp (cadr errx))
+                          (list :array (caddr errx)
+                                :arrayminus (cadr errx))
+                          (list :array (cdr errx)))))))))
+     ,@(let ((erry (assoc :error-y data)))
+         (if erry
+             (symbol-downcase
+              `(:error_y
+                (symbol-downcase
+                 `(:type "data"
+                   :symmetric :false
+                   :color ,(get-color (cdr (assoc :color data)))
+                   ,@(if (consp (cadr erry))
+                         (list :array (caddr erry)
+                               :arrayminus (cadr erry))
+                         (list :array (cdr erry))))))))))))
 
 
 (defun to-json (param)
