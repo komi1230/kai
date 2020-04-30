@@ -79,13 +79,14 @@
                 (color "blue" c)
                 (width 1)
                 (name ""))
-  `((:x . ,x)
-    (:y . ,y)
-    (:type . "line")
-    (:color . ,(choose-color color c))
-    (:width . ,width)
-    ,@(if (not (string= name ""))
-          (cons :name name))))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y . ,y)
+               (:type . "line")
+               (:color . ,(choose-color color c))
+               (:width . ,width)
+               ,(if (not (string= name ""))
+                    (cons :name name)))))
 
 
 ;; Marker2D
@@ -100,13 +101,14 @@
                   (color "blue" c)
                   (size 5)
                   (name ""))
-  `((:x . ,x)
-    (:y . ,y)
-    (:type . "marker")
-    (:color . ,(choose-color color c))
-    (:size . ,size)
-    ,@(if (not (string= name ""))
-          (cons :name name))))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y . ,y)
+               (:type . "marker")
+               (:color . ,(choose-color color c))
+               (:size . ,size)
+               ,(if (not (string= name ""))
+                    (cons :name name)))))
 
 
 ;; fill
@@ -121,13 +123,14 @@
               &key
                 (color "blue" c)
                 (name ""))
-  `((:x . ,x)
-    (:y0 . ,y0)
-    (:y1 . ,y1)
-    (:type . "fill")
-    (:color . ,(choose-color color c))
-    ,@(if (not (string= name ""))
-          (cons :name name))))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y0 . ,y0)
+               (:y1 . ,y1)
+               (:type . "fill")
+               (:color . ,(choose-color color c))
+               ,(if (not (string= name ""))
+                    (cons :name name)))))
 
 
 ;; ErrorBar
@@ -139,11 +142,19 @@
 (defun -errorbar (x
                   y
                   &key
+                    (error-x '())
+                    (error-y '())
                     (color "blue" c))
-  `((:x . ,x)
-    (:y . ,y)
-    (:type . "errorbar")
-    (:color . ,(choose-color color c))))
+  (assert (or error-x error-y))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y . ,y)
+               (:type . "errorbar")
+               (:color . ,(choose-color color c))
+               ,(if (not (null error-x))
+                    (cons :error-x error-x))
+               ,(if (not (null error-y))
+                    (cons :error-y error-y)))))
 
 
 ;; Bar plot
@@ -157,11 +168,12 @@
              &key
                (name "")
                (text '()))
-  `((:x . ,x)
-    (:y . ,y)
-    (:type . "bar")
-    ,@(if (not (string= name ""))
-          (cons :name name))))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y . ,y)
+               (:type . "bar")
+               ,(if (not (string= name ""))
+                    (cons :name name)))))
 
 
 ;; Pie chart
@@ -174,11 +186,12 @@
              labels
              &key
                (name ""))
-  `((:values . ,values)
-    (:labels . ,labels)
-    (:type . "pie")
-    ,@(if (not (string= name ""))
-          (cons :name name))))
+  (remove-if #'null
+             `((:values . ,values)
+               (:labels . ,labels)
+               (:type . "pie")
+               ,(if (not (string= name ""))
+                    (cons :name name)))))
 
 
 ;; Box plots
@@ -193,13 +206,14 @@
                (name "")
                (boxmean t)
                (boxpoints :false))
-  `((:y . ,y)
-    (:type . "box")
-    (:color . ,(choose-color color c))
-    (:boxmean . ,boxmean)
-    (:boxpoints . ,boxpoints)
-    ,@(if (not (string= name ""))
-          (cons :name name))))
+  (remove-if #'null
+             `((:y . ,y)
+               (:type . "box")
+               (:color . ,(choose-color color c))
+               (:boxmean . ,boxmean)
+               (:boxpoints . ,boxpoints)
+               ,@(if (not (string= name ""))
+                     (cons :name name)))))
 
 
 ;; Heatmap
@@ -245,14 +259,15 @@
                   (color "blue" c)
                   (width 1)
                   (name ""))
-  `((:x . ,x)
-    (:y . ,y)
-    (:z . ,z)
-    (:type . "line3d")
-    (:color . ,(choose-color color c))
-    (:width . ,width)
-    ,@(if (not (string= name ""))
-          (cons :name name))))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y . ,y)
+               (:z . ,z)
+               (:type . "line3d")
+               (:color . ,(choose-color color c))
+               (:width . ,width)
+               ,(if (not (string= name ""))
+                    (cons :name name)))))
 
 
 ;; Marker3D
@@ -268,14 +283,15 @@
                     (color "blue" c)
                     (size 5)
                     (name ""))
-  `((:x . ,x)
-    (:y . ,y)
-    (:z . ,z)
-    (:type . "marker3d")
-    (:color . ,(choose-color color c))
-    (:size . ,size)
-    ,@(if (not (string= name ""))
-          (cons :name name))))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y . ,y)
+               (:z . ,z)
+               (:type . "marker3d")
+               (:color . ,(choose-color color c))
+               (:size . ,size)
+               ,(if (not (string= name ""))
+                    (cons :name name)))))
 
 
 ;; Surface
@@ -287,10 +303,11 @@
 (defun -surface (z
                  &key
                    (name ""))
-  `((:z . ,z)
-    (:type . "surface")
-    ,@(if (not (string= name ""))
-          (cons :name name))))
+  (remove-if #'null
+             `((:z . ,z)
+               (:type . "surface")
+               ,(if (not (string= name ""))
+                    (cons :name name)))))
 
 
 
