@@ -25,15 +25,22 @@
   (:export :*state*
            :*style*
            :reset!
-           :scatter
+           :line
+           :marker
+           :errorbar
+           :fillarea
+           :bar
            :pie
-           :sunburst
            :box
            :heatmap
            :contour
-           :scatter3d
+           :line3d
+           :marker3d
            :surface
-           :style
+           :title
+           :xaxis
+           :yaxis
+           :showlegend
            :show))
 (in-package :kai.interface)
 
@@ -49,212 +56,112 @@
 
 (defun reset! ()
   (setf *state* '())
-  (setf *style* '()))
+  (setf *style* '())
+  T)
 
+(defparameter *palette*
+  #("blue" "red" "green" "yellow" "cyan" "magenta"))
 
-;;;; Color
-;;;
-;;; List of color code
+(defun choose-color (color supplied-p)
+  (if supplied-p
+      color
+      (aref *palette*
+            (mod (length *state*)
+                 (length *palette*)))))
 
-(defparameter *colors* (make-hash-table))
-
-(setf (gethash (intern "ALICEBLUE") *colors*) "#F0F8FF"
-      (gethash (intern "ANTIQUEWHITE") *colors*) "#FAEBD7"
-      (gethash (intern "AQUA") *colors*) "#00FFFF"
-      (gethash (intern "AQUAMARINE") *colors*) "#7FFFD4"
-      (gethash (intern "AZURE") *colors*) "#F0FFFF"
-      (gethash (intern "BEIGE") *colors*) "#F5F5DC"
-      (gethash (intern "BISQUE") *colors*) "#FFE4C4"
-      (gethash (intern "BLACK") *colors*) "#000000"
-      (gethash (intern "BLANCHEDALMOND") *colors*) "#FFEBCD"
-      (gethash (intern "BLUE") *colors*) "#0000FF"
-      (gethash (intern "BLUEVIOLET") *colors*) "#8A2BE2"
-      (gethash (intern "BROWN") *colors*) "#A52A2A"
-      (gethash (intern "BURLYWOOD") *colors*) "#DEB887"
-      (gethash (intern "CADETBLUE") *colors*) "#5F9EA0"
-      (gethash (intern "CHARTREUSE") *colors*) "#7FFF00"
-      (gethash (intern "CHOCOLATE") *colors*) "#D2691E"
-      (gethash (intern "CORAL") *colors*) "#FF7F50"
-      (gethash (intern "CORNFLOWERBLUE") *colors*) "#6495ED"
-      (gethash (intern "CORNSILK") *colors*) "#FFF8DC"
-      (gethash (intern "CRIMSON") *colors*) "#DC143C"
-      (gethash (intern "CYAN") *colors*) "#00FFFF"
-      (gethash (intern "DARKBLUE") *colors*) "#00008B"
-      (gethash (intern "DARKCYAN") *colors*) "#008B8B"
-      (gethash (intern "DARKGOLDENROD") *colors*) "#B8860B"
-      (gethash (intern "DARKGRAY") *colors*) "#A9A9A9"
-      (gethash (intern "DARKGREEN") *colors*) "#006400"
-      (gethash (intern "DARKGREY") *colors*) "#A9A9A9"
-      (gethash (intern "DARKKHAKI") *colors*) "#BDB76B"
-      (gethash (intern "DARKMAGENTA") *colors*) "#8B008B"
-      (gethash (intern "DARKOLIVEGREEN") *colors*) "#556B2F"
-      (gethash (intern "DARKORANGE") *colors*) "#FF8C00"
-      (gethash (intern "DARKORCHID") *colors*) "#9932CC"
-      (gethash (intern "DARKRED") *colors*) "#8B0000"
-      (gethash (intern "DARKSALMON") *colors*) "#E9967A"
-      (gethash (intern "DARKSEAGREEN") *colors*) "#8FBC8F"
-      (gethash (intern "DARKSLATEBLUE") *colors*) "#483D8B"
-      (gethash (intern "DARKSLATEGRAY") *colors*) "#2F4F4F"
-      (gethash (intern "DARKSLATEGREY") *colors*) "#2F4F4F"
-      (gethash (intern "DARKTURQUOISE") *colors*) "#00CED1"
-      (gethash (intern "DARKVIOLET") *colors*) "#9400D3"
-      (gethash (intern "DEEPPINK") *colors*) "#FF1493"
-      (gethash (intern "DEEPSKYBLUE") *colors*) "#00BFFF"
-      (gethash (intern "DIMGRAY") *colors*) "#696969"
-      (gethash (intern "DIMGREY") *colors*) "#696969"
-      (gethash (intern "DODGERBLUE") *colors*) "#1E90FF"
-      (gethash (intern "FIREBRICK") *colors*) "#B22222"
-      (gethash (intern "FLORALWHITE") *colors*) "#FFFAF0"
-      (gethash (intern "FORESTGREEN") *colors*) "#228B22"
-      (gethash (intern "FUCHSIA") *colors*) "#FF00FF"
-      (gethash (intern "GAINSBORO") *colors*) "#DCDCDC"
-      (gethash (intern "GHOSTWHITE") *colors*) "#F8F8FF"
-      (gethash (intern "GOLD") *colors*) "#FFD700"
-      (gethash (intern "GOLDENROD") *colors*) "#DAA520"
-      (gethash (intern "GRAY") *colors*) "#808080"
-      (gethash (intern "GREEN") *colors*) "#008000"
-      (gethash (intern "GREENYELLOW") *colors*) "#ADFF2F"
-      (gethash (intern "GREY") *colors*) "#808080"
-      (gethash (intern "HONEYDEW") *colors*) "#F0FFF0"
-      (gethash (intern "HOTPINK") *colors*) "#FF69B4"
-      (gethash (intern "INDIANRED") *colors*) "#CD5C5C"
-      (gethash (intern "INDIGO") *colors*) "#4B0082"
-      (gethash (intern "IVORY") *colors*) "#FFFFF0"
-      (gethash (intern "KHAKI") *colors*) "#F0E68C"
-      (gethash (intern "LAVENDER") *colors*) "#E6E6FA"
-      (gethash (intern "LAVENDERBLUSH") *colors*) "#FFF0F5"
-      (gethash (intern "LAWNGREEN") *colors*) "#7CFC00"
-      (gethash (intern "LEMONCHIFFON") *colors*) "#FFFACD"
-      (gethash (intern "LIGHTBLUE") *colors*) "#ADD8E6"
-      (gethash (intern "LIGHTCORAL") *colors*) "#F08080"
-      (gethash (intern "LIGHTCYAN") *colors*) "#E0FFFF"
-      (gethash (intern "LIGHTGOLDENRODYELLOW") *colors*) "#FAFAD2"
-      (gethash (intern "LIGHTGRAY") *colors*) "#D3D3D3"
-      (gethash (intern "LIGHTGREEN") *colors*) "#90EE90"
-      (gethash (intern "LIGHTGREY") *colors*) "#D3D3D3"
-      (gethash (intern "LIGHTPINK") *colors*) "#FFB6C1"
-      (gethash (intern "LIGHTSALMON") *colors*) "#FFA07A"
-      (gethash (intern "LIGHTSEAGREEN") *colors*) "#20B2AA"
-      (gethash (intern "LIGHTSKYBLUE") *colors*) "#87CEFA"
-      (gethash (intern "LIGHTSLATEGRAY") *colors*) "#778899"
-      (gethash (intern "LIGHTSLATEGREY") *colors*) "#778899"
-      (gethash (intern "LIGHTSTEELBLUE") *colors*) "#B0C4DE"
-      (gethash (intern "LIGHTYELLOW") *colors*) "#FFFFE0"
-      (gethash (intern "LIME") *colors*) "#00FF00"
-      (gethash (intern "LIMEGREEN") *colors*) "#32CD32"
-      (gethash (intern "LINEN") *colors*) "#FAF0E6"
-      (gethash (intern "MAGENTA") *colors*) "#FF00FF"
-      (gethash (intern "MAROON") *colors*) "#800000"
-      (gethash (intern "MEDIUMAQUAMARINE") *colors*) "#66CDAA"
-      (gethash (intern "MEDIUMBLUE") *colors*) "#0000CD"
-      (gethash (intern "MEDIUMORCHID") *colors*) "#BA55D3"
-      (gethash (intern "MEDIUMPURPLE") *colors*) "#9370DB"
-      (gethash (intern "MEDIUMSEAGREEN") *colors*) "#3CB371"
-      (gethash (intern "MEDIUMSLATEBLUE") *colors*) "#7B68EE"
-      (gethash (intern "MEDIUMSPRINGGREEN") *colors*) "#00FA9A"
-      (gethash (intern "MEDIUMTURQUOISE") *colors*) "#48D1CC"
-      (gethash (intern "MEDIUMVIOLETRED") *colors*) "#C71585"
-      (gethash (intern "MIDNIGHTBLUE") *colors*) "#191970"
-      (gethash (intern "MINTCREAM") *colors*) "#F5FFFA"
-      (gethash (intern "MISTYROSE") *colors*) "#FFE4E1"
-      (gethash (intern "MOCCASIN") *colors*) "#FFE4B5"
-      (gethash (intern "NAVAJOWHITE") *colors*) "#FFDEAD"
-      (gethash (intern "NAVY") *colors*) "#000080"
-      (gethash (intern "OLDLACE") *colors*) "#FDF5E6"
-      (gethash (intern "OLIVE") *colors*) "#808000"
-      (gethash (intern "OLIVEDRAB") *colors*) "#6B8E23"
-      (gethash (intern "ORANGE") *colors*) "#FFA500"
-      (gethash (intern "ORANGERED") *colors*) "#FF4500"
-      (gethash (intern "ORCHID") *colors*) "#DA70D6"
-      (gethash (intern "PALEGOLDENROD") *colors*) "#EEE8AA"
-      (gethash (intern "PALEGREEN") *colors*) "#98FB98"
-      (gethash (intern "PALETURQUOISE") *colors*) "#AFEEEE"
-      (gethash (intern "PALEVIOLETRED") *colors*) "#DB7093"
-      (gethash (intern "PAPAYAWHIP") *colors*) "#FFEFD5"
-      (gethash (intern "PEACHPUFF") *colors*) "#FFDAB9"
-      (gethash (intern "PERU") *colors*) "#CD853F"
-      (gethash (intern "PINK") *colors*) "#FFC0CB"
-      (gethash (intern "PLUM") *colors*) "#DDA0DD"
-      (gethash (intern "POWDERBLUE") *colors*) "#B0E0E6"
-      (gethash (intern "PURPLE") *colors*) "#800080"
-      (gethash (intern "REBECCAPURPLE") *colors*) "#663399"
-      (gethash (intern "RED") *colors*) "#FF0000"
-      (gethash (intern "ROSYBROWN") *colors*) "#BC8F8F"
-      (gethash (intern "ROYALBLUE") *colors*) "#4169E1"
-      (gethash (intern "SADDLEBROWN") *colors*) "#8B4513"
-      (gethash (intern "SALMON") *colors*) "#FA8072"
-      (gethash (intern "SANDYBROWN") *colors*) "#F4A460"
-      (gethash (intern "SEAGREEN") *colors*) "#2E8B57"
-      (gethash (intern "SEASHELL") *colors*) "#FFF5EE"
-      (gethash (intern "SIENNA") *colors*) "#A0522D"
-      (gethash (intern "SILVER") *colors*) "#C0C0C0"
-      (gethash (intern "SKYBLUE") *colors*) "#87CEEB"
-      (gethash (intern "SLATEBLUE") *colors*) "#6A5ACD"
-      (gethash (intern "SLATEGRAY") *colors*) "#708090"
-      (gethash (intern "SLATEGREY") *colors*) "#708090"
-      (gethash (intern "SNOW") *colors*) "#FFFAFA"
-      (gethash (intern "SPRINGGREEN") *colors*) "#00FF7F"
-      (gethash (intern "STEELBLUE") *colors*) "#4682B4"
-      (gethash (intern "TAN") *colors*) "#D2B48C"
-      (gethash (intern "TEAL") *colors*) "#008080"
-      (gethash (intern "THISTLE") *colors*) "#D8BFD8"
-      (gethash (intern "TOMATO") *colors*) "#FF6347"
-      (gethash (intern "TURQUOISE") *colors*) "#40E0D0"
-      (gethash (intern "VIOLET") *colors*) "#EE82EE"
-      (gethash (intern "WHEAT") *colors*) "#F5DEB3"
-      (gethash (intern "WHITE") *colors*) "#FFFFFF"
-      (gethash (intern "WHITESMOKE") *colors*) "#F5F5F5"
-      (gethash (intern "YELLOW") *colors*) "#FFFF00"
-      (gethash (intern "YELLOWGREEN") *colors*) "#9ACD32")
-
-(defun get-color (c)
-  (gethash (intern (string-upcase c))
-           *colors*))
 
 
 ;;;; Scatter and Line
 ;;;
 ;;; This covers scatter and line plotting and their options.
 
-;; 2D scatter
-(defun scatter (&rest data)
-  (push (apply #'-scatter (apply #'convert-data data))
+;; Line2D
+(defun line (&rest data)
+  (push (apply #'-line (apply #'convert-data data))
         *state*)
   T)
 
-(defun -scatter (x
-                 y
-                 &key
-                   (mode "lines")
-                   (name "")
-                   (text '())
-                   (error-x '())
-                   (error-y '())
-                   (fill "")
-                   (fillcolor "")
-                   (line '())
-                   (marker '()))
-  (symbol-downcase
-   `( :x ,x
-      :y ,y
-      :type "scatter"
-      :mode ,mode
-      ,@(if (not (string= name ""))
-            (list :name name))
-      ,@(if (not (null text))
-            (list :text text))
-      ,@(if (not (null error-x))
-            (list :error_x error-x))
-      ,@(if (not (null error-y))
-            (list :error_y error-y))
-      ,@(if (not (string= fill ""))
-            (list :fill fill))
-      ,@(if (not (string= fillcolor ""))
-            (list :fillcolor fillcolor))
-      ,@(if (not (null line))
-            (list :line (symbol-downcase line)))
-      ,@(if (not (null marker))
-            (list :marker (symbol-downcase marker))))))
+(defun -line (x
+              y
+              &key
+                (color "blue" c)
+                (width 1 w)
+                (name "" n))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y . ,y)
+               (:type . "line")
+               (:color . ,(choose-color color c))
+               ,(if w (cons :width width))
+               ,(if n (cons :name name)))))
+
+
+;; Marker2D
+(defun marker (&rest data)
+  (push (apply #'-marker (apply #'convert-data data))
+        *state*)
+  T)
+
+(defun -marker (x
+                y
+                &key
+                  (color "blue" c)
+                  (size 5 s)
+                  (name "" n))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y . ,y)
+               (:type . "marker")
+               (:color . ,(choose-color color c))
+               ,(if s (cons :size size))
+               ,(if n (cons :name name)))))
+
+
+;; fill
+(defun fillarea (&rest data)
+  (push (apply #'-fillarea data)
+        *state*)
+  T)
+
+(defun -fillarea (x
+              y0
+              y1
+              &key
+                (color "blue" c)
+                (name "" n))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y0 . ,y0)
+               (:y1 . ,y1)
+               (:type . "fill")
+               (:color . ,(choose-color color c))
+               ,(if n (cons :name name)))))
+
+
+;; ErrorBar
+(defun errorbar (&rest data)
+  (push (apply #'-errorbar (apply #'convert-data data))
+        *state*)
+  T)
+
+(defun -errorbar (x
+                  y
+                  &key
+                    (error-x '())
+                    (error-y '())
+                    (color "blue" c)
+                    (name "" n))
+  (assert (or error-x error-y))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y . ,y)
+               (:type . "errorbar")
+               (:color . ,(choose-color color c))
+               ,(if n (cons :name name))
+               ,(if (not (null error-x))
+                    (cons :error-x error-x))
+               ,(if (not (null error-y))
+                    (cons :error-y error-y)))))
 
 
 ;; Bar plot
@@ -266,31 +173,12 @@
 (defun -bar (x
              y
              &key
-               (name "")
-               (text '())
-               (error-x '())
-               (error-y '())
-               (fill "")
-               (fillcolor "")
-               (marker '()))
-  (symbol-downcase
-   `( :x ,x
-      :y ,y
-      :type "bar"
-      ,@(if (not (string= name ""))
-            (list :name name))
-      ,@(if (not (null text))
-            (list :text text))
-      ,@(if (not (null error-x))
-            (list :error_x error-x))
-      ,@(if (not (null error-y))
-            (list :error_y error-y))
-      ,@(if (not (string= fill ""))
-            (list :fill fill))
-      ,@(if (not (string= fillcolor ""))
-            (list :fillcolor fillcolor))
-      ,@(if (not (null marker))
-            (list :marker (symbol-downcase marker))))))
+               (name "" n))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y . ,y)
+               (:type . "bar")
+               ,(if n (cons :name name)))))
 
 
 ;; Pie chart
@@ -302,32 +190,12 @@
 (defun -pie (values
              labels
              &key
-               (name ""))
-  (symbol-downcase
-   `(:values ,values
-     :labels ,labels
-     ,@(if (not (string= name ""))
-           (list :name name)))))
-
-
-;; Sunburst
-(defun sunburst (&rest data)
-  (push (apply #'-sunburst data)
-        *state*)
-  T)
-
-(defun -sunburst (values
-                  labels
-                  parents
-                  &key
-                    (marker '()))
-  (symbol-downcase
-   `(:value ,values
-     :label ,labels
-     :parents ,parents
-     :type "sunburst"
-     ,@(if (not (null marker))
-           (list :marker (symbol-downcase marker))))))
+               (name "" n))
+  (remove-if #'null
+             `((:values . ,values)
+               (:labels . ,labels)
+               (:type . "pie")
+               ,(if n (cons :name name)))))
 
 
 ;; Box plots
@@ -338,19 +206,17 @@
 
 (defun -box (y
              &key
-               (name "")
-               (marker '())
+               (color "blue" c)
+               (name "" n)
                (boxmean t)
                (boxpoints :false))
-  (symbol-downcase
-   `(:y ,y
-     :type "box"
-     :boxmean ,boxmean
-     :boxpoints ,boxpoints
-     ,@(if (not (string= name ""))
-           (list :name name))
-     ,@(if (not (null marker))
-           (list :marker (symbol-downcase marker))))))
+  (remove-if #'null
+             `((:y . ,y)
+               (:type . "box")
+               (:color . ,(choose-color color c))
+               (:boxmean . ,boxmean)
+               (:boxpoints . ,boxpoints)
+               ,(if n (cons :name name)))))
 
 
 ;; Heatmap
@@ -361,14 +227,10 @@
 
 (defun -heatmap (z
                  &key
-                   (colorscale '())
                    (showscale :false))
-  (symbol-downcase
-   `(:z ,z
-     :type "heatmap"
-     :showscale ,showscale
-     ,@(if (not (null colorscale))
-           (list :marker (symbol-downcase colorscale))))))
+  `((:z . ,z)
+    (:type . "heatmap")
+    (:showscale . ,showscale)))
 
 
 ;; Contour
@@ -379,50 +241,58 @@
 
 (defun -contour (z
                  &key
-                   (colorscale '())
                    (showscale :false)
-                   (autocontour :false)
-                   (contours '()))
-  (symbol-downcase
-   `(:z ,z
-     :type "contour"
-     :showscale ,showscale
-     :autocontour ,autocontour
-     ,@(if (not (null colorscale))
-           (list :marker (symbol-downcase colorscale)))
-     ,@(if (not (null contours))
-           (list :marker (symbol-downcase contours))))))
+                   (autocontour :false))
+  `((:z . ,z)
+    (:type . "contour")
+    (:showscale . ,showscale)
+    (:autocontour . ,autocontour)))
 
 
-;; Scatter3D
-(defun scatter3d (&rest data)
-  (push (apply #'-scatter3d data)
+;; Line3D
+(defun line3d (&rest data)
+  (push (apply #'-line3d data)
         *state*)
   T)
 
-(defun -scatter3d (x
-                   y
-                   z
-                   &key
-                     (mode "markers")
-                     (name "")
-                     (text '())
-                     (marker '())
-                     (line '()))
-  (symbol-downcase
-   `(:x ,x
-     :y ,y
-     :z ,z
-     :type "scatter3d"
-     :mode ,mode
-     ,@(if (not (string= name ""))
-           (list :name name))
-     ,@(if (not (null text))
-           (list :text text))
-     ,@(if (not (null line))
-           (list :line (symbol-downcase line)))
-     ,@(if (not (null marker))
-           (list :marker (symbol-downcase marker))))))
+(defun -line3d (x
+                y
+                z
+                &key
+                  (color "blue" c)
+                  (width 1 w)
+                  (name "" n))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y . ,y)
+               (:z . ,z)
+               (:type . "line3d")
+               (:color . ,(choose-color color c))
+               ,(if w (cons :width width))
+               ,(if n (cons :name name)))))
+
+
+;; Marker3D
+(defun marker3d (&rest data)
+  (push (apply #'-marker3d data)
+        *state*)
+  T)
+
+(defun -marker3d (x
+                  y
+                  z
+                  &key
+                    (color "blue" c)
+                    (size 5 s)
+                    (name "" n))
+  (remove-if #'null
+             `((:x . ,x)
+               (:y . ,y)
+               (:z . ,z)
+               (:type . "marker3d")
+               (:color . ,(choose-color color c))
+               ,(if s (cons :size size))
+               ,(if n (cons :name name)))))
 
 
 ;; Surface
@@ -433,12 +303,11 @@
 
 (defun -surface (z
                  &key
-                   (name ""))
-  (symbol-downcase
-   `(:z ,z
-     :type "surface"
-     ,@(if (not (string= name ""))
-           (list :name name)))))
+                   (name "" n))
+  (remove-if #'null
+             `((:z . ,z)
+               (:type . "surface")
+               ,(if n (cons :name name)))))
 
 
 
@@ -446,17 +315,25 @@
 ;;;
 ;;; To attach title or axis options to the graph.
 
-(defun style (&key
-                (title "")
-                (xaxis '())
-                (yaxis '()))
-  (setf *style*
-        `(:title ,title
-                 ,@(if (not (null xaxis))
-                       (list :xaxis (symbol-downcase xaxis)))
-                 ,@(if (not (null yaxis))
-                       (list :yaxis (symbol-downcase yaxis)))))
+(defun title (text)
+  (push (cons :title text)
+        *style*)
   T)
+
+(defun xaxis (text)
+  (push (cons :xaxis text)
+        *style*)
+  T)
+
+(defun yaxis (text)
+  (push (cons :yaxis text)
+        *style*)
+  T)
+
+(defun showlegend ()
+  (push (cons :showlegend t)
+        *style*))
+
 
 
 ;;;; Plot
