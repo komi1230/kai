@@ -49,7 +49,8 @@
 
 (defun reset! ()
   (setf *state* '())
-  (setf *style* '()))
+  (setf *style* '())
+  T)
 
 (defparameter *palette*
   #("blue" "red" "green" "yellow" "cyan" "magenta"))
@@ -77,16 +78,15 @@
               y
               &key
                 (color "blue" c)
-                (width 1)
-                (name ""))
+                (width 1 w)
+                (name "" n))
   (remove-if #'null
              `((:x . ,x)
                (:y . ,y)
                (:type . "line")
                (:color . ,(choose-color color c))
-               (:width . ,width)
-               ,(if (not (string= name ""))
-                    (cons :name name)))))
+               ,(if w (cons :width width))
+               ,(if n (cons :name name)))))
 
 
 ;; Marker2D
@@ -99,16 +99,15 @@
                 y
                 &key
                   (color "blue" c)
-                  (size 5)
-                  (name ""))
+                  (size 5 s)
+                  (name "" n))
   (remove-if #'null
              `((:x . ,x)
                (:y . ,y)
                (:type . "marker")
                (:color . ,(choose-color color c))
-               (:size . ,size)
-               ,(if (not (string= name ""))
-                    (cons :name name)))))
+               ,(if s (cons :size size))
+               ,(if n (cons :name name)))))
 
 
 ;; fill
@@ -122,15 +121,14 @@
               y1
               &key
                 (color "blue" c)
-                (name ""))
+                (name "" n))
   (remove-if #'null
              `((:x . ,x)
                (:y0 . ,y0)
                (:y1 . ,y1)
                (:type . "fill")
                (:color . ,(choose-color color c))
-               ,(if (not (string= name ""))
-                    (cons :name name)))))
+               ,(if n (cons :name name)))))
 
 
 ;; ErrorBar
@@ -166,14 +164,12 @@
 (defun -bar (x
              y
              &key
-               (name "")
-               (text '()))
+               (name "" n))
   (remove-if #'null
              `((:x . ,x)
                (:y . ,y)
                (:type . "bar")
-               ,(if (not (string= name ""))
-                    (cons :name name)))))
+               ,(if n (cons :name name)))))
 
 
 ;; Pie chart
@@ -185,13 +181,12 @@
 (defun -pie (values
              labels
              &key
-               (name ""))
+               (name "" n))
   (remove-if #'null
              `((:values . ,values)
                (:labels . ,labels)
                (:type . "pie")
-               ,(if (not (string= name ""))
-                    (cons :name name)))))
+               ,(if n (cons :name name)))))
 
 
 ;; Box plots
@@ -203,7 +198,7 @@
 (defun -box (y
              &key
                (color "blue" c)
-               (name "")
+               (name "" n)
                (boxmean t)
                (boxpoints :false))
   (remove-if #'null
@@ -212,8 +207,7 @@
                (:color . ,(choose-color color c))
                (:boxmean . ,boxmean)
                (:boxpoints . ,boxpoints)
-               ,@(if (not (string= name ""))
-                     (cons :name name)))))
+               ,(if n (cons :name name)))))
 
 
 ;; Heatmap
@@ -257,17 +251,16 @@
                 z
                 &key
                   (color "blue" c)
-                  (width 1)
-                  (name ""))
+                  (width 1 w)
+                  (name "" n))
   (remove-if #'null
              `((:x . ,x)
                (:y . ,y)
                (:z . ,z)
                (:type . "line3d")
                (:color . ,(choose-color color c))
-               (:width . ,width)
-               ,(if (not (string= name ""))
-                    (cons :name name)))))
+               ,(if w (:width . ,width))
+               ,(if n (cons :name name)))))
 
 
 ;; Marker3D
@@ -281,17 +274,16 @@
                   z
                   &key
                     (color "blue" c)
-                    (size 5)
-                    (name ""))
+                    (size 5 s)
+                    (name "" n))
   (remove-if #'null
              `((:x . ,x)
                (:y . ,y)
                (:z . ,z)
                (:type . "marker3d")
                (:color . ,(choose-color color c))
-               (:size . ,size)
-               ,(if (not (string= name ""))
-                    (cons :name name)))))
+               ,(if s (:size . ,size))
+               ,(if n (cons :name name)))))
 
 
 ;; Surface
@@ -302,12 +294,11 @@
 
 (defun -surface (z
                  &key
-                   (name ""))
+                   (name "" n))
   (remove-if #'null
              `((:z . ,z)
                (:type . "surface")
-               ,(if (not (string= name ""))
-                    (cons :name name)))))
+               ,(if n (cons :name name)))))
 
 
 
@@ -316,19 +307,23 @@
 ;;; To attach title or axis options to the graph.
 
 (defun title (text)
-  (push (list :title text)
+  (push (cons :title text)
         *style*)
   T)
 
 (defun xaxis (text)
-  (push (list :xaxis text)
+  (push (cons :xaxis text)
         *style*)
   T)
 
 (defun yaxis (text)
-  (push (list :yaxis text)
+  (push (cons :yaxis text)
         *style*)
   T)
+
+(defun showlegend ()
+  (push (cons :showlegend t)
+        *style*))
 
 
 
