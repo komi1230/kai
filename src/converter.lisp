@@ -190,9 +190,14 @@
      :y ,(cdr (assoc :y data))
      :type "scatter"
      :mode "lines"
+     ,@(if (assoc :name data)
+           (symbol-downcase
+            (list :name (cdr (assoc :name data)))))
      :line ,(symbol-downcase
              `(:color ,(get-color (cdr (assoc :color data)))
-               :width ,(cdr (assoc :width data)))))))
+               ,@(if (assoc :width data)
+                     (symbol-downcase
+                      (list :width (cdr (assoc :width data))))))))))
 
 
 (defun plotly-marker (data)
@@ -201,9 +206,14 @@
      :y ,(cdr (assoc :y data))
      :type "scatter"
      :mode "markers"
+     ,@(if (assoc :name data)
+           (symbol-downcase
+            (list :name (cdr (assoc :name data)))))
      :marker ,(symbol-downcase
                `(:color ,(get-color (cdr (assoc :color data)))
-                 :size ,(cdr (assoc :size data)))))))
+                 ,@(if (assoc :width data)
+                     (symbol-downcase
+                      (list :width (cdr (assoc :width data))))))))))
 
 
 (defun plotly-fill (data)
@@ -259,14 +269,119 @@
                          (list :array (cdr erry))))))))))))
 
 
+(defun plotly-bar (data)
+  (symbol-downcase
+   `(:x ,(cdr (assoc :x data))
+     :y ,(cdr (assoc :y data))
+     :type "bar"
+     ,@(if (assoc :name data)
+           (symbol-downcase
+            (list :name (cdr (assoc :name data))))))))
+
+
+(defun plotly-pie (data)
+  (symbol-downcase
+   `(:values ,(cdr (assoc :values data))
+     :labels ,(cdr (assoc :labels data))
+     :type "pie"
+     ,@(if (assoc :name data)
+           (symbol-downcase
+            (list :name (cdr (assoc :name data))))))))
+
+
+(defun plotly-box (data)
+  (symbol-downcase
+   `(:y ,(cdr (assoc :y data))
+     :type "box"
+     ,@(if (assoc :name data)
+           (symbol-downcase
+            (list :name (cdr (assoc :name data)))))
+     :boxmean ,(cdr (assoc :boxmean data))
+     :boxpoints ,(cdr (assoc :boxpoints data))
+     :marker (:color ,(get-color (cdr (assoc :color data)))))))
+
+
+(defun plotly-heatmap (data)
+  (symbol-downcase
+   `(:z ,(cdr (assoc :z data))
+     :type "heatmap"
+     :showscale ,(cdr (assoc :showscale data)))))
+
+
+(defun plotly-contour (data)
+  (symbol-downcase
+   `(:z ,(cdr (assoc :z data))
+     :type "contour"
+     :showscale ,(cdr (assoc :showscale data))
+     :autocontour ,(cdr (assoc :autocontour data)))))
+
+
+(defun plotly-line3d (data)
+  (symbol-downcase
+   `(:x ,(cdr (assoc :x data))
+     :y ,(cdr (assoc :y data))
+     :z ,(cdr (assoc :z data))
+     :type "scatter3d"
+     :mode "lines"
+     ,@(if (assoc :name data)
+           (symbol-downcase
+            (list :name (cdr (assoc :name data)))))
+     :line ,(symbol-downcase
+             `(:color ,(get-color (cdr (assoc :color data)))
+               ,@(if (assoc :width data)
+                     (symbol-downcase
+                      (list :width (cdr (assoc :width data))))))))))
+
+
+(defun plotly-marker3d (data)
+  (symbol-downcase
+   `(:x ,(cdr (assoc :x data))
+     :y ,(cdr (assoc :y data))
+     :z ,(cdr (assoc :z data))
+     :type "scatter3d"
+     :mode "markers"
+     ,@(if (assoc :name data)
+           (symbol-downcase
+            (list :name (cdr (assoc :name data)))))
+     :marker ,(symbol-downcase
+               `(:color ,(get-color (cdr (assoc :color data)))
+                 ,@(if (assoc :width data)
+                     (symbol-downcase
+                      (list :width (cdr (assoc :width data))))))))))
+
+
+(defun plotly-surface (data)
+  (symbol-downcase
+   `(:z ,(cdr (assoc :z data))
+     :type "surface"
+     ,@(if (assoc :name data)
+           (symbol-downcase
+            (list :name (cdr (assoc :name data))))))))
+
+
+(defun plotly-convert (data)
+  (let ((chart-type (cdr (assoc :type data))))
+    (case chart-type
+      ("line" (list (plotly-line data)))
+      ("marker" (list (plotly-marker data)))
+      ("fill" (plotly-fill data))
+      ("errorbar" (list (plotly-errorbar data)))
+      ("bar" (list (plotly-bar data)))
+      ("pie" (list (plotly-pie data)))
+      ("box" (list (plotly-box data)))
+      ("heatmap" (list (plotly-heatmap data)))
+      ("contour" (list (plotly-contour data)))
+      ("line3d" (list (plotly-line3d data)))
+      ("marker3d" (list (plotly-marker3d data)))
+      ("surface" (list (plotly-surface data))))))
+
+
 (defun to-json (param)
   (let ((jonathan:*false-value* :false)
         (jonathan:*null-value* :null)
         (jonathan:*empty-array-value* :empty-array)
         (jonathan:*empty-object-value* :empty-object))
     (jonathan:to-json param)))
-
-
 
 
 
