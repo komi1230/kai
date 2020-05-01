@@ -240,6 +240,7 @@
       :type "scatter"
       :mode "lines"
       :fill "tonexty"
+      :fillcolor (plotly-get-color (cdr (assoc :color data)))
       :line ,(symbol-downcase
               `(:color ,(plotly-get-color (cdr (assoc :color data)))))))))
 
