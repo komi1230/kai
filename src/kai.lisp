@@ -25,6 +25,8 @@
                 :*style*)
   (:export :line
            :marker
+           :fillarea
+           :errorbar
            :bar
            :pie
            :box

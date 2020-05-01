@@ -24,159 +24,166 @@
 
 (defparameter *colors* (make-hash-table))
 
-(setf (gethash (intern "ALICEBLUE") *colors*) "#F0F8FF"
-      (gethash (intern "ANTIQUEWHITE") *colors*) "#FAEBD7"
-      (gethash (intern "AQUA") *colors*) "#00FFFF"
-      (gethash (intern "AQUAMARINE") *colors*) "#7FFFD4"
-      (gethash (intern "AZURE") *colors*) "#F0FFFF"
-      (gethash (intern "BEIGE") *colors*) "#F5F5DC"
-      (gethash (intern "BISQUE") *colors*) "#FFE4C4"
-      (gethash (intern "BLACK") *colors*) "#000000"
-      (gethash (intern "BLANCHEDALMOND") *colors*) "#FFEBCD"
-      (gethash (intern "BLUE") *colors*) "#0000FF"
-      (gethash (intern "BLUEVIOLET") *colors*) "#8A2BE2"
-      (gethash (intern "BROWN") *colors*) "#A52A2A"
-      (gethash (intern "BURLYWOOD") *colors*) "#DEB887"
-      (gethash (intern "CADETBLUE") *colors*) "#5F9EA0"
-      (gethash (intern "CHARTREUSE") *colors*) "#7FFF00"
-      (gethash (intern "CHOCOLATE") *colors*) "#D2691E"
-      (gethash (intern "CORAL") *colors*) "#FF7F50"
-      (gethash (intern "CORNFLOWERBLUE") *colors*) "#6495ED"
-      (gethash (intern "CORNSILK") *colors*) "#FFF8DC"
-      (gethash (intern "CRIMSON") *colors*) "#DC143C"
-      (gethash (intern "CYAN") *colors*) "#00FFFF"
-      (gethash (intern "DARKBLUE") *colors*) "#00008B"
-      (gethash (intern "DARKCYAN") *colors*) "#008B8B"
-      (gethash (intern "DARKGOLDENROD") *colors*) "#B8860B"
-      (gethash (intern "DARKGRAY") *colors*) "#A9A9A9"
-      (gethash (intern "DARKGREEN") *colors*) "#006400"
-      (gethash (intern "DARKGREY") *colors*) "#A9A9A9"
-      (gethash (intern "DARKKHAKI") *colors*) "#BDB76B"
-      (gethash (intern "DARKMAGENTA") *colors*) "#8B008B"
-      (gethash (intern "DARKOLIVEGREEN") *colors*) "#556B2F"
-      (gethash (intern "DARKORANGE") *colors*) "#FF8C00"
-      (gethash (intern "DARKORCHID") *colors*) "#9932CC"
-      (gethash (intern "DARKRED") *colors*) "#8B0000"
-      (gethash (intern "DARKSALMON") *colors*) "#E9967A"
-      (gethash (intern "DARKSEAGREEN") *colors*) "#8FBC8F"
-      (gethash (intern "DARKSLATEBLUE") *colors*) "#483D8B"
-      (gethash (intern "DARKSLATEGRAY") *colors*) "#2F4F4F"
-      (gethash (intern "DARKSLATEGREY") *colors*) "#2F4F4F"
-      (gethash (intern "DARKTURQUOISE") *colors*) "#00CED1"
-      (gethash (intern "DARKVIOLET") *colors*) "#9400D3"
-      (gethash (intern "DEEPPINK") *colors*) "#FF1493"
-      (gethash (intern "DEEPSKYBLUE") *colors*) "#00BFFF"
-      (gethash (intern "DIMGRAY") *colors*) "#696969"
-      (gethash (intern "DIMGREY") *colors*) "#696969"
-      (gethash (intern "DODGERBLUE") *colors*) "#1E90FF"
-      (gethash (intern "FIREBRICK") *colors*) "#B22222"
-      (gethash (intern "FLORALWHITE") *colors*) "#FFFAF0"
-      (gethash (intern "FORESTGREEN") *colors*) "#228B22"
-      (gethash (intern "FUCHSIA") *colors*) "#FF00FF"
-      (gethash (intern "GAINSBORO") *colors*) "#DCDCDC"
-      (gethash (intern "GHOSTWHITE") *colors*) "#F8F8FF"
-      (gethash (intern "GOLD") *colors*) "#FFD700"
-      (gethash (intern "GOLDENROD") *colors*) "#DAA520"
-      (gethash (intern "GRAY") *colors*) "#808080"
-      (gethash (intern "GREEN") *colors*) "#008000"
-      (gethash (intern "GREENYELLOW") *colors*) "#ADFF2F"
-      (gethash (intern "GREY") *colors*) "#808080"
-      (gethash (intern "HONEYDEW") *colors*) "#F0FFF0"
-      (gethash (intern "HOTPINK") *colors*) "#FF69B4"
-      (gethash (intern "INDIANRED") *colors*) "#CD5C5C"
-      (gethash (intern "INDIGO") *colors*) "#4B0082"
-      (gethash (intern "IVORY") *colors*) "#FFFFF0"
-      (gethash (intern "KHAKI") *colors*) "#F0E68C"
-      (gethash (intern "LAVENDER") *colors*) "#E6E6FA"
-      (gethash (intern "LAVENDERBLUSH") *colors*) "#FFF0F5"
-      (gethash (intern "LAWNGREEN") *colors*) "#7CFC00"
-      (gethash (intern "LEMONCHIFFON") *colors*) "#FFFACD"
-      (gethash (intern "LIGHTBLUE") *colors*) "#ADD8E6"
-      (gethash (intern "LIGHTCORAL") *colors*) "#F08080"
-      (gethash (intern "LIGHTCYAN") *colors*) "#E0FFFF"
-      (gethash (intern "LIGHTGOLDENRODYELLOW") *colors*) "#FAFAD2"
-      (gethash (intern "LIGHTGRAY") *colors*) "#D3D3D3"
-      (gethash (intern "LIGHTGREEN") *colors*) "#90EE90"
-      (gethash (intern "LIGHTGREY") *colors*) "#D3D3D3"
-      (gethash (intern "LIGHTPINK") *colors*) "#FFB6C1"
-      (gethash (intern "LIGHTSALMON") *colors*) "#FFA07A"
-      (gethash (intern "LIGHTSEAGREEN") *colors*) "#20B2AA"
-      (gethash (intern "LIGHTSKYBLUE") *colors*) "#87CEFA"
-      (gethash (intern "LIGHTSLATEGRAY") *colors*) "#778899"
-      (gethash (intern "LIGHTSLATEGREY") *colors*) "#778899"
-      (gethash (intern "LIGHTSTEELBLUE") *colors*) "#B0C4DE"
-      (gethash (intern "LIGHTYELLOW") *colors*) "#FFFFE0"
-      (gethash (intern "LIME") *colors*) "#00FF00"
-      (gethash (intern "LIMEGREEN") *colors*) "#32CD32"
-      (gethash (intern "LINEN") *colors*) "#FAF0E6"
-      (gethash (intern "MAGENTA") *colors*) "#FF00FF"
-      (gethash (intern "MAROON") *colors*) "#800000"
-      (gethash (intern "MEDIUMAQUAMARINE") *colors*) "#66CDAA"
-      (gethash (intern "MEDIUMBLUE") *colors*) "#0000CD"
-      (gethash (intern "MEDIUMORCHID") *colors*) "#BA55D3"
-      (gethash (intern "MEDIUMPURPLE") *colors*) "#9370DB"
-      (gethash (intern "MEDIUMSEAGREEN") *colors*) "#3CB371"
-      (gethash (intern "MEDIUMSLATEBLUE") *colors*) "#7B68EE"
-      (gethash (intern "MEDIUMSPRINGGREEN") *colors*) "#00FA9A"
-      (gethash (intern "MEDIUMTURQUOISE") *colors*) "#48D1CC"
-      (gethash (intern "MEDIUMVIOLETRED") *colors*) "#C71585"
-      (gethash (intern "MIDNIGHTBLUE") *colors*) "#191970"
-      (gethash (intern "MINTCREAM") *colors*) "#F5FFFA"
-      (gethash (intern "MISTYROSE") *colors*) "#FFE4E1"
-      (gethash (intern "MOCCASIN") *colors*) "#FFE4B5"
-      (gethash (intern "NAVAJOWHITE") *colors*) "#FFDEAD"
-      (gethash (intern "NAVY") *colors*) "#000080"
-      (gethash (intern "OLDLACE") *colors*) "#FDF5E6"
-      (gethash (intern "OLIVE") *colors*) "#808000"
-      (gethash (intern "OLIVEDRAB") *colors*) "#6B8E23"
-      (gethash (intern "ORANGE") *colors*) "#FFA500"
-      (gethash (intern "ORANGERED") *colors*) "#FF4500"
-      (gethash (intern "ORCHID") *colors*) "#DA70D6"
-      (gethash (intern "PALEGOLDENROD") *colors*) "#EEE8AA"
-      (gethash (intern "PALEGREEN") *colors*) "#98FB98"
-      (gethash (intern "PALETURQUOISE") *colors*) "#AFEEEE"
-      (gethash (intern "PALEVIOLETRED") *colors*) "#DB7093"
-      (gethash (intern "PAPAYAWHIP") *colors*) "#FFEFD5"
-      (gethash (intern "PEACHPUFF") *colors*) "#FFDAB9"
-      (gethash (intern "PERU") *colors*) "#CD853F"
-      (gethash (intern "PINK") *colors*) "#FFC0CB"
-      (gethash (intern "PLUM") *colors*) "#DDA0DD"
-      (gethash (intern "POWDERBLUE") *colors*) "#B0E0E6"
-      (gethash (intern "PURPLE") *colors*) "#800080"
-      (gethash (intern "REBECCAPURPLE") *colors*) "#663399"
-      (gethash (intern "RED") *colors*) "#FF0000"
-      (gethash (intern "ROSYBROWN") *colors*) "#BC8F8F"
-      (gethash (intern "ROYALBLUE") *colors*) "#4169E1"
-      (gethash (intern "SADDLEBROWN") *colors*) "#8B4513"
-      (gethash (intern "SALMON") *colors*) "#FA8072"
-      (gethash (intern "SANDYBROWN") *colors*) "#F4A460"
-      (gethash (intern "SEAGREEN") *colors*) "#2E8B57"
-      (gethash (intern "SEASHELL") *colors*) "#FFF5EE"
-      (gethash (intern "SIENNA") *colors*) "#A0522D"
-      (gethash (intern "SILVER") *colors*) "#C0C0C0"
-      (gethash (intern "SKYBLUE") *colors*) "#87CEEB"
-      (gethash (intern "SLATEBLUE") *colors*) "#6A5ACD"
-      (gethash (intern "SLATEGRAY") *colors*) "#708090"
-      (gethash (intern "SLATEGREY") *colors*) "#708090"
-      (gethash (intern "SNOW") *colors*) "#FFFAFA"
-      (gethash (intern "SPRINGGREEN") *colors*) "#00FF7F"
-      (gethash (intern "STEELBLUE") *colors*) "#4682B4"
-      (gethash (intern "TAN") *colors*) "#D2B48C"
-      (gethash (intern "TEAL") *colors*) "#008080"
-      (gethash (intern "THISTLE") *colors*) "#D8BFD8"
-      (gethash (intern "TOMATO") *colors*) "#FF6347"
-      (gethash (intern "TURQUOISE") *colors*) "#40E0D0"
-      (gethash (intern "VIOLET") *colors*) "#EE82EE"
-      (gethash (intern "WHEAT") *colors*) "#F5DEB3"
-      (gethash (intern "WHITE") *colors*) "#FFFFFF"
-      (gethash (intern "WHITESMOKE") *colors*) "#F5F5F5"
-      (gethash (intern "YELLOW") *colors*) "#FFFF00"
-      (gethash (intern "YELLOWGREEN") *colors*) "#9ACD32")
+(setf (gethash (intern "ALICEBLUE" "KEYWORD") *colors*) '(240 248 255)
+(gethash (intern "ANTIQUEWHITE" "KEYWORD") *colors*) '(250 235 215)
+(gethash (intern "AQUA" "KEYWORD") *colors*) '(0 255 255)
+(gethash (intern "AQUAMARINE" "KEYWORD") *colors*) '(127 255 212)
+(gethash (intern "AZURE" "KEYWORD") *colors*) '(240 255 255)
+(gethash (intern "BEIGE" "KEYWORD") *colors*) '(245 245 220)
+(gethash (intern "BISQUE" "KEYWORD") *colors*) '(255 228 196)
+(gethash (intern "BLACK" "KEYWORD") *colors*) '(0 0 0)
+(gethash (intern "BLANCHEDALMOND" "KEYWORD") *colors*) '(255 235 205)
+(gethash (intern "BLUE" "KEYWORD") *colors*) '(0 0 255)
+(gethash (intern "BLUEVIOLET" "KEYWORD") *colors*) '(138 43 226)
+(gethash (intern "BROWN" "KEYWORD") *colors*) '(165 42 42)
+(gethash (intern "BURLYWOOD" "KEYWORD") *colors*) '(222 184 135)
+(gethash (intern "CADETBLUE" "KEYWORD") *colors*) '(95 158 160)
+(gethash (intern "CHARTREUSE" "KEYWORD") *colors*) '(127 255 0)
+(gethash (intern "CHOCOLATE" "KEYWORD") *colors*) '(210 105 30)
+(gethash (intern "CORAL" "KEYWORD") *colors*) '(255 127 80)
+(gethash (intern "CORNFLOWERBLUE" "KEYWORD") *colors*) '(100 149 237)
+(gethash (intern "CORNSILK" "KEYWORD") *colors*) '(255 248 220)
+(gethash (intern "CRIMSON" "KEYWORD") *colors*) '(220 20 60)
+(gethash (intern "CYAN" "KEYWORD") *colors*) '(0 255 255)
+(gethash (intern "DARKBLUE" "KEYWORD") *colors*) '(0 0 139)
+(gethash (intern "DARKCYAN" "KEYWORD") *colors*) '(0 139 139)
+(gethash (intern "DARKGOLDENROD" "KEYWORD") *colors*) '(184 134 11)
+(gethash (intern "DARKGRAY" "KEYWORD") *colors*) '(169 169 169)
+(gethash (intern "DARKGREEN" "KEYWORD") *colors*) '(0 100 0)
+(gethash (intern "DARKGREY" "KEYWORD") *colors*) '(169 169 169)
+(gethash (intern "DARKKHAKI" "KEYWORD") *colors*) '(189 183 107)
+(gethash (intern "DARKMAGENTA" "KEYWORD") *colors*) '(139 0 139)
+(gethash (intern "DARKOLIVEGREEN" "KEYWORD") *colors*) '(85 107 47)
+(gethash (intern "DARKORANGE" "KEYWORD") *colors*) '(255 140 0)
+(gethash (intern "DARKORCHID" "KEYWORD") *colors*) '(153 50 204)
+(gethash (intern "DARKRED" "KEYWORD") *colors*) '(139 0 0)
+(gethash (intern "DARKSALMON" "KEYWORD") *colors*) '(233 150 122)
+(gethash (intern "DARKSEAGREEN" "KEYWORD") *colors*) '(143 188 143)
+(gethash (intern "DARKSLATEBLUE" "KEYWORD") *colors*) '(72 61 139)
+(gethash (intern "DARKSLATEGRAY" "KEYWORD") *colors*) '(47 79 79)
+(gethash (intern "DARKSLATEGREY" "KEYWORD") *colors*) '(47 79 79)
+(gethash (intern "DARKTURQUOISE" "KEYWORD") *colors*) '(0 206 209)
+(gethash (intern "DARKVIOLET" "KEYWORD") *colors*) '(148 0 211)
+(gethash (intern "DEEPPINK" "KEYWORD") *colors*) '(255 20 147)
+(gethash (intern "DEEPSKYBLUE" "KEYWORD") *colors*) '(0 191 255)
+(gethash (intern "DIMGRAY" "KEYWORD") *colors*) '(105 105 105)
+(gethash (intern "DIMGREY" "KEYWORD") *colors*) '(105 105 105)
+(gethash (intern "DODGERBLUE" "KEYWORD") *colors*) '(30 144 255)
+(gethash (intern "FIREBRICK" "KEYWORD") *colors*) '(178 34 34)
+(gethash (intern "FLORALWHITE" "KEYWORD") *colors*) '(255 250 240)
+(gethash (intern "FORESTGREEN" "KEYWORD") *colors*) '(34 139 34)
+(gethash (intern "FUCHSIA" "KEYWORD") *colors*) '(255 0 255)
+(gethash (intern "GAINSBORO" "KEYWORD") *colors*) '(220 220 220)
+(gethash (intern "GHOSTWHITE" "KEYWORD") *colors*) '(248 248 255)
+(gethash (intern "GOLD" "KEYWORD") *colors*) '(255 215 0)
+(gethash (intern "GOLDENROD" "KEYWORD") *colors*) '(218 165 32)
+(gethash (intern "GRAY" "KEYWORD") *colors*) '(128 128 128)
+(gethash (intern "GREEN" "KEYWORD") *colors*) '(0 128 0)
+(gethash (intern "GREENYELLOW" "KEYWORD") *colors*) '(173 255 47)
+(gethash (intern "GREY" "KEYWORD") *colors*) '(128 128 128)
+(gethash (intern "HONEYDEW" "KEYWORD") *colors*) '(240 255 240)
+(gethash (intern "HOTPINK" "KEYWORD") *colors*) '(255 105 180)
+(gethash (intern "INDIANRED" "KEYWORD") *colors*) '(205 92 92)
+(gethash (intern "INDIGO" "KEYWORD") *colors*) '(75 0 130)
+(gethash (intern "IVORY" "KEYWORD") *colors*) '(255 255 240)
+(gethash (intern "KHAKI" "KEYWORD") *colors*) '(240 230 140)
+(gethash (intern "LAVENDER" "KEYWORD") *colors*) '(230 230 250)
+(gethash (intern "LAVENDERBLUSH" "KEYWORD") *colors*) '(255 240 245)
+(gethash (intern "LAWNGREEN" "KEYWORD") *colors*) '(124 252 0)
+(gethash (intern "LEMONCHIFFON" "KEYWORD") *colors*) '(255 250 205)
+(gethash (intern "LIGHTBLUE" "KEYWORD") *colors*) '(173 216 230)
+(gethash (intern "LIGHTCORAL" "KEYWORD") *colors*) '(240 128 128)
+(gethash (intern "LIGHTCYAN" "KEYWORD") *colors*) '(224 255 255)
+(gethash (intern "LIGHTGOLDENRODYELLOW" "KEYWORD") *colors*) '(250 250 210)
+(gethash (intern "LIGHTGRAY" "KEYWORD") *colors*) '(211 211 211)
+(gethash (intern "LIGHTGREEN" "KEYWORD") *colors*) '(144 238 144)
+(gethash (intern "LIGHTGREY" "KEYWORD") *colors*) '(211 211 211)
+(gethash (intern "LIGHTPINK" "KEYWORD") *colors*) '(255 182 193)
+(gethash (intern "LIGHTSALMON" "KEYWORD") *colors*) '(255 160 122)
+(gethash (intern "LIGHTSEAGREEN" "KEYWORD") *colors*) '(32 178 170)
+(gethash (intern "LIGHTSKYBLUE" "KEYWORD") *colors*) '(135 206 250)
+(gethash (intern "LIGHTSLATEGRAY" "KEYWORD") *colors*) '(119 136 153)
+(gethash (intern "LIGHTSLATEGREY" "KEYWORD") *colors*) '(119 136 153)
+(gethash (intern "LIGHTSTEELBLUE" "KEYWORD") *colors*) '(176 196 222)
+(gethash (intern "LIGHTYELLOW" "KEYWORD") *colors*) '(255 255 224)
+(gethash (intern "LIME" "KEYWORD") *colors*) '(0 255 0)
+(gethash (intern "LIMEGREEN" "KEYWORD") *colors*) '(50 205 50)
+(gethash (intern "LINEN" "KEYWORD") *colors*) '(250 240 230)
+(gethash (intern "MAGENTA" "KEYWORD") *colors*) '(255 0 255)
+(gethash (intern "MAROON" "KEYWORD") *colors*) '(128 0 0)
+(gethash (intern "MEDIUMAQUAMARINE" "KEYWORD") *colors*) '(102 205 170)
+(gethash (intern "MEDIUMBLUE" "KEYWORD") *colors*) '(0 0 205)
+(gethash (intern "MEDIUMORCHID" "KEYWORD") *colors*) '(186 85 211)
+(gethash (intern "MEDIUMPURPLE" "KEYWORD") *colors*) '(147 112 219)
+(gethash (intern "MEDIUMSEAGREEN" "KEYWORD") *colors*) '(60 179 113)
+(gethash (intern "MEDIUMSLATEBLUE" "KEYWORD") *colors*) '(123 104 238)
+(gethash (intern "MEDIUMSPRINGGREEN" "KEYWORD") *colors*) '(0 250 154)
+(gethash (intern "MEDIUMTURQUOISE" "KEYWORD") *colors*) '(72 209 204)
+(gethash (intern "MEDIUMVIOLETRED" "KEYWORD") *colors*) '(199 21 133)
+(gethash (intern "MIDNIGHTBLUE" "KEYWORD") *colors*) '(25 25 112)
+(gethash (intern "MINTCREAM" "KEYWORD") *colors*) '(245 255 250)
+(gethash (intern "MISTYROSE" "KEYWORD") *colors*) '(255 228 225)
+(gethash (intern "MOCCASIN" "KEYWORD") *colors*) '(255 228 181)
+(gethash (intern "NAVAJOWHITE" "KEYWORD") *colors*) '(255 222 173)
+(gethash (intern "NAVY" "KEYWORD") *colors*) '(0 0 128)
+(gethash (intern "OLDLACE" "KEYWORD") *colors*) '(253 245 230)
+(gethash (intern "OLIVE" "KEYWORD") *colors*) '(128 128 0)
+(gethash (intern "OLIVEDRAB" "KEYWORD") *colors*) '(107 142 35)
+(gethash (intern "ORANGE" "KEYWORD") *colors*) '(255 165 0)
+(gethash (intern "ORANGERED" "KEYWORD") *colors*) '(255 69 0)
+(gethash (intern "ORCHID" "KEYWORD") *colors*) '(218 112 214)
+(gethash (intern "PALEGOLDENROD" "KEYWORD") *colors*) '(238 232 170)
+(gethash (intern "PALEGREEN" "KEYWORD") *colors*) '(152 251 152)
+(gethash (intern "PALETURQUOISE" "KEYWORD") *colors*) '(175 238 238)
+(gethash (intern "PALEVIOLETRED" "KEYWORD") *colors*) '(219 112 147)
+(gethash (intern "PAPAYAWHIP" "KEYWORD") *colors*) '(255 239 213)
+(gethash (intern "PEACHPUFF" "KEYWORD") *colors*) '(255 218 185)
+(gethash (intern "PERU" "KEYWORD") *colors*) '(205 133 63)
+(gethash (intern "PINK" "KEYWORD") *colors*) '(255 192 203)
+(gethash (intern "PLUM" "KEYWORD") *colors*) '(221 160 221)
+(gethash (intern "POWDERBLUE" "KEYWORD") *colors*) '(176 224 230)
+(gethash (intern "PURPLE" "KEYWORD") *colors*) '(128 0 128)
+(gethash (intern "REBECCAPURPLE" "KEYWORD") *colors*) '(102 51 153)
+(gethash (intern "RED" "KEYWORD") *colors*) '(255 0 0)
+(gethash (intern "ROSYBROWN" "KEYWORD") *colors*) '(188 143 143)
+(gethash (intern "ROYALBLUE" "KEYWORD") *colors*) '(65 105 225)
+(gethash (intern "SADDLEBROWN" "KEYWORD") *colors*) '(139 69 19)
+(gethash (intern "SALMON" "KEYWORD") *colors*) '(250 128 114)
+(gethash (intern "SANDYBROWN" "KEYWORD") *colors*) '(244 164 96)
+(gethash (intern "SEAGREEN" "KEYWORD") *colors*) '(46 139 87)
+(gethash (intern "SEASHELL" "KEYWORD") *colors*) '(255 245 238)
+(gethash (intern "SIENNA" "KEYWORD") *colors*) '(160 82 45)
+(gethash (intern "SILVER" "KEYWORD") *colors*) '(192 192 192)
+(gethash (intern "SKYBLUE" "KEYWORD") *colors*) '(135 206 235)
+(gethash (intern "SLATEBLUE" "KEYWORD") *colors*) '(106 90 205)
+(gethash (intern "SLATEGRAY" "KEYWORD") *colors*) '(112 128 144)
+(gethash (intern "SLATEGREY" "KEYWORD") *colors*) '(112 128 144)
+(gethash (intern "SNOW" "KEYWORD") *colors*) '(255 250 250)
+(gethash (intern "SPRINGGREEN" "KEYWORD") *colors*) '(0 255 127)
+(gethash (intern "STEELBLUE" "KEYWORD") *colors*) '(70 130 180)
+(gethash (intern "TAN" "KEYWORD") *colors*) '(210 180 140)
+(gethash (intern "TEAL" "KEYWORD") *colors*) '(0 128 128)
+(gethash (intern "THISTLE" "KEYWORD") *colors*) '(216 191 216)
+(gethash (intern "TOMATO" "KEYWORD") *colors*) '(255 99 71)
+(gethash (intern "TURQUOISE" "KEYWORD") *colors*) '(64 224 208)
+(gethash (intern "VIOLET" "KEYWORD") *colors*) '(238 130 238)
+(gethash (intern "WHEAT" "KEYWORD") *colors*) '(245 222 179)
+(gethash (intern "WHITE" "KEYWORD") *colors*) '(255 255 255)
+(gethash (intern "WHITESMOKE" "KEYWORD") *colors*) '(245 245 245)
+(gethash (intern "YELLOW" "KEYWORD") *colors*) '(255 255 0)
+(gethash (intern "YELLOWGREEN" "KEYWORD") *colors*) '(154 205 50))
 
 
 (defun get-color (c)
-  (gethash (intern (string-upcase c))
-           *colors*))
+  (gethash c *colors*))
+
+
+(defun plotly-get-color (c)
+  (let ((color (get-color c)))
+    (format nil "rgb(~A, ~A, ~A)"
+            (first color)
+            (second color)
+            (third color))))
 
 
 ;;;; Ploly converter
@@ -196,7 +203,7 @@
            (symbol-downcase
             (list :name (cdr (assoc :name data)))))
      :line ,(symbol-downcase
-             `(:color ,(get-color (cdr (assoc :color data)))
+             `(:color ,(plotly-get-color (cdr (assoc :color data)))
                ,@(if (assoc :width data)
                      (symbol-downcase
                       (list :width (cdr (assoc :width data))))))))))
@@ -212,7 +219,7 @@
            (symbol-downcase
             (list :name (cdr (assoc :name data)))))
      :marker ,(symbol-downcase
-               `(:color ,(get-color (cdr (assoc :color data)))
+               `(:color ,(plotly-get-color (cdr (assoc :color data)))
                  ,@(if (assoc :width data)
                      (symbol-downcase
                       (list :width (cdr (assoc :width data))))))))))
@@ -225,8 +232,8 @@
       :y ,(cdr (assoc :y0 data))
       :type "scatter"
       :mode "lines"
-      :fill "tonexty"
-      :line (:color ,(get-color (cdr (assoc :color data))))))
+      :line ,(symbol-downcase
+              `(:color ,(plotly-get-color (cdr (assoc :color data)))))))
    (symbol-downcase
     `(:x ,(cdr (assoc :x data))
       :y ,(cdr (assoc :y1 data))
@@ -234,7 +241,7 @@
       :mode "lines"
       :fill "tonexty"
       :line ,(symbol-downcase
-              `(:color ,(get-color (cdr (assoc :color data)))))))))
+              `(:color ,(plotly-get-color (cdr (assoc :color data)))))))))
 
 
 (defun plotly-errorbar (data)
@@ -244,7 +251,7 @@
      :type "scatter"
      :mode "marker"
      :fill "tonexty"
-     :marker (:color ,(get-color (cdr (assoc :color data))))
+     :marker (:color ,(plotly-get-color (cdr (assoc :color data))))
      ,@(let ((errx (assoc :error-x data)))
          (if errx
              (symbol-downcase
@@ -252,7 +259,7 @@
                 ,(symbol-downcase
                   `(:type "data"
                     :symmetric :false
-                    :color ,(get-color (cdr (assoc :color data)))
+                    :color ,(plotly-get-color (cdr (assoc :color data)))
                     ,@(if (consp (cadr errx))
                           (list :array (caddr errx)
                                 :arrayminus (cadr errx))
@@ -264,7 +271,7 @@
                 (symbol-downcase
                  `(:type "data"
                    :symmetric :false
-                   :color ,(get-color (cdr (assoc :color data)))
+                   :color ,(plotly-get-color (cdr (assoc :color data)))
                    ,@(if (consp (cadr erry))
                          (list :array (caddr erry)
                                :arrayminus (cadr erry))
@@ -300,7 +307,7 @@
             (list :name (cdr (assoc :name data)))))
      :boxmean ,(cdr (assoc :boxmean data))
      :boxpoints ,(cdr (assoc :boxpoints data))
-     :marker (:color ,(get-color (cdr (assoc :color data)))))))
+     :marker (:color ,(plotly-get-color (cdr (assoc :color data)))))))
 
 
 (defun plotly-heatmap (data)
@@ -329,7 +336,7 @@
            (symbol-downcase
             (list :name (cdr (assoc :name data)))))
      :line ,(symbol-downcase
-             `(:color ,(get-color (cdr (assoc :color data)))
+             `(:color ,(plotly-get-color (cdr (assoc :color data)))
                ,@(if (assoc :width data)
                      (symbol-downcase
                       (list :width (cdr (assoc :width data))))))))))
@@ -346,7 +353,7 @@
            (symbol-downcase
             (list :name (cdr (assoc :name data)))))
      :marker ,(symbol-downcase
-               `(:color ,(get-color (cdr (assoc :color data)))
+               `(:color ,(plotly-get-color (cdr (assoc :color data)))
                  ,@(if (assoc :width data)
                      (symbol-downcase
                       (list :width (cdr (assoc :width data))))))))))
