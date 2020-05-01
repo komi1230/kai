@@ -13,7 +13,6 @@
                 :style
                 :scatter
                 :pie
-                :sunburst
                 :box
                 :heatmap
                 :contour
@@ -63,15 +62,6 @@
 (defparameter pie-data
   '(19 26 55))
 
-(defparameter sunburst-value
-  '(10 14 12 10 2 6 6 4 4))
-
-(defparameter sunburst-label
-  '("Eve" "Cain" "Seth" "Enos" "Noam" "Abel" "Awan" "Enoch" "Azura"))
-
-(defparameter sunburst-parent
-  '("" "Eve" "Eve" "Seth" "Seth" "Eve" "Eve" "Awan" "Eve"))
-
 (defparameter box-data
   (loop :repeat 50
         :collect (random 100.0)))
@@ -112,18 +102,6 @@
 (defun pie-chart ()
   (pie pie-data pie-label)
   (style :title "Pie chart example")
-  (show))
-
-
-;;;; Sunburst
-;;;
-;;; sunburst chart can be usable only in plotly
-
-(defun sunburst-chart ()
-  (sunburst sunburst-value
-            sunburst-label
-            sunburst-parent)
-  (style :title "Sunburst chart example")
   (show))
 
 
