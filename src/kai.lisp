@@ -3,30 +3,40 @@
 (defpackage :kai
   (:use :cl)
   (:import-from :kai.interface
-                :scatter
+                :line
+                :marker
+                :fillarea
+                :errorbar             
                 :bar
                 :pie
-                :sunburst
                 :box
                 :heatmap
                 :contour
-                :scatter3d
+                :line3d
+                :marker3d
                 :surface
-                :style
+                :title
+                :xaxis
+                :yaxis
+                :showlegend
                 :show
                 :reset!
                 :*state*
                 :*style*)
-  (:export :scatter
+  (:export :line
+           :marker
            :bar
            :pie
-           :sunburst
            :box
            :heatmap
            :contour
-           :scatter3d
+           :line3d
+           :marker3d
            :surface
-           :style
+           :title
+           :xaxis
+           :yaxis
+           :showlegend
            :show
            :reset!
            :*state*

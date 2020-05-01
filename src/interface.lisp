@@ -25,15 +25,22 @@
   (:export :*state*
            :*style*
            :reset!
-           :scatter
+           :line
+           :marker
+           :errorbar
+           :fillarea
+           :bar
            :pie
-           :sunburst
            :box
            :heatmap
            :contour
-           :scatter3d
+           :line3d
+           :marker3d
            :surface
-           :style
+           :title
+           :xaxis
+           :yaxis
+           :showlegend
            :show))
 (in-package :kai.interface)
 
@@ -111,12 +118,12 @@
 
 
 ;; fill
-(defun fill (&rest data)
-  (push (apply #'-fill data)
+(defun fillarea (&rest data)
+  (push (apply #'-fillarea data)
         *state*)
   T)
 
-(defun -fill (x
+(defun -fillarea (x
               y0
               y1
               &key
@@ -261,7 +268,7 @@
                (:z . ,z)
                (:type . "line3d")
                (:color . ,(choose-color color c))
-               ,(if w (:width . ,width))
+               ,(if w (cons :width width))
                ,(if n (cons :name name)))))
 
 
@@ -284,7 +291,7 @@
                (:z . ,z)
                (:type . "marker3d")
                (:color . ,(choose-color color c))
-               ,(if s (:size . ,size))
+               ,(if s (cons :size size))
                ,(if n (cons :name name)))))
 
 

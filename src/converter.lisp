@@ -11,7 +11,9 @@
 (in-package :cl-user)
 (defpackage :kai.converter
   (:use :cl)
-  (:export :to-json))
+  (:import-from :kai.util
+                :symbol-downcase)
+  (:export :plotly-code))
 (in-package :kai.converter)
 
 
@@ -361,19 +363,19 @@
 
 (defun plotly-convert (data)
   (let ((chart-type (cdr (assoc :type data))))
-    (case chart-type
-      ("line" (list (plotly-line data)))
-      ("marker" (list (plotly-marker data)))
-      ("fill" (plotly-fill data))
-      ("errorbar" (list (plotly-errorbar data)))
-      ("bar" (list (plotly-bar data)))
-      ("pie" (list (plotly-pie data)))
-      ("box" (list (plotly-box data)))
-      ("heatmap" (list (plotly-heatmap data)))
-      ("contour" (list (plotly-contour data)))
-      ("line3d" (list (plotly-line3d data)))
-      ("marker3d" (list (plotly-marker3d data)))
-      ("surface" (list (plotly-surface data))))))
+    (cond 
+      ((equal chart-type "line") (list (plotly-line data)))
+      ((equal chart-type "marker") (list (plotly-marker data)))
+      ((equal chart-type "fill") (plotly-fill data))
+      ((equal chart-type "errorbar") (list (plotly-errorbar data)))
+      ((equal chart-type "bar") (list (plotly-bar data)))
+      ((equal chart-type "pie") (list (plotly-pie data)))
+      ((equal chart-type "box") (list (plotly-box data)))
+      ((equal chart-type "heatmap") (list (plotly-heatmap data)))
+      ((equal chart-type "contour") (list (plotly-contour data)))
+      ((equal chart-type "line3d") (list (plotly-line3d data)))
+      ((equal chart-type "marker3d") (list (plotly-marker3d data)))
+      ((equal chart-type "surface") (list (plotly-surface data))))))
 
 
 (defun to-json (param)
@@ -382,6 +384,12 @@
         (jonathan:*empty-array-value* :empty-array)
         (jonathan:*empty-object-value* :empty-object))
     (jonathan:to-json param)))
+
+
+(defun plotly-code (states)
+  (mapcar #'to-json
+          (apply #'append
+                 (mapcar #'plotly-convert states))))
 
 
 

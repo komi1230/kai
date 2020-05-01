@@ -11,7 +11,8 @@
 (defpackage :kai.plotly.generate
   (:use :cl)
   (:import-from :kai.converter
-                :to-json)
+                :to-json
+                :plotly-code)
   (:import-from :kai.util
                 :make-kai-cache
                 :download-file)
@@ -70,10 +71,11 @@
 
 (defun generate-js (states style)
   (let* ((len (length states))
+         (json-traces (plotly-code states))
          (traces (format nil "~{~A~}~3&"
                          (loop for i below len
                                collect (format nil "var trace~A = ~A;~&~&" i
-                                               (to-json (nth i states))))))
+                                               (nth i json-traces)))))
          (layout (format nil "var layout = ~A;~3&" (to-json style)))
          (data (format nil "var data = [~{~A~}];~3&"
                        (loop for i below len
