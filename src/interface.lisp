@@ -142,13 +142,15 @@
                   &key
                     (error-x '())
                     (error-y '())
-                    (color "blue" c))
+                    (color "blue" c)
+                    (name "" n))
   (assert (or error-x error-y))
   (remove-if #'null
              `((:x . ,x)
                (:y . ,y)
                (:type . "errorbar")
                (:color . ,(choose-color color c))
+               ,(if n (cons :name name))
                ,(if (not (null error-x))
                     (cons :error-x error-x))
                ,(if (not (null error-y))
