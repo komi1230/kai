@@ -124,11 +124,11 @@
   T)
 
 (defun -fillarea (x
-              y0
-              y1
-              &key
-                (color "blue" c)
-                (name "" n))
+                  y0
+                  y1
+                  &key
+                    (color "blue" c)
+                    (name "" n))
   (remove-if #'null
              `((:x . ,x)
                (:y0 . ,y0)
