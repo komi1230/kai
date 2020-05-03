@@ -81,17 +81,25 @@
 ;;;
 ;;; Line and scatter
 
-(defun line ()
-  (scatter x-data-index
-           y-data-10)
+(defun line-chart ()
+  (line x-data-index
+        y-data-10)
   (style :title "Line plot example")
   (show))
 
 (defun marker ()
-  (scatter x-data-random
-           y-data-100
-           :mode "markers")
-  (style :title "Marker plot example")
+  (marker x-data-random
+          y-data-100
+          :size 20)
+  (title "Marker plot example")
+  (show))
+
+(defun fill-chart ()
+  (fillarea '(1 2 3)
+            '(2 1 3)
+            '(5 2 7)
+            :color :aqua)
+  (title "Fill chart with line plotting")
   (show))
 
 
@@ -101,7 +109,7 @@
 
 (defun pie-chart ()
   (pie pie-data pie-label)
-  (style :title "Pie chart example")
+  (title "Pie chart example")
   (show))
 
 
@@ -111,7 +119,7 @@
 
 (defun box-chart ()
   (box box-data)
-  (style :title "Box chart example")
+  (title "Box chart example")
   (show))
 
 
@@ -122,7 +130,7 @@
 (defun heatmap-chart ()
   (heatmap heatmap-data
            :showscale t)
-  (style :title "Heatmap example")
+  (title "Heatmap example")
   (show))
 
 
@@ -133,7 +141,7 @@
 (defun contour-chart ()
   (contour contour-data
            :showscale t)
-  (style :title "Contour example")
+  (title "Contour example")
   (show))
 
 
@@ -142,19 +150,17 @@
 ;;; scatter3d plots: line and marker
 
 (defun line3d ()
-  (scatter3d x-data-random
-             y-data-100
-             z-data-100
-             :mode "lines")
-  (style :title "Line3D plot example")
+  (line3d x-data-random
+          y-data-100
+          z-data-100)
+  (title "Line3D plot example")
   (show))
 
 (defun marker3d ()
-  (scatter3d x-data-random
-             y-data-100
-             z-data-100
-             :mode "markers")
-  (style :title "Marker3D plot example")
+  (marker3d x-data-random
+            y-data-100
+            z-data-100)
+  (title "Marker3D plot example")
   (show))
 
 
@@ -164,5 +170,5 @@
 
 (defun surface-chart ()
   (surface contour-data)
-  (style :title "Surface chart example")
+  (title "Surface chart example")
   (show))
