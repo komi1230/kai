@@ -189,6 +189,7 @@
 ;;;; GR plot type
 ;;;
 ;;; GR has many types of plot for line and marker.
+;;; And also GR has some choices of fonts.
 
 (defun gr-linetype (ltype)
   (let ((table (list (cons :auto 1)
@@ -226,6 +227,37 @@
                      (cons :vline -30)
                      (cons :hline -31))))
     (cdr (assoc mtype table))))
+
+
+(defun gr-halign (pos)
+  (let ((table (list (cons :left 1)
+                     (cons :center 2)
+                     (cons :right 3))))
+    (cdr (assoc pos table))))
+
+
+(defun gr-valign (pos)
+  (let ((table (list (cons :top 1)
+                     (cons :center 3)
+                     (cons :bottom 5))))
+    (cdr (assoc pos table))))
+
+
+(defun gr-font-family (font-type)
+  (let ((table (list (cons :times 1)
+                     (cons :helvetica 5)
+                     (cons :courier 9)
+                     (cons :bookman 14)
+                     (cons :newcenturyschlbk 18)
+                     (cons :avantgarde 22)
+                     (cons :palatino 26))))
+    (cdr (assoc font-type table))))
+
+
+(defun gr-vector-font (font-type)
+  (let ((table (list (cons :serif-roman 232)
+                     (cons :sans-serif 233))))
+    (cdr (assoc font-type table))))
 
 
 ;; First Setup before launching GR
