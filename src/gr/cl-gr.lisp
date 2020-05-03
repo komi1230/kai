@@ -14,6 +14,7 @@
                 :init
                 :openws
                 :closews
+                :inqdspsize
                 :activatews
                 :deactivatews
                 :polyline
@@ -185,6 +186,47 @@
    "libGRM.so")
 
 
+;;;; GR plot type
+;;;
+;;; GR has many types of plot for line and marker.
+
+(defun gr-linetype (ltype)
+  (let ((table (list (cons :auto 1)
+                     (cons :solid 1)
+                     (cons :dash 2)
+                     (cons :dot 3)
+                     (cons :dashdot 4)
+                     (cons :dashdotdot -1))))
+    (cdr (assoc ltype table))))
+
+
+(defun gr-markertype (mtype)
+  (let ((table (list (cons :auto 1)
+                     (cons :none -1)
+                     (cons :circle -1)
+                     (cons :rect -7)
+                     (cons :diamond -13)
+                     (cons :utriangle -3)
+                     (cons :dtriangle -5)
+                     (cons :ltriangle -18)
+                     (cons :rtriangle -17)
+                     (cons :pentagon -21)
+                     (cons :hexagon -22)
+                     (cons :heptagon -23)
+                     (cons :octagon -24)
+                     (cons :cross 2)
+                     (cons :xcross 5)
+                     (cons :+ 2)
+                     (cons :x 5)
+                     (cons :star4 -25)
+                     (cons :star5 -26)
+                     (cons :star6 -27)
+                     (cons :star7 -28)
+                     (cons :star8 -29)
+                     (cons :vline -30)
+                     (cons :hline -31))))
+    (cdr (assoc mtype table))))
+
 
 ;; First Setup before launching GR
 (defun init ()
@@ -199,5 +241,21 @@
      (merge-pathnames (format nil "lib/~A" libGR)
                       (make-kai-cache "gr")))))
 
+
+
+
+;;;; Check window information
+;;;
+;;; Here we check environment on window information;
+;;; width, height, DPI (Dots per inch)
+;;; Note: 0.0254 is some coefficient to calculate DPI.
+
+(defun window-info ()
+  (let* ((win-info (inqdspsize)))
+    (list (cons :mwidth (first win-info))
+          (cons :mheight (second win-info))
+          (cons :width (third win-info))
+          (cons :height (fourth win-info))
+          (cons :dpi (* 0.0254 (/ width mwidth))))))
 
 
