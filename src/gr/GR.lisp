@@ -194,7 +194,7 @@
 (defun inqdspsize ()
   (let ((mwidth (data-alloc '(0) :double))
         (mheight (data-alloc '(0) :double))
-        (width (data-alloc (0) :int))
+        (width (data-alloc '(0) :int))
         (height (data-alloc '(0) :int)))
     (gr-inqdspsize mwidth
                    mheight
