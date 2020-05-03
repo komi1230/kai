@@ -22,6 +22,7 @@
   (:export :init
            :openws
            :closews
+           :inqdspsize
            :activatews
            :deactivatews
            :polyline
