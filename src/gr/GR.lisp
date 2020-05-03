@@ -180,6 +180,33 @@
 (cffi:defcfun ("gr_closegks" closegks) :void)
 
 
+;;;; Check display size
+;;;
+;;; To plot some data, we have to check windows size.
+
+(cffi:defcfun ("gr_inqdspsize" gr-inqdspsize) :void
+  (mwidth (:pointer :double))
+  (mheight (:pointer  :double))
+  (width (:pointer :int))
+  (height (:pointer :int)))
+
+(defun inqdspsize ()
+  (let ((mwidth (data-alloc '(0) :double))
+        (mheight (data-alloc '(0) :double))
+        (width (data-alloc (0) :int))
+        (height (data-alloc '(0) :int)))
+    (gr-inqdspsize mwidth
+                   mheight
+                   width
+                   height)
+    (let ((-mwidth (arr-aref mwidth :double 0))
+          (-mheight (arr-aref mheight :double 0))
+          (-width (arr-aref width :int 0))
+          (-height (arr-aref height :int 0)))
+      (free mwidth mheight width height)
+      (list -mwidth -mheight -width -height))))
+
+
 
 #|
     openws(workstation_id::Int, connection, workstation_type::Int)
@@ -1002,7 +1029,7 @@ multiplied by the marker size scale factor.
 
 (defun setmarkersize (markersize)
   (gr-setmarkersize (coerce markersize 'double-float)))
-
+    
 
 (cffi:defcfun ("gr_inqmarkersize" gr-inqmarkersize) :void
   (markersize (:pointer :double)))
