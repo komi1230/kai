@@ -4,6 +4,7 @@
 ;;; are disclaimed.
 ;;;
 ;;; This file is a bridge between API of GR and Kai.
+;;; ref) https://github.com/JuliaPlots/Plots.jl/blob/master/src/backends/gr.jl
 
 (in-package :cl-user)
 (defpackage :kai.GR.cl-gr
