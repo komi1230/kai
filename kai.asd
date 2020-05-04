@@ -1,5 +1,5 @@
 (defsystem "kai"
-  :version "0.1.11"
+  :version "0.2.0"
   :author "Yusuke Kominami"
   :license "MIT License"
   :depends-on ("dexador"
