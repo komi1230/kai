@@ -261,6 +261,49 @@
     (cdr (assoc font-type table))))
 
 
+;;;; Color
+;;;
+;;; GR designates color not as RGB but as color index.
+;;; This color index is set by INQCOLORFROMRGB.
+;;; When we input some RGB to this function, this returns
+;;; color index.
+;;; When we set some color of line or marker, we use this system.
+;;; Note: "ind" means "index."
+
+;; get color index from RGB and Alpha
+(defun gr-getcolorind (color-rgb &key (alpha 1))
+  (settransparency alpha)
+  (inqcolorfromrgb (first color-rgb)
+                   (second color-rgb)
+                   (third color-rgb)))
+
+(defun linecolor (color-rgb)
+  (setlinecolorind (gr-getcolorind color-rgb)))
+
+(defun markercolor (color-rgb)
+  (setmarkercolorind (gr-getcolorind color-rgb)))
+
+(defun fillcolor (color-rgb)
+  (setfillcolorind (gr-getcolorind color-rgb)))
+
+(defun bordercolor (color-rgb)
+  (setbordercolorind (gr-getcolorind color-rgb)))
+
+(defun textcolor (color-rgb)
+  (settextcolorind (gr-getcolorind color-rgb)))
+
+
+;; Transparency
+(defun transparency (alpha)
+  (let ((a (if (cond
+                 ((< alpha 0) 0)
+                 ((> alpha 1) 1)
+                 (t alpha)))))
+    (settransparency alpha)))
+
+
+
+
 ;; First Setup before launching GR
 (defun init ()
   (let ((kai-cache-dir (namestring (make-kai-cache "gr"))))
