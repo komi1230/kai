@@ -230,6 +230,17 @@
     (cdr (assoc mtype table))))
 
 
+(defun gr-arrowstyle (astyle)
+  (let ((table (list (cons :simple 1)
+                     (cons :hollow 3)
+                     (cons :filled 4)
+                     (cons :triangle 5)
+                     (cons :filledtriangle 6)
+                     (cons :closed 6)
+                     (cons :open 5))))
+    (cdr (assoc astyle table))))
+
+
 (defun gr-halign (pos)
   (let ((table (list (cons :left 1)
                      (cons :center 2)
