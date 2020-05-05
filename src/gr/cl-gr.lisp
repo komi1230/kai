@@ -288,24 +288,24 @@
                    (second color-rgb)
                    (third color-rgb)))
 
-(defun linecolor (color-rgb)
+(defun gr-linecolor (color-rgb)
   (setlinecolorind (gr-getcolorind color-rgb)))
 
-(defun markercolor (color-rgb)
+(defun gr-markercolor (color-rgb)
   (setmarkercolorind (gr-getcolorind color-rgb)))
 
-(defun fillcolor (color-rgb)
+(defun gr-fillcolor (color-rgb)
   (setfillcolorind (gr-getcolorind color-rgb)))
 
-(defun bordercolor (color-rgb)
+(defun gr-bordercolor (color-rgb)
   (setbordercolorind (gr-getcolorind color-rgb)))
 
-(defun textcolor (color-rgb)
+(defun gr-textcolor (color-rgb)
   (settextcolorind (gr-getcolorind color-rgb)))
 
 
 ;; Transparency
-(defun transparency (alpha)
+(defun gr-transparency (alpha)
   (let ((a (if (cond
                  ((< alpha 0) 0)
                  ((> alpha 1) 1)
@@ -316,7 +316,7 @@
 
 
 ;; First Setup before launching GR
-(defun init ()
+(defun gr-init ()
   (let ((kai-cache-dir (namestring (make-kai-cache "gr"))))
     ;; Set environment variables
     (setf (uiop:getenv "GRDIR") kai-cache-dir)
@@ -337,7 +337,7 @@
 ;;; width, height, DPI (Dots per inch)
 ;;; Note: 0.0254 is some coefficient to calculate DPI.
 
-(defun window-info ()
+(defun gr-window-info ()
   (let* ((win-info (inqdspsize)))
     (list (cons :mwidth (first win-info))
           (cons :mheight (second win-info))
@@ -345,4 +345,38 @@
           (cons :height (fourth win-info))
           (cons :dpi (* 0.0254 (/ width mwidth))))))
 
+
+
+;;;; Polyline
+;;;
+;;; Draw line segments, splitting x/y into contiguous/finite segments.
+;;; Here you can draw arrow in the start or the end of data.
+
+;; Plot line and draw arrow
+(defun gr-polyline (x y &key
+                          (arrowside :none)
+                          (arrowstyle :simple))
+  (assert (= (length x) (length y)))
+  (polyline x y)
+  (if (find arrowside '(:head :both))
+      (progn
+        (setarrowstyle (gr-arrowstyle arrowstyle))
+        (drawarrow (cadr x)
+                   (cadr y)
+                   (car x)
+                   (car y))))
+  (if (find arrowside '(:tail :both))
+      (progn
+        (setarrowstyle (gr-arrowstyle arrowstyle))
+        (drawarrow (car (last x 2))
+                   (car (last y 2))
+                   (car (last x 1))
+                   (car (last y 1))))))
+
+
+;; Plot 3D-line and draw arrow
+;; Note: GR doesn't provide 3D arrow.
+(defun gr-polyline3d (x y z)
+  (assert (= (length x) (length y) (length z)))
+  (polyline3d x y z))
 
