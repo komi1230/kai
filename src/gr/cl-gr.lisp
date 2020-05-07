@@ -281,7 +281,7 @@
 ;;; When we set some color of line or marker, we use this system.
 ;;; Note: "ind" means "index."
 
-;; get color index from RGB and Alpha
+;; get color index from RGB (as List) and Alpha (as Keyword)
 (defun gr-getcolorind (color-rgb &key (alpha 1))
   (settransparency alpha)
   (inqcolorfromrgb (first color-rgb)
@@ -311,6 +311,36 @@
                  ((> alpha 1) 1)
                  (t alpha)))))
     (settransparency alpha)))
+
+
+
+;;;; Text
+;;;
+;;; GR can provide some functions to write texts in a window.
+;;; This is branched to normal text and TeX text.
+
+(defun gr-inqtext (x y text)
+  (let ((len (length text)))
+    (cond
+      ((and (equal #\$ (aref text 0))
+            (equal #\$ (aref text (1- len))))
+       (inqmathtex x y (subseq text 1 (1- len))))
+      ((find #\\ text :test #'equal)
+       (inqtextext x y text))
+      (t
+       (inqtext x y text)))))
+
+
+(defun gr-text (x y text)
+  (let ((len (length text)))
+    (cond
+      ((and (equal #\$ (aref text 0))
+            (equal #\$ (aref text (1- len))))
+       (mathtex x y (subseq text 1 (1- len))))
+      ((find #\\ text :test #'equal)
+       (textext x y text))
+      (t
+       (text x y text)))))
 
 
 
