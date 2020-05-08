@@ -344,6 +344,19 @@
 
 
 
+;;;; Axis
+;;;
+;;; Set polar axis or grid axis.
+
+
+
+
+;;;; Fill Viewport
+;;;
+;;; Set Fill viewport.
+
+
+
 
 ;; First Setup before launching GR
 (defun gr-init ()
