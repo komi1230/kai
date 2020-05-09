@@ -58,8 +58,8 @@
            :setcharup
            :settextpath
            :settextalign
-           :setfillinstyle
-           :inqfillinstyle
+           :setfillintstyle
+           :inqfillintstyle
            :setfillstyle
            :inqfillstyle
            :setfillcolorind
@@ -1376,17 +1376,17 @@ primitives. The default interior style is HOLLOW.
 
 |#
 
-(cffi:defcfun ("gr_setfillinstyle" gr-setfillinstyle) :void
+(cffi:defcfun ("gr_setfillintstyle" gr-setfillinstyle) :void
   (style :int))
 
-(defun setfillinstyle (style)
+(defun setfillintstyle (style)
   (gr-setfillinstyle style))
 
 
-(cffi:defcfun ("gr_inqfillinstyle" gr-inqfillinstyle) :void
+(cffi:defcfun ("gr_inqfillintstyle" gr-inqfillinstyle) :void
   (style (:pointer :int)))
 
-(defun inqfillinstyle (style)
+(defun inqfillintstyle (style)
   (let ((style-data (data-alloc style :int)))
     (gr-inqfillinstyle style-data)
     (free style-data)))
