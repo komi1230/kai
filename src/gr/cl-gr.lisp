@@ -278,6 +278,7 @@
 ;;; This color index is set by INQCOLORFROMRGB.
 ;;; When we input some RGB to this function, this returns
 ;;; color index.
+;;; color-rgb is 3-element list: like '(255 80 125)
 ;;; When we set some color of line or marker, we use this system.
 ;;; Note: "ind" means "index."
 
@@ -353,7 +354,7 @@
 ;;;; Fill Viewport
 ;;;
 ;;; Set Fill viewport.
-;;; Viewport is like '(0 1 0 1)
+;;; Viewport is 4-element list: like '(0 1 0 1)
 
 (defun gr-fill-viewport (viewport color)
   (let ((intstyle-solid 1))
