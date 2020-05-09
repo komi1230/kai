@@ -51,8 +51,8 @@
                 :setcharup
                 :settextpath
                 :settextalign
-                :setfillinstyle
-                :inqfillinstyle
+                :setfillintstyle
+                :inqfillintstyle
                 :setfillstyle
                 :inqfillstyle
                 :setfillcolorind
@@ -350,12 +350,21 @@
 
 
 
-
 ;;;; Fill Viewport
 ;;;
 ;;; Set Fill viewport.
+;;; Viewport is like '(0 1 0 1)
 
-
+(defun gr-fill-viewport (viewport color)
+  (let ((intstyle-solid 1))
+    (savestate)
+    (selntran 0)
+    (setscale 0)
+    (setfillintstyle intstyle-solid)
+    (gr-fillcolor color)
+    (apply #'fillrect viewport)
+    (selntran 1)
+    (restorestate)))
 
 
 ;; First Setup before launching GR
