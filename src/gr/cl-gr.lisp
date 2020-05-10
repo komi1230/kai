@@ -373,21 +373,6 @@
     (restorestate)))
 
 
-;; First Setup before launching GR
-(defun gr-init ()
-  (let ((kai-cache-dir (namestring (make-kai-cache "gr"))))
-    ;; Set environment variables
-    (setf (uiop:getenv "GRDIR") kai-cache-dir)
-    (setf (uiop:getenv "GKS_FONTPATH") kai-cache-dir)
-    (setf (uiop:getenv "GKS_USE_CAIRO_PNG") "true")
-
-    ;; Load shared objects
-    (cffi:load-foreign-library
-     (merge-pathnames (format nil "lib/~A" libGR)
-                      (make-kai-cache "gr")))))
-
-
-
 
 ;;;; Check window information
 ;;;
@@ -401,7 +386,24 @@
           (cons :mheight (second win-info))
           (cons :width (third win-info))
           (cons :height (fourth win-info))
-          (cons :dpi (* 0.0254 (/ width mwidth))))))
+          (cons :dpi (* 0.0254 (/ (third win-info)
+                                  (first win-info)))))))
+
+
+
+
+;; First Setup before launching GR
+(defun gr-init ()
+  (let ((kai-cache-dir (namestring (make-kai-cache "gr"))))
+    ;; Set environment variables
+    (setf (uiop:getenv "GRDIR") kai-cache-dir)
+    (setf (uiop:getenv "GKS_FONTPATH") kai-cache-dir)
+    (setf (uiop:getenv "GKS_USE_CAIRO_PNG") "true")
+
+    ;; Load shared objects
+    (cffi:load-foreign-library
+     (merge-pathnames (format nil "lib/~A" libGR)
+                      (make-kai-cache "gr")))))
 
 
 
@@ -437,5 +439,4 @@
 (defun gr-polyline3d (x y z)
   (assert (= (length x) (length y) (length z)))
   (polyline3d x y z))
-
 
