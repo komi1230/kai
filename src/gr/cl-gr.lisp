@@ -187,6 +187,22 @@
    "libGRM.so")
 
 
+;; Environment variables and load libraries
+(defun gr-init ()
+  (let ((kai-cache-dir (namestring (make-kai-cache "gr"))))
+    ;; Set environment variables
+    (setf (uiop:getenv "GRDIR") kai-cache-dir)
+    (setf (uiop:getenv "GKS_FONTPATH") kai-cache-dir)
+    (setf (uiop:getenv "GKS_USE_CAIRO_PNG") "true")
+
+    ;; Load shared objects
+    (cffi:load-foreign-library
+     (merge-pathnames (format nil "lib/~A" libGR)
+                      (make-kai-cache "gr")))))
+
+
+
+
 ;;;; GR plot type
 ;;;
 ;;; GR has many types of plot for line and marker.
@@ -285,9 +301,7 @@
 ;; get color index from RGB (as List) and Alpha (as Keyword)
 (defun gr-getcolorind (color-rgb &key (alpha 1))
   (settransparency alpha)
-  (inqcolorfromrgb (first color-rgb)
-                   (second color-rgb)
-                   (third color-rgb)))
+  (apply #'inqcolorfromrgb color-rgb))
 
 (defun gr-linecolor (color-rgb)
   (setlinecolorind (gr-getcolorind color-rgb)))
@@ -361,7 +375,7 @@
 ;;; Set Fill viewport.
 ;;; Viewport is 4-element list: like '(0 1 0 1)
 
-(defun gr-fill-viewport (viewport color)
+(defun gr-fill-viewport (viewport &key (color '(255 255 255)))
   (let ((intstyle-solid 1))
     (savestate)
     (selntran 0)
@@ -382,29 +396,55 @@
 
 (defun gr-window-info ()
   (let* ((win-info (inqdspsize)))
-    (list (cons :mwidth (first win-info))
-          (cons :mheight (second win-info))
-          (cons :width (third win-info))
-          (cons :height (fourth win-info))
+    (list (cons :width-meter (first win-info))
+          (cons :height-meter (second win-info))
+          (cons :width-px (third win-info))
+          (cons :height-px (fourth win-info))
           (cons :dpi (* 0.0254 (/ (third win-info)
                                   (first win-info)))))))
 
 
+;;;; Display intialization
+;;;
+;;; Window should be initialized before plotting to adjust
+;;; window size, background color, viewport and etc...
 
-
-;; First Setup before launching GR
-(defun gr-init ()
-  (let ((kai-cache-dir (namestring (make-kai-cache "gr"))))
-    ;; Set environment variables
-    (setf (uiop:getenv "GRDIR") kai-cache-dir)
-    (setf (uiop:getenv "GKS_FONTPATH") kai-cache-dir)
-    (setf (uiop:getenv "GKS_USE_CAIRO_PNG") "true")
-
-    ;; Load shared objects
-    (cffi:load-foreign-library
-     (merge-pathnames (format nil "lib/~A" libGR)
-                      (make-kai-cache "gr")))))
-
+(defun gr-display-init ()
+  (let* ((win-info (gr-window-info))
+         (dpi (cdr (assoc :dpi win-info)))
+         (width-meter (cdr (assoc :width-meter win-info)))
+         (height-meter (cdr (assoc :height-meter win-info)))
+         (width-ratio (/ (cdr (assoc :width-meter win-info))
+                         (cdr (assoc :width-px win-info))))
+         (height-ratio (/ (cdr (assoc :height-meter win-info))
+                          (cdr (assoc :height-px win-info)))))
+    (if (> width-meter height-meter)
+        (let* ((msize (* width-meter 0.45))
+               (ratio (/ (cdr (assoc :width-meter win-info))
+                         (cdr (assoc :height-meter win-info))))
+               (viewport-canvas (list 0 1 0 ratio)))
+          (setwsviewport 0
+                         msize
+                         0
+                         (* msize ratio))
+          (setwswindow 0
+                       1
+                       0
+                       ratio)
+          (gr-fill-viewport viewport-canvas))
+        (let* ((msize (* height-meter 0.45))
+               (ratio (/ (cdr (assoc :height-meter win-info))
+                         (cdr (assoc :width-meter win-info))))
+               (viewport-canvas (list 0 ratio 0 1)))
+          (setwsviewport 0
+                         (* msize ratio)
+                         0
+                         msize)
+          (setwswindow 0
+                       ratio
+                       0
+                       1)
+          (gr-fill-viewport viewport-canvas)))))
 
 
 ;;;; Polyline
