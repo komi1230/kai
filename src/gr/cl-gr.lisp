@@ -421,8 +421,8 @@
     (emergencyclosegks)
     (if (> width-meter height-meter)
         (let* ((msize (* width-meter 0.45))
-               (ratio (/ (cdr (assoc :width-meter win-info))
-                         (cdr (assoc :height-meter win-info))))
+               (ratio (/ (cdr (assoc :height-meter win-info))
+                         (cdr (assoc :width-meter win-info))))
                (viewport-canvas (list 0 1 0 ratio)))
           (setwsviewport 0
                          msize
@@ -434,8 +434,8 @@
                        ratio)
           (gr-fill-viewport viewport-canvas))
         (let* ((msize (* height-meter 0.45))
-               (ratio (/ (cdr (assoc :height-meter win-info))
-                         (cdr (assoc :width-meter win-info))))
+               (ratio (/ (cdr (assoc :width-meter win-info))
+                         (cdr (assoc :height-meter win-info))))
                (viewport-canvas (list 0 ratio 0 1)))
           (setwsviewport 0
                          (* msize ratio)
