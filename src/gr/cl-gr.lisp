@@ -419,6 +419,7 @@
          (height-ratio (/ (cdr (assoc :height-meter win-info))
                           (cdr (assoc :height-px win-info)))))
     (emergencyclosegks)
+    (clearws)
     (if (> width-meter height-meter)
         (let* ((msize (* width-meter 0.45))
                (ratio (/ (cdr (assoc :height-meter win-info))
@@ -431,8 +432,8 @@
           (setwswindow 0
                        1
                        0
-                       ratio)
-          (gr-fill-viewport viewport-canvas))
+                       ratio))
+          ;(gr-fill-viewport viewport-canvas))
         (let* ((msize (* height-meter 0.45))
                (ratio (/ (cdr (assoc :width-meter win-info))
                          (cdr (assoc :height-meter win-info))))
@@ -444,8 +445,10 @@
           (setwswindow 0
                        ratio
                        0
-                       1)
-          (gr-fill-viewport viewport-canvas)))))
+                       1)))
+          ;(gr-fill-viewport viewport-canvas))
+        (updatews)
+        (updategks)))
 
 
 ;;;; Polyline
