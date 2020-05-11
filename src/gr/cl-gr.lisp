@@ -418,6 +418,7 @@
                          (cdr (assoc :width-px win-info))))
          (height-ratio (/ (cdr (assoc :height-meter win-info))
                           (cdr (assoc :height-px win-info)))))
+    (emergencyclosegks)
     (if (> width-meter height-meter)
         (let* ((msize (* width-meter 0.45))
                (ratio (/ (cdr (assoc :width-meter win-info))
