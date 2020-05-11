@@ -411,20 +411,14 @@
 
 (defun gr-display-init ()
   (let* ((win-info (gr-window-info))
-         (dpi (cdr (assoc :dpi win-info)))
          (width-meter (cdr (assoc :width-meter win-info)))
-         (height-meter (cdr (assoc :height-meter win-info)))
-         (width-ratio (/ (cdr (assoc :width-meter win-info))
-                         (cdr (assoc :width-px win-info))))
-         (height-ratio (/ (cdr (assoc :height-meter win-info))
-                          (cdr (assoc :height-px win-info)))))
+         (height-meter (cdr (assoc :height-meter win-info))))
     (emergencyclosegks)
     (clearws)
     (if (> width-meter height-meter)
         (let* ((msize (* width-meter 0.45))
                (ratio (/ (cdr (assoc :height-meter win-info))
-                         (cdr (assoc :width-meter win-info))))
-               (viewport-canvas (list 0 1 0 ratio)))
+                         (cdr (assoc :width-meter win-info)))))
           (setwsviewport 0
                          msize
                          0
@@ -433,11 +427,9 @@
                        1
                        0
                        ratio))
-          ;(gr-fill-viewport viewport-canvas))
         (let* ((msize (* height-meter 0.45))
                (ratio (/ (cdr (assoc :width-meter win-info))
-                         (cdr (assoc :height-meter win-info))))
-               (viewport-canvas (list 0 ratio 0 1)))
+                         (cdr (assoc :height-meter win-info)))))
           (setwsviewport 0
                          (* msize ratio)
                          0
@@ -446,9 +438,7 @@
                        ratio
                        0
                        1)))
-          ;(gr-fill-viewport viewport-canvas))
-        (updatews)
-        (updategks)))
+        (updatews)))
 
 
 ;;;; Polyline
