@@ -321,11 +321,11 @@
 
 ;; Transparency
 (defun gr-transparency (alpha)
-  (let ((a (if (cond
-                 ((< alpha 0) 0)
-                 ((> alpha 1) 1)
-                 (t alpha)))))
-    (settransparency alpha)))
+  (let ((a (cond
+             ((< alpha 0) 0)
+             ((> alpha 1) 1)
+             (t alpha))))
+    (settransparency a)))
 
 
 
