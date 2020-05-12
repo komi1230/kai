@@ -39,6 +39,8 @@ And load with ASDF:
 
 ## How to use
 
+Check [example](https://github.com/komi1230/kai/blob/master/examples/main.lisp)
+
 Prepare some data:
 
 ```lisp
@@ -57,27 +59,27 @@ This example uses List data but Array is also OK.
 ### Scatter plot
 
 ```lisp
-(kai:scatter x y)
+(kai:line x y)
 ```
 
 or
 
 ```lisp
-(kai:scatter y)
+(kai:line y)
 ```
 
 You can add some options:
 
 ```lisp
-(kai:scatter y
-             :mode "line"   ; "marker", "line" or "marker+line"
-             :name "test1")
+(kai:line y 
+          :color :magenta 
+          :width 10)
 ```
 
 ### Style (Not Necessary)
 
 ```lisp
-(kai:style :title "hogehoge plot")
+(kai:title "hogehoge plot")
 ```
 
 ### Show
@@ -85,3 +87,4 @@ You can add some options:
 ```lisp
 (kai:show)
 ```
+
