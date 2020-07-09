@@ -6,6 +6,8 @@
 
 ;; NOTE: To run this test file, execute `(asdf:test-system :kai)' in your Lisp.
 
+(teardown
+  (reset!))
 
 (deftest test-target-kai
   (testing "Initial setup"
