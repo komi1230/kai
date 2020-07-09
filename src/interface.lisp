@@ -316,23 +316,24 @@
 ;;; To attach title or axis options to the graph.
 
 (defun title (text)
-  (push (cons :title text)
-        *style*)
+  "Set title for the graph"
+  (setf (getf *style* :|title|) text)
   T)
 
-(defun xaxis (text)
-  (push (cons :xaxis text)
-        *style*)
+(defun xaxis (options)
+  "Set X axis options"
+  (setf (getf *style* :|xaxis|) options)
   T)
 
-(defun yaxis (text)
-  (push (cons :yaxis text)
-        *style*)
+(defun yaxis (options)
+  "Set Y axis options"
+  (setf (getf *style* :|yaxis|) options)
   T)
 
 (defun showlegend ()
-  (push (cons :showlegend t)
-        *style*))
+  "Show legend on the graph"
+  (setf (getf *style* :|showlegend|) t)
+  T)
 
 
 

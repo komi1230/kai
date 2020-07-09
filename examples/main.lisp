@@ -10,24 +10,29 @@
 (defpackage :kai-example
   (:use :cl)
   (:import-from :kai
-                :style
-                :scatter
+                :title
+                :line
                 :pie
                 :box
                 :heatmap
                 :contour
-                :scatter3d
+                :line3d
                 :surface
+                :fillarea
+                :marker
+                :marker3d
+                :xaxis
+                :yaxis
                 :show)
   (:export :line
-           :marker
+           :marker-example
            :pie-chart
            :sunburst-chart
            :heatmap-chart
            :box-chart
            :contour-chart
            :line3d
-           :marker3d
+           :marker3d-example
            :surface-chart))
 (in-package :kai-example)
 
@@ -84,10 +89,12 @@
 (defun line-chart ()
   (line x-data-index
         y-data-10)
-  (style :title "Line plot example")
+  (title "Line plot example")
+  (xaxis (list :|title| "X axis"))
+  (yaxis (list :|title| "Y axis"))
   (show))
 
-(defun marker ()
+(defun marker-example ()
   (marker x-data-random
           y-data-100
           :size 20)
@@ -149,14 +156,14 @@
 ;;;
 ;;; scatter3d plots: line and marker
 
-(defun line3d ()
+(defun line3d-example ()
   (line3d x-data-random
           y-data-100
           z-data-100)
   (title "Line3D plot example")
   (show))
 
-(defun marker3d ()
+(defun marker3d-example ()
   (marker3d x-data-random
             y-data-100
             z-data-100)
