@@ -21,6 +21,8 @@
                 :fillarea
                 :marker
                 :marker3d
+                :xaxis
+                :yaxis
                 :show)
   (:export :line
            :marker-example
@@ -88,6 +90,8 @@
   (line x-data-index
         y-data-10)
   (title "Line plot example")
+  (xaxis (list :|title| "X axis"))
+  (yaxis (list :|title| "Y axis"))
   (show))
 
 (defun marker-example ()
