@@ -6,7 +6,6 @@
 ;;; This file is composed of a collection of utility functions for
 ;;; plotting. This checks type and shape of input data.
 
-
 (in-package :cl-user)
 (defpackage :kai.util
   (:use :cl)
@@ -25,14 +24,11 @@
            :check-file-exist))
 (in-package :kai.util)
 
-;; rationalise how implementations refer to MS Windows in *features*
-#+(and (not windows) (or win32 mswindows))(pushnew :windows *features*)
-
 ;;;; Input style converter
 ;;;
 ;;; When getting input data, we accept variable length args.
 ;;; We cannot realize to accept one or two args with some options by
-;;; standard style, so we papare such a function to convert args.
+;;; standard style, so we prepare such a function to convert args.
 
 (defun convert-data (&rest data)
   (let ((x (car data))
@@ -120,8 +116,6 @@
 (defun check-file-exist (dir filename)
   (probe-file (merge-pathnames filename
                                (make-kai-cache dir))))
-
-
 
 ;;;; Download
 ;;;

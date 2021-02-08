@@ -1,15 +1,21 @@
-(defsystem "kai"
-  :version "0.2.1"
+;;; -*- Mode: LISP; Base: 10; Syntax: ANSI-Common-Lisp; Package: CL-USER -*-
+
+(defsystem :kai
+  :version "0.3.1"
   :author "Yusuke Kominami"
-  :license "MIT License"
-  :depends-on ("dexador"
+  :license :MIT
+  :depends-on (#:alexandria
+	       "dexador"
                "cl-who"
                "cl-css"
                "jonathan")
   :serial t
   :components ((:module "src"
                 :components
-                ((:file "util")
+                ((:file #:environment)
+		 (:file #:browser)
+		 (:file "util")
+		 (:file #:kai-init)
                  (:file "converter")
                  (:module "plotly"
                   :serial t
