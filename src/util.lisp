@@ -6,7 +6,6 @@
 ;;; This file is composed of a collection of utility functions for
 ;;; plotting. This checks type and shape of input data.
 
-
 (in-package :cl-user)
 (defpackage :kai.util
   (:use :cl)
@@ -25,19 +24,18 @@
            :check-file-exist))
 (in-package :kai.util)
 
-
 ;;;; Input style converter
 ;;;
 ;;; When getting input data, we accept variable length args.
 ;;; We cannot realize to accept one or two args with some options by
-;;; standard style, so we papare such a function to convert args.
+;;; standard style, so we prepare such a function to convert args.
 
 (defun convert-data (&rest data)
   (let ((x (car data))
         (y (cadr data)))
     (if (or (consp x)        ; check first data
             (vectorp x))
-        (if (or (consp y)    ; check second data  
+        (if (or (consp y)    ; check second data
                 (vectorp y))
             data
             `(,(loop for i below (length x) collect i)
@@ -91,19 +89,33 @@
 ;;;
 ;;; When plotting, Kai depends on some files.
 ;;; Here we check file path.
-;;; Check if .cache file exists in the home directory.
+;;; Check if .cache file exists in the home directory on UNIX-like
+;;; system or local application cache/data directory on MS Windows.
 ;;; And create cache directory for Kai.
 
 (defun make-kai-cache (dir-name)
   (ensure-directories-exist
+   #+windows
+   (merge-pathnames (pathname (format nil "kai/~A/" dir-name))
+		    (uiop:getenv-absolute-directory "TEMP")) ; If plots are truly cache data
+
+   ;; if plots are considered data and might be saved for later, this
+   ;; directory is more appropiate
+   #+nil
+   (merge-pathnames (pathname (format nil "kai/plots/~A/" dir-name))
+		    (uiop:getenv-absolute-directory "LOCALAPPDATA"))
+
+   ;; UNIX should probably use something similar to the above, e.g.:
+   ;; (uiop:getenv "XDG_CACHE_HOME") for cache and (uiop:getenv
+   ;; "XDG_DATA_HOME") for plots that are output data.  I would make
+   ;; the change but have no way to test it.
+   #-windows
    (merge-pathnames (format nil ".cache/kai/~A/" dir-name)
                     (user-homedir-pathname))))
 
 (defun check-file-exist (dir filename)
   (probe-file (merge-pathnames filename
                                (make-kai-cache dir))))
-
-
 
 ;;;; Download
 ;;;

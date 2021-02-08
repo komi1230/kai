@@ -6,7 +6,7 @@
                 :line
                 :marker
                 :fillarea
-                :errorbar             
+                :errorbar
                 :bar
                 :pie
                 :box
@@ -40,6 +40,7 @@
            :yaxis
            :showlegend
            :show
+	   :set-plot-size
            :reset!
            :*state*
            :*style*))

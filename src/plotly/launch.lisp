@@ -15,16 +15,20 @@
 (in-package :kai.plotly.launch)
 
 
-
-;;;; Open browser
-;;;
-;;; When launching js file in the browser, we use system command
-;;; to open browser.
+;;; Open browser
 (defun open-browser ()
-  (let ((path-to-html (check-file-exist "plotly" "kai.html")))
-    (uiop:run-program #+(or win32 mswindows windows)
-                      (format nil "explorer file:///~A" path-to-html)
-                      #+(or macos darwin)
-                      (format nil "open ~A" path-to-html)
-                      #-(or win32 mswindows macos darwin windows)
-                      (format nil "xdg-open ~A" path-to-html))))
+  (plot-from-file "plotly/kai.html"))
+
+;; TODO: remove package prefixes
+(defun plot-from-file (filename &key (browser :default) (browser-options cl-user::*default-browser-options*))
+  "Open plot specification FILENAME located in the KAI:CACHE directory."
+  (let ((plot-file (namestring (merge-pathnames filename (translate-logical-pathname "KAI:CACHE;")))))
+    #+windows (setf plot-file (concatenate 'string "file:///" plot-file))
+    (uiop:launch-program `(,(alexandria:assoc-value cl-user::*browser-commands* browser)
+			   ,@(case browser
+			     (:chrome (if (assoc "app" browser-options :test 'string=)
+					  (setf (cdr (assoc "app" browser-options :test 'string=)) plot-file))
+			      (cl-user::encode-chrome-options browser-options))
+			     (:default plot-file)))
+			 :ignore-error-status t)))
+
